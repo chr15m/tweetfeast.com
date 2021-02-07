@@ -1,0 +1,14 @@
+{:source-paths ["src"]
+ :dependencies []
+ :builds {:server {:target :node-script
+                   :output-to "devserver.js"
+                   :main rsstonews.main/main!
+                   :release {:output-to "server.js"}
+                   :devtools {:after-load rsstonews.main/reload!}}
+          :app {:target :browser
+                :output-dir "public/js"
+                :asset-path "js"
+                :modules {:main {:init-fn rsstonews.ui/main!}}
+                :devtools {:after-load rsstonews.ui/reload!}
+                :release {:output-dir "build/js"}}}}
+

@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@keyv/mongo": "^1.1.0",
+    "@keyv/mysql": "^1.1.4",
+    "@keyv/postgres": "^1.0.16",
+    "@keyv/redis": "^2.1.2",
+    "@keyv/sqlite": "^2.0.2",
+    "cookie-parser": "^1.4.5",
+    "express": "^4.17.1",
+    "keyv": "^4.0.3",
+    "serve-static": "^1.14.1",
+    "shadow-cljs": "^2.11.17"
+  }
+}
