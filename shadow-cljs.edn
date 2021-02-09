@@ -1,5 +1,5 @@
 {:source-paths ["src"]
- :dependencies []
+ :dependencies [[reagent "1.0.0-alpha2"]]
  :builds {:server {:target :node-script
                    :output-to "devserver.js"
                    :main rsstonews.main/main!

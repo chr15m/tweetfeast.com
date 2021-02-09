@@ -9,9 +9,26 @@
 (defonce app (web/create))
 (defonce keyv (Keyv. (or (aget js/process.env "DATABASE") "sqlite://./rsstonews.sqlite")))
 
+(defn authenticate [req res pass]
+  (if (nil? (aget req "session" "authenticated"))
+    (-> res (.status 403) (.json #js {:error "Not authenticated."}))
+    (pass)))
+
+(defn get-data [req res]
+  (go (.json res (<p! (.get keyv "user-data")))))
+
+(defn set-data [req res]
+  (go (.json res (<p! (.set keyv "user-data" (aget req "body"))))))
+
+(defn login [req res]
+  (if (= req.body (web/env "PASSWORD"))
+    (aset req.session "authenticated" true)))
+
 (defn setup-routes [app]
-  ; (.use app serve-middleware)
-  (.use app "/ip" (fn [req res] (.json res (aget req "ip")))))
+  (.use app authenticate)
+  (.get app "/data" get-data)
+  (.post app "/save" set-data)
+  (.post app "/login" login))
 
 (defn reload! []
   (web/reset-routes app)

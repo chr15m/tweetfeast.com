@@ -7,7 +7,7 @@ test.js: src/**/*.cljs shadow-cljs.edn
 test: test.js
 	node test.js
 
-.PHONY: watch watcher server
+.PHONY: watch watcher server repl
 
 server:
 	rm -f devserver.js
@@ -20,3 +20,5 @@ watcher:
 watch:
 	make -j2 watcher server
 
+repl:
+	npx shadow-cljs cljs-repl app
