@@ -18,7 +18,7 @@
   (js/console.error "Server exit.")
   (js/process.exit 1))
 
-(defn env [k default]
+(defn env [k & [default]]
   (or (aget js/process.env k)) default)
 
 (defn add-default-middleware [app]

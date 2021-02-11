@@ -6,6 +6,8 @@
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
+(set! *warn-on-infer* false)
+
 (defonce app (web/create))
 (defonce keyv (Keyv. (or (aget js/process.env "DATABASE") "sqlite://./rsstonews.sqlite")))
 
@@ -21,14 +23,17 @@
   (go (.json res (<p! (.set keyv "user-data" (aget req "body"))))))
 
 (defn login [req res]
-  (if (= req.body (web/env "PASSWORD"))
-    (aset req.session "authenticated" true)))
+  (if (= (aget req.body "password") (web/env "PASSWORD" "password"))
+    (do
+      (aset req.session "authenticated" true)
+      (.json res true))
+    (-> res (.status 403) (.json #js {:error "Incorrect password"}))))
 
 (defn setup-routes [app]
+  (.post app "/login" login)
   (.use app authenticate)
   (.get app "/data" get-data)
-  (.post app "/save" set-data)
-  (.post app "/login" login))
+  (.post app "/save" set-data))
 
 (defn reload! []
   (web/reset-routes app)

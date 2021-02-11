@@ -10,3 +10,19 @@ body, html, #app, #loading {
   flex-direction: column;
   justify-content: center;
 }
+
+nav ul {
+  margin: 0px;
+  padding: 0px;
+}
+
+nav ul li {
+  cursor: pointer;
+  list-style-type: none;
+  margin: 0px 0.25em;
+  display: inline-block;
+}
+
+nav ul li.selected {
+  color: red;
+}
