@@ -3,6 +3,7 @@
     [rsstonews.web :as web]
     ["keyv" :as Keyv]
     ["path" :as path]
+    ["node-fetch" :as fetch]
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
@@ -29,9 +30,22 @@
       (.json res true))
     (-> res (.status 403) (.json #js {:error "Incorrect password"}))))
 
+(defn cors-proxy [req res]
+  (js/console.log req.query)
+  (let [url (aget req.query "url")]
+    (-> (fetch url)
+        (.then (fn [f]
+                 (-> (.text f)
+                     (.then (fn [text]
+                              (for [[k v] (.entries f.headers)]
+                                (.header res k v))
+                              (.status res f.status)
+                              (.send res text)))))))))
+
 (defn setup-routes [app]
   (.post app "/login" login)
   (.use app authenticate)
+  (.get app "/proxy" cors-proxy)
   (.get app "/data" get-data)
   (.post app "/save" set-data))
 
