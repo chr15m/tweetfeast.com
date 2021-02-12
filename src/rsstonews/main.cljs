@@ -9,7 +9,7 @@
 (set! *warn-on-infer* false)
 
 (defonce app (web/create))
-(defonce keyv (Keyv. (or (aget js/process.env "DATABASE") "sqlite://./rsstonews.sqlite")))
+(defonce keyv (Keyv. (web/env "DATABASE" "sqlite://./rsstonews.sqlite")))
 
 (defn authenticate [req res pass]
   (if (nil? (aget req "session" "authenticated"))
