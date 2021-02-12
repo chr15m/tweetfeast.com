@@ -12,6 +12,8 @@
                         :feeds []
                         :newsletters []}))
 
+(defonce save-debounce-timeout (atom nil))
+
 ; *** functions *** ;
 
 (defn <p!-get-data [state]
@@ -24,7 +26,20 @@
   (go
     (let [data (<p! (<p!-get-data state))]
       (js/console.log "User data:" (clj->js data))
-      (swap! state assoc :data data))))
+      (when data
+        (swap! state assoc
+               :feeds (js->clj (aget data "feeds") :keywordize-keys true)
+               :newsletters (js->clj (aget data "newsletters") :keywordize-keys true))))))
+
+(defn save-data! [state-structure]
+  (-> (js/fetch "/save"
+                #js {:method "POST"
+                     :headers #js {:content-type "application/json"}
+                     :body (js/JSON.stringify (clj->js state-structure))})
+      (.then (fn [res]
+               (when (= res.status 403) (swap! state assoc :tab :login))
+               (.json res)))
+      (.then (fn [res] (js/console.log "save" res)))))
 
 (defn add-message! [state msg]
   (swap! state update-in [:messages] conj (assoc msg :id (js/Math.random))))
@@ -33,9 +48,10 @@
   (swap! state update-in [:messages] (fn [messages] (remove #(= % m) messages))))
 
 (defn login [state]
-  (-> (js/fetch "/login" #js {:method "POST"
-                              :headers #js {:content-type "application/json"}
-                              :body (js/JSON.stringify (clj->js {:password (@state :password)}))})
+  (-> (js/fetch "/login"
+                #js {:method "POST"
+                     :headers #js {:content-type "application/json"}
+                     :body (js/JSON.stringify (clj->js {:password (@state :password)}))})
       (.then (fn [res]
                (go
                  (if (= res.status 200)
@@ -49,7 +65,7 @@
 
 (defn component-config-item [state base-key & [idx]]
   (let [item (get-in @state [base-key idx])]
-    [:li {:key (or (:id item) (js/Math.random))}
+    [:li {:key (:id item)}
      [:input {:value (:text item)
               :class "fit"
               :placeholder "https://..."
@@ -107,6 +123,18 @@
         :config [component-page-config state])])])
 
 ; *** startup *** ;
+
+(defn debounced-save! [k state-atom old-state new-state]
+  (js/console.log "new state" (clj->js new-state))
+  (js/clearTimeout @save-debounce-timeout)
+  (reset! save-debounce-timeout
+         (js/setTimeout
+           #(save-data! {:feeds (:feeds new-state)
+                         :newsletters (:newsletters new-state)})
+           1000)))
+
+(defonce watcher
+  (add-watch state :saver #'debounced-save!))
 
 (defn reload! []
   (js/console.log "reload!")
