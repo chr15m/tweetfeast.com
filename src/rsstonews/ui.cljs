@@ -15,7 +15,7 @@
 
 (defonce save-debounce-timeout (atom nil))
 
-(def persist #{:feeds :newsletters})
+(def persist #{:feeds :newsletters :last-update :items})
 
 ; *** functions *** ;
 
@@ -68,7 +68,7 @@
 (defn merge-new-items [new-items old-items]
   (let [old-item-keys (set (map #(:link %) old-items))
         new-items-filtered (remove #(contains? old-item-keys (:link %)) new-items)]
-    (concat old-items new-items-filtered)))
+    (vec (concat old-items new-items-filtered))))
 
 (defn refresh-feeds! [state]
   (swap! state assoc :refreshing true)
@@ -115,6 +115,15 @@
                               [60 "mins"]
                               [1 "secs"]])))))
 
+(defn archive-post! [state item]
+  (swap! state update-in [:items]
+         (fn [posts]
+           (map (fn [{:keys [title link pubDate] :as post} post]
+                  (if (= post item)
+                    {:title title :link link :pubDate pubDate :archived true}
+                    post))
+                posts))))
+
 ; *** views *** ;
 
 (defn component-config-item [state base-key & [idx]]
@@ -128,6 +137,21 @@
 (defn component-page-compose [state]
   [:h1 "compose"])
 
+(defn component-post-list [state]
+  (let [posts (sort-posts (:items @state))]
+    [:div
+     (for [idx (range (count posts))]
+       (let [i (nth posts idx)]
+         (when (not (:archived i))
+           [:div.post {:key (:link i)}
+            [:h3.title (-> (:title i) (.substr 0 96))]
+            [:span.source (-> i :feed :url (.split "//") (.pop))]
+            [:span.date (-> i :pubDate (js/Date.) str (.split " ") (.slice 0 4) (.join " "))]
+            [:div.content (-> (i :contentSnippet) (or "") (.split " ") (.slice 0 33) (.join " "))]
+            [:div
+             [:button {:on-click (partial archive-post! state i)} "archive"]
+             [:button "compose"]]])))]))
+
 (defn component-page-posts [state]
   [:section#posts
    [:h1 "posts"]
@@ -138,19 +162,7 @@
        [:div "refresh"])]
     [:span.last
      (str "Last update: " (or (time-since (@state :last-update)) "just now"))]]
-   [:div
-    (for [i (sort-posts (:items @state))]
-      [:div.post {:key (:link i)}
-       [:h3.title (-> (:title i) (.substr 0 96))]
-       [:span.source (-> i :feed :url (.split "//") (.pop))]
-       [:span.date (-> i :pubDate (js/Date.) str (.split " ") (.slice 0 4) (.join " "))]
-       [:div.content (-> (i :contentSnippet) (or "") (.split " ") (.slice 0 33) (.join " "))]
-       [:div
-        [:button "archive"]
-        [:button "compose"]]
-       ; [:div.content {:ref (fn [el] (when el (aset el "innerHTML" (i :content))))}]
-
-       ])]])
+   [component-post-list state]])
 
 (defn component-config-items [state section-key]
   [:section
