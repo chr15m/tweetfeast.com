@@ -31,7 +31,6 @@
     (-> res (.status 403) (.json #js {:error "Incorrect password"}))))
 
 (defn cors-proxy [req res]
-  (js/console.log req.query)
   (let [url (aget req.query "url")]
     (-> (fetch url)
         (.then (fn [f]

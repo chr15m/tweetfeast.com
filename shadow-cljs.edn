@@ -9,6 +9,7 @@
                 :output-dir "public/js"
                 :asset-path "js"
                 :modules {:main {:init-fn rsstonews.ui/main!}}
-                :devtools {:after-load rsstonews.ui/reload!}
+                :devtools {:after-load rsstonews.ui/reload!
+                           :watch-dir "public"}
                 :release {:output-dir "build/js"}}}}
 

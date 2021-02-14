@@ -26,3 +26,25 @@ nav ul li {
 nav ul li.selected {
   color: red;
 }
+
+.last {
+  margin-left: 1em;
+}
+
+#posts .post {
+  margin-bottom: 2em;
+}
+
+#posts .title {
+  display: block;
+  margin-bottom: 0px;
+}
+
+#posts .date {
+  color: #999;
+}
+
+#posts .source {
+  display: block;
+  color: #999;
+}
