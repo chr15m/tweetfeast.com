@@ -180,7 +180,7 @@
     [:h2 (name section-key)]
     [:ul
      (for [f (range (count (@state section-key)))]
-       [component-config-item state section-key f])]
+       (with-meta [component-config-item state section-key f] {:key f}))]
     [:button {:on-click #(swap! state update-in [section-key] conj {:id (js/Math.random)})} "+"]])
 
 (defn component-page-config [state]
@@ -244,5 +244,5 @@
   (go
       (<! (fetch-data! state))
       (reload!))
-  (js/console.log "hi"))
+  (js/console.log "main!"))
 
