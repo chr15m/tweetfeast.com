@@ -1,4 +1,4 @@
-(ns rsstonews.main
+(ns rsstonews.server
   (:require
     [rsstonews.web :as web]
     ["keyv" :as Keyv]

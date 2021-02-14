@@ -2,9 +2,9 @@
  :dependencies [[reagent "1.0.0-alpha2"]]
  :builds {:server {:target :node-script
                    :output-to "devserver.js"
-                   :main rsstonews.main/main!
+                   :main rsstonews.server/main!
                    :release {:output-to "server.js"}
-                   :devtools {:after-load rsstonews.main/reload!}}
+                   :devtools {:after-load rsstonews.server/reload!}}
           :app {:target :browser
                 :output-dir "public/js"
                 :asset-path "js"
