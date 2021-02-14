@@ -13,7 +13,7 @@
 (defonce keyv (Keyv. (web/env "DATABASE" "sqlite://./rsstonews.sqlite")))
 
 (defn authenticate [req res pass]
-  (if (nil? (aget req "session" "authenticated"))
+  (if (not (aget req "session" "authenticated"))
     (-> res (.status 403) (.json #js {:error "Not authenticated."}))
     (pass)))
 
@@ -30,6 +30,10 @@
       (.json res true))
     (-> res (.status 403) (.json #js {:error "Incorrect password"}))))
 
+(defn logout [req res]
+  (aset req.session "authenticated" false)
+  (.json res true))
+
 (defn cors-proxy [req res]
   (let [url (aget req.query "url")]
     (-> (fetch url)
@@ -43,6 +47,7 @@
 
 (defn setup-routes [app]
   (.post app "/login" login)
+  (.get app "/logout" logout)
   (.use app authenticate)
   (.get app "/proxy" cors-proxy)
   (.get app "/data" get-data)

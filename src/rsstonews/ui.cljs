@@ -8,10 +8,12 @@
 ;(def init-state
 ;  {:search nil})
 
-(defonce state (r/atom {:messages []
-                        :tab :compose
-                        :feeds []
-                        :newsletters []}))
+(def initial-state {:messages []
+                    :tab :compose
+                    :feeds []
+                    :newsletters []})
+
+(defonce state (r/atom initial-state))
 
 (defonce save-debounce-timeout (atom nil))
 
@@ -51,11 +53,11 @@
 (defn remove-message! [state m]
   (swap! state update-in [:messages] (fn [messages] (remove #(= % m) messages))))
 
-(defn login [state]
+(defn login [state password]
   (-> (js/fetch "/login"
                 #js {:method "POST"
                      :headers #js {:content-type "application/json"}
-                     :body (js/JSON.stringify (clj->js {:password (@state :password)}))})
+                     :body (js/JSON.stringify (clj->js {:password password}))})
       (.then (fn [res]
                (go
                  (if (= res.status 200)
@@ -64,6 +66,12 @@
                      (fetch-data! state))
                    (let [error (<p! (.json res))]
                      (add-message! state {:type :error :text (aget error "error")}))))))))
+
+(defn logout [state]
+  (-> (js/fetch "/logout"
+                #js {:headers #js {:content-type "application/json"}})
+      (.then (fn [res]
+               (reset! state (merge initial-state {:tab :login}))))))
 
 (defn merge-new-items [new-items old-items]
   (let [old-item-keys (set (map #(:link %) old-items))
@@ -193,6 +201,16 @@
   [:li {:on-click #(swap! state assoc :tab tabname)
         :class (if (= (@state :tab) tabname) :selected)} (name tabname)])
 
+(defn component-login [state password]
+  (fn []
+    [:div
+     [:h1 "login"]
+     [:input {:type "password"
+              :value @password
+              :on-key-down #(if (= (.-keyCode %) 13) (login state @password))
+              :on-change #(reset! password (-> % .-target .-value))}]
+     [:button {:on-click #(login state @password)} "login"]]))
+
 (defn component-main [state]
   [:main
    (when (not-empty (@state :messages))
@@ -203,18 +221,14 @@
                      :class (get m :class)}
          (get m :text)])])
    (if (= (@state :tab) :login)
-     [:div
-      [:h1 "login"]
-      [:input {:type "password"
-               :value (@state :password)
-               :on-change #(swap! state assoc :password (-> % .-target .-value))}]
-      [:button {:on-click #(login state)} "login"]]
+     [component-login state (r/atom "")]
      [:div
       [:nav
        [:ul
         [component-tab-item state :compose]
         [component-tab-item state :posts]
-        [component-tab-item state :config]]]
+        [component-tab-item state :config]
+        [:li {:on-click (partial logout state)} "logout"]]]
       (case (@state :tab)
         :compose [component-page-compose state]
         :posts [component-page-posts state]
@@ -225,13 +239,14 @@
 
 (defn debounced-save! [k state-atom old-state new-state]
   (js/console.log "new state" (clj->js new-state))
-  (js/clearTimeout @save-debounce-timeout)
-  ; TODO: check if "persist" keys have changed specifically
-  (reset! save-debounce-timeout
-         (js/setTimeout
-           #(save-data! {:feeds (:feeds new-state)
-                         :newsletters (:newsletters new-state)})
-           1000)))
+  (when (not= old-state new-state)
+    (js/clearTimeout @save-debounce-timeout)
+    ; TODO: check if "persist" keys have changed specifically
+    (reset! save-debounce-timeout
+            (js/setTimeout
+              #(save-data! {:feeds (:feeds new-state)
+                            :newsletters (:newsletters new-state)})
+              1000))))
 
 (defonce watcher
   (add-watch state :saver #'debounced-save!))
