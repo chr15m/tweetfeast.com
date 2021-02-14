@@ -33,13 +33,13 @@
 (defn cors-proxy [req res]
   (let [url (aget req.query "url")]
     (-> (fetch url)
-        (.then (fn [f]
-                 (-> (.text f)
-                     (.then (fn [text]
-                              (for [[k v] (.entries f.headers)]
-                                (.header res k v))
-                              (.status res f.status)
-                              (.send res text)))))))))
+        (.then (fn [r] (-> (.text r)
+                           (.then (fn [text] #js [text r])))))
+        (.then (fn [text f]
+                 (for [[k v] (.entries f.headers)]
+                   (.header res k v))
+                 (.status res f.status)
+                 (.send res text))))))
 
 (defn setup-routes [app]
   (.post app "/login" login)
