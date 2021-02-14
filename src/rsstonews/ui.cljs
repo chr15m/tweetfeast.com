@@ -133,14 +133,6 @@
 
 ; *** views *** ;
 
-(defn component-config-item [state base-key & [idx]]
-  (let [item (get-in @state [base-key idx])]
-    [:li {:key (:id item)}
-     [:input {:value (:value item)
-              :class "fit"
-              :placeholder "https://..."
-              :on-change #(swap! state assoc-in [base-key idx :value] (-> % .-target .-value))}]]))
-
 (defn component-page-compose [state]
   [:h1 "compose"])
 
@@ -171,8 +163,20 @@
      (str "Last update: " (or (time-since (@state :last-update)) "just now"))]]
    [component-post-list state]])
 
+(defn remove-nth [col idx]
+  (vec (keep-indexed (fn [i item] (when (not= idx i) item)) col)))
+
+(defn component-config-item [state base-key & [idx]]
+  (let [item (get-in @state [base-key idx])]
+    [:li {:key (:id item)}
+     [:input {:value (:value item)
+              :class "fit"
+              :placeholder "https://..."
+              :on-change #(swap! state assoc-in [base-key idx :value] (-> % .-target .-value))}]
+     [:button {:on-click #(swap! state update-in [base-key] remove-nth idx)} "x"]]))
+
 (defn component-config-items [state section-key]
-  [:section
+  [:section#config
     [:h2 (name section-key)]
     [:ul
      (for [f (range (count (@state section-key)))]

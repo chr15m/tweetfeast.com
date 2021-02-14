@@ -49,6 +49,10 @@ nav ul li.selected {
   color: #999;
 }
 
+#config li {
+  display: flex;
+}
+
 #messages {
   position: fixed;
   top: 0px;
