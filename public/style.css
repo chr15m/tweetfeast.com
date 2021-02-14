@@ -48,3 +48,23 @@ nav ul li.selected {
   display: block;
   color: #999;
 }
+
+#messages {
+  position: fixed;
+  top: 0px;
+  display: flex;
+  flex-direction: column;
+  width: 50em;
+  max-width: 100%;
+  background-color: white;
+}
+
+#messages .message {
+  border: 2px solid pink;
+  background-color: #F6E3E6;
+  padding: 0.25em 0.5em;
+  border-radius: 3px;
+  width: inherit;
+  margin: 0.25em 0px;
+  cursor: pointer;
+}

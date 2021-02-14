@@ -70,21 +70,28 @@
         new-items-filtered (remove #(contains? old-item-keys (:link %)) new-items)]
     (vec (concat old-items new-items-filtered))))
 
+(defn feed-fetch-and-parse [state feed]
+  (-> (js/fetch (str "/proxy?url=" (:value feed)))
+      (.then (fn [res]
+               (if (aget res "ok")
+                 (.text res)
+                 (do
+                   (add-message! state {:type :error :text (str "failed to load " (:value feed))})
+                   nil))))
+      (.then (fn [text]
+               (when text
+                 (-> (rss.)
+                     (.parseString text)))))
+      (.then (fn [rss-struct]
+               (when rss-struct
+                 (doseq [i (aget rss-struct "items")]
+                   (aset i "feed" #js {:title (aget rss-struct "title")
+                                       :url (:value feed)}))
+                 (aget rss-struct "items"))))))
+
 (defn refresh-feeds! [state]
   (swap! state assoc :refreshing true)
-  (let [rss-promises (map (fn [feed]
-                             (-> (js/fetch (str "/proxy?url=" (:value feed)))
-                                 (.then #(.text %))
-                                 (.then (fn [text]
-                                          (when text
-                                            (-> (rss.)
-                                                (.parseString text)))))
-                                 (.then (fn [rss-struct]
-                                          (doseq [i (aget rss-struct "items")]
-                                            (aset i "feed" #js {:title (aget rss-struct "title")
-                                                                :url (:value feed)}))
-                                          (aget rss-struct "items")))))
-                           (:feeds @state))]
+  (let [rss-promises (map (partial feed-fetch-and-parse state) (:feeds @state))]
     (->
       (js/Promise.all (clj->js rss-promises))
       (.then (fn [results]
@@ -184,11 +191,13 @@
 
 (defn component-main [state]
   [:main
-   (for [m (@state :messages)]
-     [:div {:key (get m :id)
-            :on-click #(remove-message! state m)
-            :class (get m :class)}
-      (get m :text)])
+   (when (not-empty (@state :messages))
+     [:div#messages
+      (for [m (@state :messages)]
+        [:p.message {:key (get m :id)
+                     :on-click #(remove-message! state m)
+                     :class (get m :class)}
+         (get m :text)])])
    (if (= (@state :tab) :login)
      [:div
       [:h1 "login"]
@@ -206,7 +215,7 @@
         :compose [component-page-compose state]
         :posts [component-page-posts state]
         :config [component-page-config state])
-      [:code (str @state)]])])
+      #_ [:code (str @state)]])])
 
 ; *** startup *** ;
 
