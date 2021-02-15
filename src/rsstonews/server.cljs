@@ -39,7 +39,7 @@
     (-> (fetch url)
         (.then (fn [r] (-> (.text r)
                            (.then (fn [text] #js [text r])))))
-        (.then (fn [text f]
+        (.then (fn [[text f]]
                  (for [[k v] (.entries f.headers)]
                    (.header res k v))
                  (.status res f.status)
