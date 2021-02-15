@@ -17,7 +17,7 @@
 
 (defonce save-debounce-timeout (atom nil))
 
-(def persist #{:feeds :newsletters :last-update :items})
+(def persist-keys #{:feeds :newsletters :last-update :items})
 
 ; *** functions *** ;
 
@@ -32,10 +32,7 @@
     (let [data (<p! (<p!-get-data state))]
       (js/console.log "User data:" (clj->js data))
       (when data
-        (swap! state assoc
-               ; TODO: use persist keys for this bit
-               :feeds (js->clj (aget data "feeds") :keywordize-keys true)
-               :newsletters (js->clj (aget data "newsletters") :keywordize-keys true))))))
+        (swap! state merge (into {} (map (fn [k] [k (js->clj (aget data (name k)) :keywordize-keys true)]) persist-keys)))))))
 
 (defn save-data! [state-structure]
   (-> (js/fetch "/save"
@@ -239,13 +236,12 @@
 
 (defn debounced-save! [k state-atom old-state new-state]
   (js/console.log "new state" (clj->js new-state))
-  (when (not= old-state new-state)
+  (when (and (not= (:tab new-state) :login) (not= old-state new-state))
     (js/clearTimeout @save-debounce-timeout)
-    ; TODO: check if "persist" keys have changed specifically
     (reset! save-debounce-timeout
             (js/setTimeout
-              #(save-data! {:feeds (:feeds new-state)
-                            :newsletters (:newsletters new-state)})
+              #(save-data!
+                 (into {} (map (fn [k] [k (k new-state)]) persist-keys)))
               1000))))
 
 (defonce watcher
