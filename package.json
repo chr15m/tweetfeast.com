@@ -6,6 +6,7 @@
     "@keyv/redis": "^2.1.2",
     "@keyv/sqlite": "^2.0.2",
     "cookie-parser": "^1.4.5",
+    "csvtojson": "^2.0.10",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "keyv": "^4.0.3",

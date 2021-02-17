@@ -23,6 +23,13 @@
 (defn set-data [req res]
   (go (.json res (<p! (.set keyv "user-data" (aget req "body"))))))
 
+(defn set-password [req res]
+  (go
+    (let [existing-password (<p! (.get keyv "password"))]
+      (if (nil? existing-password)
+        (.json res (<p! (.set keyv "password" (aget req "body"))))
+        (-> res (.status 403) (.json #js {:error "Password already set"}))))))
+
 (defn login [req res]
   (if (= (aget req.body "password") (web/env "PASSWORD" "password"))
     (do
@@ -48,6 +55,7 @@
 (defn setup-routes [app]
   (.post app "/login" login)
   (.get app "/logout" logout)
+  (.post app "/set-password" set-password)
   (.use app authenticate)
   (.get app "/proxy" cors-proxy)
   (.get app "/data" get-data)

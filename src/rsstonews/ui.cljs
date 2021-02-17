@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [reagent.dom :as rd]
             ["rss-to-js" :as rss]
+            ["csvtojson" :as csv]
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]))
 
@@ -10,6 +11,7 @@
 
 (def initial-state {:messages []
                     :tab :compose
+                    :last-update {:newsletters :feeds}
                     :feeds []
                     :newsletters []})
 
@@ -75,14 +77,16 @@
         new-items-filtered (remove #(contains? old-item-keys (:link %)) new-items)]
     (vec (concat old-items new-items-filtered))))
 
-(defn feed-fetch-and-parse [state feed]
-  (-> (js/fetch (str "/proxy?url=" (:value feed)))
-      (.then (fn [res]
-               (if (aget res "ok")
+(defn handle-fetch-errors [state url res]
+  (if (aget res "ok")
                  (.text res)
                  (do
-                   (add-message! state {:type :error :text (str "failed to load " (:value feed))})
-                   nil))))
+                   (add-message! state {:type :error :text (str "failed to load " url)})
+                   nil)))
+
+(defn feed-fetch-and-parse [state feed]
+  (-> (js/fetch (str "/proxy?url=" (js/encodeURIComponent (:value feed))))
+      (.then (partial handle-fetch-errors state (:value feed)))
       (.then (fn [text]
                (when text
                  (-> (rss.)
@@ -106,7 +110,31 @@
                           #(-> %
                                (update-in [:items] (partial merge-new-items all-items))
                                (dissoc :refreshing)
-                               (assoc :last-update (.getTime (js/Date.))))))))))))
+                               (assoc-in [:last-update :feeds] (.getTime (js/Date.))))))))))))
+
+(defn fetch-newsletter-and-parse [state newsletter]
+  (let [url (:value newsletter)]
+    (-> (js/fetch (str "/proxy?url=" (js/encodeURIComponent url)))
+        (.then (partial handle-fetch-errors state url))
+        (.then (fn [text]
+                 (when text
+                   (-> (csv) (.fromString text) (.then (fn [rows] #js [url rows])))))))))
+
+(defn refresh-lists! [state]
+  (swap! state assoc :refreshing true)
+  (let [newsletter-promises (map (partial fetch-newsletter-and-parse state) (:newsletters @state))]
+    (->
+      (js/Promise.all (clj->js newsletter-promises))
+      (.then (fn [results]
+               (js/console.log "newsletters" results)
+               (let [all-newsletters (into {} (js->clj results :keywordize-keys true))]
+                 (js/console.log (clj->js all-newsletters))
+                 (let []
+                   (swap! state
+                          #(-> %
+                               (assoc :lists all-newsletters)
+                               (dissoc :refreshing)
+                               (assoc-in [:last-update :newsletters] (.getTime (js/Date.))))))))))))
 
 (defn sort-posts [posts]
   (sort-by #(-> % :pubDate (js/Date.) (.getTime) (* -1)) posts))
@@ -138,8 +166,23 @@
 
 ; *** views *** ;
 
+(defn component-last-update [state k]
+  [:span.last
+     (str "Last update: "  (or (time-since (-> @state :last-update k)) "just now"))])
+
 (defn component-page-compose [state]
-  [:h1 "compose"])
+  [:div#compose
+   [:h1 "compose"]
+   [:div#lists
+    [:ul
+     (for [[list-url entries] (:lists @state)]
+       [:li {:key list-url} list-url " (" (count entries) ")"])]
+    [:div
+     [:button {:on-click (partial #'refresh-lists! state)}
+      (if (@state :refreshing)
+        [:div {:class "spin"} "( )"]
+        [:div "refresh"])]
+     [component-last-update state :newsletters]]]])
 
 (defn component-post-list [state]
   (let [posts (sort-posts (:items @state))]
@@ -164,8 +207,7 @@
      (if (@state :refreshing)
        [:div {:class "spin"} "( )"]
        [:div "refresh"])]
-    [:span.last
-     (str "Last update: " (or (time-since (@state :last-update)) "just now"))]]
+    [component-last-update state :feeds]]
    [component-post-list state]])
 
 (defn remove-nth [col idx]
