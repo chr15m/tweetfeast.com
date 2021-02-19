@@ -38,7 +38,7 @@
                                        :maxAge (* 10 365 24 60 60 1000)}}))
   (.use app (cookies))
   ; json body parser
-  (.use app (.json body-parser))
+  (.use app (.json body-parser #js {:limit "2mb" :extended true :parameterLimit 1000}))
   app)
 
 (defn add-default-routes [app]
