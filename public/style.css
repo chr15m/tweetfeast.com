@@ -53,6 +53,14 @@ nav ul li.selected {
   display: flex;
 }
 
+#config li .list-name {
+  width: 12ch;
+}
+
+#config li .email-field {
+  width: 12ch;
+}
+
 #messages {
   position: fixed;
   top: 0px;

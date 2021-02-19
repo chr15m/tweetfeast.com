@@ -85,18 +85,19 @@
                    nil)))
 
 (defn feed-fetch-and-parse [state feed]
-  (-> (js/fetch (str "/proxy?url=" (js/encodeURIComponent (:value feed))))
-      (.then (partial handle-fetch-errors state (:value feed)))
-      (.then (fn [text]
-               (when text
-                 (-> (rss.)
-                     (.parseString text)))))
-      (.then (fn [rss-struct]
-               (when rss-struct
-                 (doseq [i (aget rss-struct "items")]
-                   (aset i "feed" #js {:title (aget rss-struct "title")
-                                       :url (:value feed)}))
-                 (aget rss-struct "items"))))))
+  (when (:value feed)
+    (-> (js/fetch (str "/proxy?url=" (js/encodeURIComponent (:value feed))))
+        (.then (partial handle-fetch-errors state (:value feed)))
+        (.then (fn [text]
+                 (when text
+                   (-> (rss.)
+                       (.parseString text)))))
+        (.then (fn [rss-struct]
+                 (when rss-struct
+                   (doseq [i (aget rss-struct "items")]
+                     (aset i "feed" #js {:title (aget rss-struct "title")
+                                         :url (:value feed)}))
+                   (aget rss-struct "items")))))))
 
 (defn refresh-feeds! [state]
   (swap! state assoc :refreshing true)
@@ -118,11 +119,12 @@
 
 (defn fetch-newsletter-and-parse [state newsletter]
   (let [url (:value newsletter)]
-    (-> (js/fetch (str "/proxy?url=" (js/encodeURIComponent url)))
-        (.then (partial handle-fetch-errors state url))
-        (.then (fn [text]
-                 (when text
-                   (-> (csv) (.fromString (conform-csv text)) (.then (fn [rows] #js [url rows])))))))))
+    (when url
+      (-> (js/fetch (str "/proxy?url=" (js/encodeURIComponent url)))
+          (.then (partial handle-fetch-errors state url))
+          (.then (fn [text]
+                   (when text
+                     (-> (csv) (.fromString (conform-csv text)) (.then (fn [rows] #js [newsletter rows]))))))))))
 
 (defn refresh-lists! [state]
   (swap! state assoc :refreshing true)
@@ -130,9 +132,7 @@
     (->
       (js/Promise.all (clj->js newsletter-promises))
       (.then (fn [results]
-               (js/console.log "newsletters" results)
                (let [all-newsletters (into {} (js->clj results :keywordize-keys true))]
-                 (js/console.log (clj->js all-newsletters))
                  (let []
                    (swap! state
                           #(-> %
@@ -179,8 +179,9 @@
    [:h1 "compose"]
    [:div#lists
     [:ul
-     (for [[list-url entries] (:lists @state)]
-       [:li {:key list-url} list-url " (" (count entries) ")"])]
+     (for [[newsletter entries] (:lists @state)]
+       (let [list-name (:list-name newsletter)]
+         [:li {:key list-name} list-name " (" (count entries) ")"]))]
     [:div
      [:button {:on-click (partial #'refresh-lists! state)}
       (if (@state :refreshing)
@@ -217,28 +218,30 @@
 (defn remove-nth [col idx]
   (vec (keep-indexed (fn [i item] (when (not= idx i) item)) col)))
 
-(defn component-config-item [state base-key & [idx]]
+(defn component-config-item [state base-key fields & [idx]]
   (let [item (get-in @state [base-key idx])]
     [:li {:key (:id item)}
-     [:input {:value (:value item)
-              :class "fit"
-              :placeholder "https://..."
-              :on-change #(swap! state assoc-in [base-key idx :value] (-> % .-target .-value))}]
+     (for [[field-name field-placeholder] fields]
+       [:input {:key field-name
+                :value (field-name item)
+                :class (str "fit " (name field-name))
+                :placeholder field-placeholder
+                :on-change #(swap! state assoc-in [base-key idx field-name] (-> % .-target .-value))}])
      [:button {:on-click #(swap! state update-in [base-key] remove-nth idx)} "x"]]))
 
-(defn component-config-items [state section-key]
+(defn component-config-items [state section-key fields]
   [:section#config
     [:h2 (name section-key)]
     [:ul
      (for [f (range (count (@state section-key)))]
-       (with-meta [component-config-item state section-key f] {:key f}))]
+       (with-meta [component-config-item state section-key fields f] {:key f}))]
     [:button {:on-click #(swap! state update-in [section-key] conj {:id (js/Math.random)})} "+"]])
 
 (defn component-page-config [state]
   [:section
    [:h1 "config"]
-   [component-config-items state :feeds]
-   [component-config-items state :newsletters]])
+   [component-config-items state :feeds [[:value "https://..."]]]
+   [component-config-items state :newsletters [[:value "https://..."] [:list-name "List name..."] [:email-field "Email field name..."]]]])
 
 (defn component-tab-item [state tabname]
   [:li {:on-click #(swap! state assoc :tab tabname)
