@@ -112,13 +112,17 @@
                                (dissoc :refreshing)
                                (assoc-in [:last-update :feeds] (.getTime (js/Date.))))))))))))
 
+(defn conform-csv [text]
+  "Make sure CSV conforms by removing [] braces from mailchimp export."
+  (-> text (.split "\n") (.map #(-> % (.replace #"\[+(.*?)\]+" "$1"))) (.join "\n")))
+
 (defn fetch-newsletter-and-parse [state newsletter]
   (let [url (:value newsletter)]
     (-> (js/fetch (str "/proxy?url=" (js/encodeURIComponent url)))
         (.then (partial handle-fetch-errors state url))
         (.then (fn [text]
                  (when text
-                   (-> (csv) (.fromString text) (.then (fn [rows] #js [url rows])))))))))
+                   (-> (csv) (.fromString (conform-csv text)) (.then (fn [rows] #js [url rows])))))))))
 
 (defn refresh-lists! [state]
   (swap! state assoc :refreshing true)
