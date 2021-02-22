@@ -19,7 +19,7 @@
 
 (defonce save-debounce-timeout (atom nil))
 
-(def persist-keys #{:feeds :newsletters :last-update :items})
+(def persist-keys #{:feeds :newsletters :last-update :items :lists})
 
 ; *** functions *** ;
 
@@ -124,7 +124,11 @@
           (.then (partial handle-fetch-errors state url))
           (.then (fn [text]
                    (when text
-                     (-> (csv) (.fromString (conform-csv text)) (.then (fn [rows] #js [newsletter rows]))))))))))
+                     (-> (csv)
+                         (.fromString (conform-csv text))
+                         (.then (fn [rows]
+                                  [(:list-name newsletter)
+                                   [newsletter (js->clj rows :keywordize-keys true)]]))))))))))
 
 (defn refresh-lists! [state]
   (swap! state assoc :refreshing true)
@@ -132,7 +136,7 @@
     (->
       (js/Promise.all (clj->js newsletter-promises))
       (.then (fn [results]
-               (let [all-newsletters (into {} (js->clj results :keywordize-keys true))]
+               (let [all-newsletters (into {} results)]
                  (let []
                    (swap! state
                           #(-> %
@@ -179,9 +183,8 @@
    [:h1 "compose"]
    [:div#lists
     [:ul
-     (for [[newsletter entries] (:lists @state)]
-       (let [list-name (:list-name newsletter)]
-         [:li {:key list-name} list-name " (" (count entries) ")"]))]
+     (for [[list-name [newsletter entries]] (:lists @state)]
+       [:li {:key list-name} list-name " (" (count entries) ")"])]
     [:div
      [:button {:on-click (partial #'refresh-lists! state)}
       (if (@state :refreshing)
