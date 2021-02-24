@@ -80,3 +80,19 @@ nav ul li.selected {
   margin: 0.25em 0px;
   cursor: pointer;
 }
+
+/*** prosemirror editor styling ***/
+
+#editor {
+  margin-top: 2em;
+}
+
+#editor > * {
+  margin: 1em 0px;
+}
+
+#editor .ProseMirror {
+  padding: 0.5em;
+  background-color: #f8eeee;
+  border-radius: 4px;
+}

@@ -3,6 +3,10 @@
             [reagent.dom :as rd]
             ["rss-to-js" :as rss]
             ["csvtojson" :as csv]
+            ["prosemirror-view" :refer [EditorView]]
+            ["prosemirror-state" :refer [EditorState]]
+            ["prosemirror-markdown" :refer [schema defaultMarkdownParser defaultMarkdownSerializer]]
+            ["prosemirror-example-setup" :refer [exampleSetup]]
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]))
 
@@ -172,7 +176,25 @@
                     post))
                 posts))))
 
+(defn editor-mounted [state editor el]
+  (if el
+    (reset! editor
+            (EditorView. el 
+                         #js {:state (.create EditorState #js {:doc (.parse defaultMarkdownParser "")
+                                                               :plugins (exampleSetup #js {:schema schema})})}))
+    (swap! editor (fn [old-editor] (.destroy old-editor) nil))))
+
 ; *** views *** ;
+
+(defn component-editor [state]
+  (let [editor (atom nil)]
+    (fn []
+      [:div#editor
+       [:link {:rel "stylesheet" :href "prosemirror.css"}]
+       [:link {:rel "stylesheet" :href "prosemirror-menu.css"}]
+       [:link {:rel "stylesheet" :href "prosemirror-example.css"}]
+       [:div {:ref (partial editor-mounted state editor)}]
+       [:button "Send"]])))
 
 (defn component-last-update [state k]
   [:span.last
@@ -190,7 +212,8 @@
       (if (@state :refreshing)
         [:div {:class "spin"} "( )"]
         [:div "refresh"])]
-     [component-last-update state :newsletters]]]])
+     [component-last-update state :newsletters]]]
+   [component-editor state]])
 
 (defn component-post-list [state]
   (let [posts (sort-posts (:items @state))]
