@@ -283,11 +283,13 @@
   (let [item (get-in @state [base-key idx])]
     [:li {:key (:id item)}
      (for [[field-name field-placeholder] fields]
-       [:input {:key field-name
-                :value (field-name item)
-                :class (str "fit " (name field-name))
-                :placeholder field-placeholder
-                :on-change #(swap! state assoc-in [base-key idx field-name] (-> % .-target .-value))}])
+       (with-meta
+         [:input {:key (name field-name)
+                  :value (field-name item)
+                  :class (str "fit " (name field-name))
+                  :placeholder field-placeholder
+                  :on-change #(swap! state assoc-in [base-key idx field-name] (-> % .-target .-value))}]
+         {:key (name field-name)}))
      [:button {:on-click #(swap! state update-in [base-key] remove-nth idx)} "x"]]))
 
 (defn component-config-items [state section-key fields]
