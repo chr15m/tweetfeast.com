@@ -314,7 +314,8 @@
   (fn []
     [:div
      [:h1 "login"]
-     [:input {:type "password"
+     [:input {:ref #(when % (.focus %))
+              :type "password"
               :value @password
               :on-key-down #(if (= (.-keyCode %) 13) (login state @password))
               :on-change #(reset! password (-> % .-target .-value))}]
