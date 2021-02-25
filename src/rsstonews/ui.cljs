@@ -3,27 +3,51 @@
             [reagent.dom :as rd]
             ["rss-to-js" :as rss]
             ["csvtojson" :as csv]
-            ["prosemirror-view" :refer [EditorView]]
-            ["prosemirror-state" :refer [EditorState]]
+            ["prosemirror-view" :refer [EditorView Decoration DecorationSet]]
+            ["prosemirror-state" :refer [EditorState Plugin]]
             ["prosemirror-markdown" :refer [schema defaultMarkdownParser defaultMarkdownSerializer]]
             ["prosemirror-example-setup" :refer [exampleSetup]]
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]))
 
-;(def init-state
-;  {:search nil})
-
 (def initial-state {:messages []
                     :tab :compose
                     :last-update {:newsletters :feeds}
                     :feeds []
+                    :editor {:subject nil :content nil}
                     :newsletters []})
 
 (defonce state (r/atom initial-state))
 
 (defonce save-debounce-timeout (atom nil))
 
-(def persist-keys #{:feeds :newsletters :last-update :items :lists})
+(def persist-keys #{:feeds :newsletters :last-update :items :lists :editor})
+
+; https://discuss.prosemirror.net/t/how-to-input-like-placeholder-behavior/705/13
+(def placeholder-text-plugin
+  (fn [text]
+    (Plugin.
+      #js {:props
+           #js {:decorations
+                (fn decorations [state]
+                  (let [doc (aget state "doc")
+                        decoration-list #js []
+                        decorate (fn [node pos]
+                                   (when (and
+                                           (aget node "type" "isBlock")
+                                           (= (aget doc "firstChild" "content" "size") 0)
+                                           (= (aget doc "childCount") 1))
+                                     (.push decoration-list (.node Decoration pos (+ pos (aget node "nodeSize")) #js {:class "placeholder"}))))]
+                    (.descendants doc decorate)
+                    (.create DecorationSet doc decoration-list)))}})))
+
+(defn view-plugin [editor-state]
+  (Plugin.
+    #js {:view (defn view [editor-view]
+                 #js {:update (fn [editor-view]
+                                (swap! editor-state assoc :content (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc")))
+                                (js/console.log "content" (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc"))))
+                      :destroy (fn [])})}))
 
 ; *** functions *** ;
 
@@ -176,24 +200,35 @@
                     post))
                 posts))))
 
-(defn editor-mounted [state editor el]
+(defn editor-mounted [editor-state editor el]
   (if el
     (reset! editor
             (EditorView. el 
-                         #js {:state (.create EditorState #js {:doc (.parse defaultMarkdownParser "")
-                                                               :plugins (exampleSetup #js {:schema schema})})}))
+                         #js {:state
+                              (.create EditorState
+                                       #js {:doc (.parse defaultMarkdownParser (@editor-state :content))
+                                            :plugins (.concat (exampleSetup #js {:schema schema})
+                                                              #js [(placeholder-text-plugin "Your newsletter text...")
+                                                                   (view-plugin editor-state)])})}))
     (swap! editor (fn [old-editor] (.destroy old-editor) nil))))
 
 ; *** views *** ;
 
-(defn component-editor [state]
-  (let [editor (atom nil)]
+(defn component-subject [editor-state]
+  [:div [:input {:name :subject
+                 :placeholder "Email subject..."
+                 :on-change #(swap! editor-state assoc :subject (-> % .-target .-value))
+                 :value (@editor-state :subject)
+                 :class :fit}]])
+
+(defn component-editor [editor-state]
+  (let [editor (atom nil)
+        focus (atom nil)]
     (fn []
+      (js/console.log "re-render!")
       [:div#editor
-       [:link {:rel "stylesheet" :href "prosemirror.css"}]
-       [:link {:rel "stylesheet" :href "prosemirror-menu.css"}]
-       [:link {:rel "stylesheet" :href "prosemirror-example.css"}]
-       [:div {:ref (partial editor-mounted state editor)}]
+       [component-subject editor-state]
+       [:div {:ref (partial editor-mounted editor-state editor)}]
        [:button "Send"]])))
 
 (defn component-last-update [state k]
@@ -213,7 +248,7 @@
         [:div {:class "spin"} "( )"]
         [:div "refresh"])]
      [component-last-update state :newsletters]]]
-   [component-editor state]])
+   [component-editor (r/cursor state [:editor])]])
 
 (defn component-post-list [state]
   (let [posts (sort-posts (:items @state))]

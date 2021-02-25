@@ -92,7 +92,34 @@ nav ul li.selected {
 }
 
 #editor .ProseMirror {
-  padding: 0.5em;
-  background-color: #f8eeee;
-  border-radius: 4px;
+  padding: 0.125em 0.75em;
+  background-color: #eeeeee;
+  border-radius: 0.375em;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  min-height: 10em;
+  outline: 0;
+  border: 2px solid transparent;
+}
+
+#editor .ProseMirror:active, .ProseMirror:focus {
+  border: 2px solid silver;
+}
+
+#editor .ProseMirror-menubar {
+}
+
+.ProseMirror .placeholder::before {
+  position: absolute;
+  color: #bbb;
+  cursor: text;
+  font-weight: bold;
+  font-size: 0.8em;
+}
+
+.ProseMirror .placeholder::before {
+  content: "Your newsletter text...";
+}
+
+.ProseMirror-focused .placeholder::before {
 }
