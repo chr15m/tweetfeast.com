@@ -57,12 +57,14 @@
                (when (= res.status 403) (swap! state assoc :tab :login))
                (.json res)))))
 
-(defn fetch-data! [state]
+(defn fetch-data! [state & [done-callback]]
   (go
     (let [data (<p! (<p!-get-data state))]
       (js/console.log "User data:" (clj->js data))
       (when data
-        (swap! state merge (into {} (map (fn [k] [k (js->clj (aget data (name k)) :keywordize-keys true)]) persist-keys)))))))
+        (swap! state merge (into {} (map (fn [k] [k (js->clj (aget data (name k)) :keywordize-keys true)]) persist-keys)))
+        (when done-callback
+          (done-callback))))))
 
 (defn save-data! [state-structure]
   (-> (js/fetch "/save"
@@ -89,8 +91,7 @@
                (go
                  (if (= res.status 200)
                    (do
-                     (swap! state assoc :tab :compose)
-                     (fetch-data! state))
+                     (fetch-data! state #(swap! state assoc :tab :compose)))
                    (let [error (<p! (.json res))]
                      (add-message! state {:type :error :text (aget error "error")}))))))))
 
@@ -206,7 +207,7 @@
             (EditorView. el 
                          #js {:state
                               (.create EditorState
-                                       #js {:doc (.parse defaultMarkdownParser (@editor-state :content))
+                                       #js {:doc (.parse defaultMarkdownParser (or (:content @editor-state) ""))
                                             :plugins (.concat (exampleSetup #js {:schema schema})
                                                               #js [(placeholder-text-plugin "Your newsletter text...")
                                                                    (view-plugin editor-state)])})}))
@@ -218,17 +219,19 @@
   [:div [:input {:name :subject
                  :placeholder "Email subject..."
                  :on-change #(swap! editor-state assoc :subject (-> % .-target .-value))
-                 :value (@editor-state :subject)
+                 :value (or (:subject @editor-state) "")
                  :class :fit}]])
 
+(defn component-editor-prosemirror [editor-state editor]
+  [:div {:ref (partial editor-mounted editor-state editor)}])
+
 (defn component-editor [editor-state]
-  (let [editor (atom nil)
-        focus (atom nil)]
+  (let [editor (atom nil)]
     (fn []
       (js/console.log "re-render!")
       [:div#editor
        [component-subject editor-state]
-       [:div {:ref (partial editor-mounted editor-state editor)}]
+       [component-editor-prosemirror editor-state editor]
        [:button "Send"]])))
 
 (defn component-last-update [state k]
