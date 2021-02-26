@@ -7,6 +7,7 @@
             ["prosemirror-state" :refer [EditorState Plugin]]
             ["prosemirror-markdown" :refer [schema defaultMarkdownParser defaultMarkdownSerializer]]
             ["prosemirror-example-setup" :refer [exampleSetup]]
+            ["turndown" :as turndown]
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]))
 
@@ -20,6 +21,8 @@
 (defonce state (r/atom initial-state))
 
 (defonce save-debounce-timeout (atom nil))
+
+(defonce turndown-service (turndown))
 
 (def persist-keys #{:feeds :newsletters :last-update :items :lists :editor})
 
@@ -175,6 +178,11 @@
                     post))
                 posts))))
 
+(defn use-content! [state html-content]
+  (swap! state #(-> %
+                    (assoc-in [:editor :content] (.turndown turndown-service html-content))
+                    (assoc :tab :compose))))
+
 ; https://discuss.prosemirror.net/t/how-to-input-like-placeholder-behavior/705/13
 (def placeholder-text-plugin
   (fn [text]
@@ -197,23 +205,28 @@
   (Plugin.
     #js {:view (defn view [editor-view]
                  #js {:update (fn [editor-view]
-                                (swap! editor-state assoc :content (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc")))
-                                (js/console.log "content" (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc"))))
+                                (let [content (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc"))]
+                                  (swap! editor-state assoc :content content)
+                                  (js/console.log "content" content)))
                       :destroy (fn [])})}))
+
+(defn make-editor! [editor-state el]
+  (EditorView. el
+               #js {:state
+                    (.create EditorState
+                             #js {:doc (.parse defaultMarkdownParser (or (:content @editor-state) ""))
+                                  :plugins (.concat (exampleSetup #js {:schema schema})
+                                                    #js [(placeholder-text-plugin "Your newsletter text...")
+                                                         (view-plugin editor-state)])})}))
 
 (defn editor-mounted [editor-state editor el]
   (if el
-    (reset! editor
-            (EditorView. el 
-                         #js {:state
-                              (.create EditorState
-                                       #js {:doc (.parse defaultMarkdownParser (or (:content @editor-state) ""))
-                                            :plugins (.concat (exampleSetup #js {:schema schema})
-                                                              #js [(placeholder-text-plugin "Your newsletter text...")
-                                                                   (view-plugin editor-state)])})}))
+    (reset! editor (make-editor! editor-state el))
     (swap! editor (fn [old-editor] (.destroy old-editor) nil))))
 
 (def re-image (js/RegExp. "!\\[(.*?)\\]\\((.*?)\\)" "gm"))
+
+; (swap! state assoc-in [:editor :content] "")
 
 (defn md-to-email-image-references [md]
   (.replace md re-image
@@ -241,7 +254,7 @@
   [:div {:ref (partial editor-mounted editor-state editor)}])
 
 (defn component-plaintext-view [content]
-  [:div
+  [:div#plaintext
    [:h3 "Plaintext email version:"]
    [:pre (md-to-email-text content)]])
 
@@ -256,7 +269,7 @@
 
 (defn component-last-update [state k]
   [:span.last
-     (str "Last update: "  (or (time-since (-> @state :last-update k)) "just now"))])
+     (str "Last update: " (or (time-since (-> @state :last-update k)) "just now"))])
 
 (defn component-page-compose [state]
   [:div#compose
@@ -286,7 +299,7 @@
             [:div.content (-> (i :contentSnippet) (or "") (.split " ") (.slice 0 33) (.join " "))]
             [:div
              [:button {:on-click (partial archive-post! state i)} "archive"]
-             [:button "compose"]]])))]))
+             [:button {:on-click (partial use-content! state (:content i))} "compose"]]])))]))
 
 (defn component-page-posts [state]
   [:section#posts

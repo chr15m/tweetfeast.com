@@ -123,3 +123,7 @@ nav ul li.selected {
 
 .ProseMirror-focused .placeholder::before {
 }
+
+#plaintext pre {
+  white-space: pre-wrap;
+}
