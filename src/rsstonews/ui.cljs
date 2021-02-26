@@ -23,32 +23,6 @@
 
 (def persist-keys #{:feeds :newsletters :last-update :items :lists :editor})
 
-; https://discuss.prosemirror.net/t/how-to-input-like-placeholder-behavior/705/13
-(def placeholder-text-plugin
-  (fn [text]
-    (Plugin.
-      #js {:props
-           #js {:decorations
-                (fn decorations [state]
-                  (let [doc (aget state "doc")
-                        decoration-list #js []
-                        decorate (fn [node pos]
-                                   (when (and
-                                           (aget node "type" "isBlock")
-                                           (= (aget doc "firstChild" "content" "size") 0)
-                                           (= (aget doc "childCount") 1))
-                                     (.push decoration-list (.node Decoration pos (+ pos (aget node "nodeSize")) #js {:class "placeholder"}))))]
-                    (.descendants doc decorate)
-                    (.create DecorationSet doc decoration-list)))}})))
-
-(defn view-plugin [editor-state]
-  (Plugin.
-    #js {:view (defn view [editor-view]
-                 #js {:update (fn [editor-view]
-                                (swap! editor-state assoc :content (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc")))
-                                (js/console.log "content" (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc"))))
-                      :destroy (fn [])})}))
-
 ; *** functions *** ;
 
 (defn <p!-get-data [state]
@@ -201,6 +175,32 @@
                     post))
                 posts))))
 
+; https://discuss.prosemirror.net/t/how-to-input-like-placeholder-behavior/705/13
+(def placeholder-text-plugin
+  (fn [text]
+    (Plugin.
+      #js {:props
+           #js {:decorations
+                (fn decorations [state]
+                  (let [doc (aget state "doc")
+                        decoration-list #js []
+                        decorate (fn [node pos]
+                                   (when (and
+                                           (aget node "type" "isBlock")
+                                           (= (aget doc "firstChild" "content" "size") 0)
+                                           (= (aget doc "childCount") 1))
+                                     (.push decoration-list (.node Decoration pos (+ pos (aget node "nodeSize")) #js {:class "placeholder"}))))]
+                    (.descendants doc decorate)
+                    (.create DecorationSet doc decoration-list)))}})))
+
+(defn view-plugin [editor-state]
+  (Plugin.
+    #js {:view (defn view [editor-view]
+                 #js {:update (fn [editor-view]
+                                (swap! editor-state assoc :content (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc")))
+                                (js/console.log "content" (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc"))))
+                      :destroy (fn [])})}))
+
 (defn editor-mounted [editor-state editor el]
   (if el
     (reset! editor
@@ -248,7 +248,6 @@
 (defn component-editor [editor-state]
   (let [editor (atom nil)]
     (fn []
-      (js/console.log "re-render!")
       [:div#editor
        [component-subject editor-state]
        [component-editor-prosemirror editor-state editor]
@@ -292,6 +291,7 @@
 (defn component-page-posts [state]
   [:section#posts
    [:h1 "posts"]
+   [:h4 "Ideas and content you can re-purpose for your newsletter."]
    [:div
     [:button {:on-click (partial #'refresh-feeds! state)}
      (if (@state :refreshing)
@@ -327,8 +327,10 @@
 (defn component-page-config [state]
   [:section
    [:h1 "config"]
-   [component-config-items state :feeds [[:value "https://..."]]]
-   [component-config-items state :newsletters [[:value "https://..."] [:list-name "List name..."] [:email-field "Email field name..."]]]])
+   [component-config-items state :newsletters [[:value "https://..."]
+                                               [:list-name "List name..."]
+                                               [:email-field "Email field name..."]]]
+   [component-config-items state :feeds [[:value "https://..."]]]])
 
 (defn component-tab-item [state tabname]
   [:li {:on-click #(swap! state assoc :tab tabname)
