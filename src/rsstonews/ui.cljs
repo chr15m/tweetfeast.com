@@ -213,6 +213,21 @@
                                                                    (view-plugin editor-state)])})}))
     (swap! editor (fn [old-editor] (.destroy old-editor) nil))))
 
+(def re-image (js/RegExp. "!\\[(.*?)\\]\\((.*?)\\)" "gm"))
+
+(defn md-to-email-image-references [md]
+  (.replace md re-image
+            (fn [segment]
+              (let [image-link (.exec re-image segment)
+                    image-link (when image-link (aget image-link 2))]
+                (if (and image-link (= (.indexOf image-link "http") 0))
+                  image-link
+                  "")))))
+
+(defn md-to-email-text [md]
+  (let [md (md-to-email-image-references md)]
+    md))
+
 ; *** views *** ;
 
 (defn component-subject [editor-state]
@@ -225,6 +240,11 @@
 (defn component-editor-prosemirror [editor-state editor]
   [:div {:ref (partial editor-mounted editor-state editor)}])
 
+(defn component-plaintext-view [content]
+  [:div
+   [:h3 "Plaintext email version:"]
+   [:pre (md-to-email-text content)]])
+
 (defn component-editor [editor-state]
   (let [editor (atom nil)]
     (fn []
@@ -232,6 +252,7 @@
       [:div#editor
        [component-subject editor-state]
        [component-editor-prosemirror editor-state editor]
+       [component-plaintext-view (:content @editor-state)]
        [:button "Send"]])))
 
 (defn component-last-update [state k]
