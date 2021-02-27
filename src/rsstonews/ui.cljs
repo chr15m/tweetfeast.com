@@ -178,9 +178,16 @@
                     post))
                 posts))))
 
-(defn use-content! [state html-content]
+(def re-image-markdown "!\\[(.*?)\\]\\((.*?)\\)")
+(def re-image-src-html "")
+
+(defn pre-process-html [html-content]
+  (.turndown turndown-service html-content))
+
+(defn use-content! [state html-content title link]
   (swap! state #(-> %
-                    (assoc-in [:editor :content] (.turndown turndown-service html-content))
+                    (assoc-in [:editor :subject] title)
+                    (assoc-in [:editor :content] (str (pre-process-html html-content) "\n\nRead this article online: <" link ">\n\n"))
                     (assoc :tab :compose))))
 
 ; https://discuss.prosemirror.net/t/how-to-input-like-placeholder-behavior/705/13
@@ -216,7 +223,7 @@
                     (.create EditorState
                              #js {:doc (.parse defaultMarkdownParser (or (:content @editor-state) ""))
                                   :plugins (.concat (exampleSetup #js {:schema schema})
-                                                    #js [(placeholder-text-plugin "Your newsletter text...")
+                                                    #js [(placeholder-text-plugin "Newsletter text...")
                                                          (view-plugin editor-state)])})}))
 
 (defn editor-mounted [editor-state editor el]
@@ -224,21 +231,37 @@
     (reset! editor (make-editor! editor-state el))
     (swap! editor (fn [old-editor] (.destroy old-editor) nil))))
 
-(def re-image (js/RegExp. "!\\[(.*?)\\]\\((.*?)\\)" "gm"))
-
-; (swap! state assoc-in [:editor :content] "")
-
 (defn md-to-email-image-references [md]
-  (.replace md re-image
+  (.replace md (js/RegExp. re-image-markdown "g")
             (fn [segment]
-              (let [image-link (.exec re-image segment)
+              (let [image-link (.exec (js/RegExp. re-image-markdown) segment)
                     image-link (when image-link (aget image-link 2))]
-                (if (and image-link (= (.indexOf image-link "http") 0))
-                  image-link
+                (if image-link
+                  (cond
+                    (= (.indexOf image-link "https://") 0) image-link
+                    (= (.indexOf image-link "http://") 0) image-link
+                    (= (.indexOf image-link "data") 0) "(see attached image)"
+                    (= (.indexOf image-link "/") 0) "[RELATIVE IMAGE REMOVED]"
+                    (= (.indexOf image-link "file://")) "[LOCAL FILE IMAGE IGNORED]"
+                    :else "NO")
                   "")))))
 
+(def re-linked-image "\\[!\\[(.*?)\\]\\((.*?)\\)\\]\\((.*?)(\\ {0,1}\\\"(.*?)\\\"){0,1}\\)")
+
+(defn md-to-email-image-link [md]
+  (.replace md (js/RegExp. re-linked-image "g")
+            (fn [segment]
+              (let [parsed (.exec (js/RegExp. re-linked-image) segment)
+                    link (when parsed (nth parsed 3))
+                    link-text (when parsed (nth parsed 5))]
+                (cond
+                  link-text (str link-text ": " link)
+                  link link
+                  :else segment)))))
+
 (defn md-to-email-text [md]
-  (let [md (md-to-email-image-references md)]
+  (let [md (md-to-email-image-link md)
+        md (md-to-email-image-references md)]
     md))
 
 ; *** views *** ;
@@ -299,7 +322,7 @@
             [:div.content (-> (i :contentSnippet) (or "") (.split " ") (.slice 0 33) (.join " "))]
             [:div
              [:button {:on-click (partial archive-post! state i)} "archive"]
-             [:button {:on-click (partial use-content! state (:content i))} "compose"]]])))]))
+             [:button {:on-click (partial use-content! state (or (:content i) (:contentSnippet i) "") (:title i) (:link i))} "compose"]]])))]))
 
 (defn component-page-posts [state]
   [:section#posts
