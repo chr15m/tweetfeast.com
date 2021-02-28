@@ -57,6 +57,13 @@
                    (.status res f.status)
                    (.send res text)))))))
 
+(defn send-emails [req res]
+  (js/console.log "send-emails")
+  (js/console.log req.body)
+  (let [recipients (aget req.body "recipients")]
+    (js/console.log recipients))
+  (.json res "Hello."))
+
 (defn setup-routes [app]
   (.post app "/login" login)
   (.get app "/logout" logout)
@@ -64,7 +71,8 @@
   (.use app authenticate)
   (.get app "/proxy" cors-proxy)
   (.get app "/data" get-data)
-  (.post app "/save" set-data))
+  (.post app "/save" set-data)
+  (.post app "/send-emails" send-emails))
 
 (defn reload! []
   (web/reset-routes app)

@@ -15,7 +15,7 @@
                     :tab :compose
                     :last-update {:newsletters :feeds}
                     :feeds []
-                    :editor {:subject nil :content nil}
+                    :editor {:subject nil :content nil :html nil}
                     :newsletters []})
 
 (defonce state (r/atom initial-state))
@@ -212,9 +212,10 @@
   (Plugin.
     #js {:view (defn view [editor-view]
                  #js {:update (fn [editor-view]
-                                (let [content (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc"))]
-                                  (swap! editor-state assoc :content content)
-                                  (js/console.log "content" content)))
+                                (let [content (.serialize defaultMarkdownSerializer (aget editor-view "state" "doc"))
+                                      html (-> editor-view .-dom .-innerHTML)]
+                                  (swap! editor-state assoc :content content :html html)
+                                  (js/console.log "content" content html)))
                       :destroy (fn [])})}))
 
 (defn make-editor! [editor-state el]
@@ -264,6 +265,19 @@
         md (md-to-email-image-references md)]
     md))
 
+(defn send-emails! [state]
+  (let [editor (:editor @state)
+        fields {:recipients []
+                :text (md-to-email-text (:content editor))
+                :html (:html editor)}]
+    (-> (js/fetch "/send-emails"
+                  #js {:method "POST"
+                       :headers #js {:content-type "application/json"}
+                       :body (js/JSON.stringify (clj->js fields))})
+        (.then (fn [res]
+                 ; TODO: update with log, last-post time
+                 (js/console.log "send-emails result" res))))))
+
 ; *** views *** ;
 
 (defn component-subject [editor-state]
@@ -281,14 +295,15 @@
    [:h3 "Plaintext email version:"]
    [:pre (md-to-email-text content)]])
 
-(defn component-editor [editor-state]
-  (let [editor (atom nil)]
+(defn component-editor [state]
+  (let [editor (atom nil)
+        editor-state (r/cursor state [:editor])]
     (fn []
       [:div#editor
        [component-subject editor-state]
        [component-editor-prosemirror editor-state editor]
        [component-plaintext-view (:content @editor-state)]
-       [:button "Send"]])))
+       [:button {:on-click (partial send-emails! state)} "Send"]])))
 
 (defn component-last-update [state k]
   [:span.last
@@ -307,7 +322,7 @@
         [:div {:class "spin"} "( )"]
         [:div "refresh"])]
      [component-last-update state :newsletters]]]
-   [component-editor (r/cursor state [:editor])]])
+   [component-editor state]])
 
 (defn component-post-list [state]
   (let [posts (sort-posts (:items @state))]
