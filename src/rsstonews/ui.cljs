@@ -106,7 +106,7 @@
                    (aget rss-struct "items")))))))
 
 (defn refresh-feeds! [state]
-  (swap! state assoc :refreshing true)
+  (swap! state assoc-in [:refreshing :feeds] true)
   (let [rss-promises (map (partial feed-fetch-and-parse state) (:feeds @state))]
     (->
       (js/Promise.all (clj->js rss-promises))
@@ -116,7 +116,7 @@
                    (swap! state
                           #(-> %
                                (update-in [:items] (partial merge-new-items all-items))
-                               (dissoc :refreshing)
+                               (update-in [:refreshing] dissoc :feeds)
                                (assoc-in [:last-update :feeds] (.getTime (js/Date.))))))))))))
 
 (defn conform-csv [text]
@@ -137,7 +137,7 @@
                                    [newsletter (js->clj rows :keywordize-keys true)]]))))))))))
 
 (defn refresh-lists! [state]
-  (swap! state assoc :refreshing true)
+  (swap! state assoc-in [:refreshing :lists] true)
   (let [newsletter-promises (map (partial fetch-newsletter-and-parse state) (:newsletters @state))]
     (->
       (js/Promise.all (clj->js newsletter-promises))
@@ -147,7 +147,7 @@
                    (swap! state
                           #(-> %
                                (assoc :lists all-newsletters)
-                               (dissoc :refreshing)
+                               (update-in [:refreshing] dissoc :lists)
                                (assoc-in [:last-update :newsletters] (.getTime (js/Date.))))))))))))
 
 (defn sort-posts [posts]
@@ -318,7 +318,7 @@
        [:li {:key list-name} list-name " (" (count entries) ")"])]
     [:div
      [:button {:on-click (partial #'refresh-lists! state)}
-      (if (@state :refreshing)
+      (if (-> @state :refreshing :lists)
         [:div {:class "spin"} "( )"]
         [:div "refresh"])]
      [component-last-update state :newsletters]]]
@@ -345,7 +345,7 @@
    [:h4 "Ideas and content you can re-purpose for your newsletter."]
    [:div
     [:button {:on-click (partial #'refresh-feeds! state)}
-     (if (@state :refreshing)
+     (if (-> @state :refreshing :feeds)
        [:div {:class "spin"} "( )"]
        [:div "refresh"])]
     [component-last-update state :feeds]]
