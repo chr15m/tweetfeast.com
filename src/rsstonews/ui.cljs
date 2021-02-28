@@ -266,6 +266,7 @@
     md))
 
 (defn send-emails! [state]
+  (swap! state assoc-in [:refreshing :send] true)
   (let [editor (:editor @state)
         fields {:recipients []
                 :text (md-to-email-text (:content editor))
@@ -275,6 +276,7 @@
                        :headers #js {:content-type "application/json"}
                        :body (js/JSON.stringify (clj->js fields))})
         (.then (fn [res]
+                 (swap! state update-in [:refreshing] dissoc :send)
                  ; TODO: update with log, last-post time
                  (js/console.log "send-emails result" res))))))
 
@@ -303,7 +305,10 @@
        [component-subject editor-state]
        [component-editor-prosemirror editor-state editor]
        [component-plaintext-view (:content @editor-state)]
-       [:button {:on-click (partial send-emails! state)} "Send"]])))
+       [:button {:on-click (partial send-emails! state)}
+        (if (-> @state :refreshing :send)
+          [:div {:class "spin"} "( )"]
+          [:div "send"])]])))
 
 (defn component-last-update [state k]
   [:span.last
