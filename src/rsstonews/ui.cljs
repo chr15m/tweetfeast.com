@@ -15,7 +15,7 @@
                     :tab :compose
                     :last-update {:newsletters :feeds}
                     :feeds []
-                    :editor {:subject nil :content nil :html nil}
+                    :editor {:subject nil :content nil :html nil :selected-lists {}}
                     :newsletters []})
 
 (defonce state (r/atom initial-state))
@@ -268,7 +268,8 @@
 (defn send-emails! [state]
   (swap! state assoc-in [:refreshing :send] true)
   (let [editor (:editor @state)
-        fields {:recipients []
+        fields {:recipients (map #(-> @state :lists % second) (-> @state :editor :selected-lists keys))
+                :subject (:subject editor)
                 :text (md-to-email-text (:content editor))
                 :html (:html editor)}]
     (-> (js/fetch "/send-emails"
@@ -320,7 +321,11 @@
    [:div#lists
     [:ul
      (for [[list-name [newsletter entries]] (:lists @state)]
-       [:li {:key list-name} list-name " (" (count entries) ")"])]
+       [:li {:key list-name
+             :on-click #(swap! state update-in [:editor :selected-lists list-name] not)}
+        [:input {:type :checkbox :checked (-> @state :editor :selected-lists list-name) :name (str "cb-" list-name)}]
+        [:label {:for (str "cb-" list-name)}
+         (str (name list-name) " (" (count entries) ")")]])]
     [:div
      [:button {:on-click (partial #'refresh-lists! state)}
       (if (-> @state :refreshing :lists)
@@ -347,7 +352,7 @@
 (defn component-page-posts [state]
   [:section#posts
    [:h1 "posts"]
-   [:h4 "Ideas and content you can re-purpose for your newsletter."]
+   [:h4 "Newsletter ideas from your feeds."]
    [:div
     [:button {:on-click (partial #'refresh-feeds! state)}
      (if (-> @state :refreshing :feeds)
