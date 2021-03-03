@@ -268,7 +268,7 @@
 (defn send-emails! [state]
   (swap! state assoc-in [:refreshing :send] true)
   (let [editor (:editor @state)
-        fields {:recipients (map #(-> @state :lists % second) (-> @state :editor :selected-lists keys))
+        fields {:recipients (apply concat (map #(-> @state :lists % second) (-> @state :editor :selected-lists keys)))
                 :subject (:subject editor)
                 :text (md-to-email-text (:content editor))
                 :html (:html editor)}]

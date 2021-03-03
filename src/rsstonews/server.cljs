@@ -1,6 +1,7 @@
 (ns rsstonews.server
   (:require
     [rsstonews.web :as web]
+    [rsstonews.mail :as mail]
     ["keyv" :as Keyv]
     ["path" :as path]
     ["node-fetch" :as fetch]
@@ -58,10 +59,17 @@
                    (.send res text)))))))
 
 (defn send-emails [req res]
-  (js/console.log "send-emails")
-  (js/console.log req.body)
-  (let [recipients (aget req.body "recipients")]
-    (js/console.log recipients))
+  (let [text (aget req.body "text")
+        html (aget req.body "html")
+        subject (aget req.body "subject")
+        recipients (aget req.body "recipients")
+        from (web/env "FROM_EMAIL" "chris@mccormick.cx")
+        mailer (mail/create)]
+    (doseq [r (take 3 recipients)]
+      ;from to subject text html
+      (js/console.log (aget r "email") subject)
+      ;(mailer/send )
+      ))
   (.json res "Hello."))
 
 (defn setup-routes [app]
