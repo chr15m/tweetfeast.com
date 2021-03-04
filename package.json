@@ -13,6 +13,7 @@
     "keyv": "^4.0.3",
     "minimal-stylesheet": "^0.1.0",
     "node-fetch": "^2.6.1",
+    "nodemailer": "^6.5.0",
     "prosemirror": "^0.11.1",
     "prosemirror-example-setup": "^1.1.2",
     "prosemirror-markdown": "^1.5.1",

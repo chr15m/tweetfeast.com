@@ -272,6 +272,7 @@
   (->> state :editor :selected-lists (filter last) keys))
 
 (defn send-emails! [state]
+  ; TODO: record the results of the send
   (swap! state assoc-in [:refreshing :send] true)
   (let [editor (:editor @state)
         selected-lists (get-selected-lists @state)
@@ -328,6 +329,8 @@
 (defn component-editor [state]
   (let [editor (r/cursor state [:prosemirror])
         editor-state (r/cursor state [:editor])]
+    ; TODO: add base64 attachments
+    ; https://nodemailer.com/message/attachments/
     (fn []
       [:div#editor
        [component-subject editor-state]
