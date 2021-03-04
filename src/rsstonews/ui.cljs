@@ -8,12 +8,14 @@
             ["prosemirror-markdown" :refer [schema defaultMarkdownParser defaultMarkdownSerializer]]
             ["prosemirror-example-setup" :refer [exampleSetup]]
             ["turndown" :as turndown]
+            [applied-science.js-interop :as j]
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]))
 
 (def initial-state {:messages []
                     :tab :compose
                     :last-update {:newsletters :feeds}
+                    :emails {:list-last-post {} :log []}
                     :feeds []
                     :editor {:subject nil :content nil :html nil :selected-lists {}}
                     :newsletters []})
@@ -261,24 +263,48 @@
                   :else segment)))))
 
 (defn md-to-email-text [md]
-  (let [md (md-to-email-image-link md)
-        md (md-to-email-image-references md)]
-    md))
+  (when md
+    (let [md (md-to-email-image-link md)
+          md (md-to-email-image-references md)]
+      md)))
+
+(defn get-selected-lists [state]
+  (->> state :editor :selected-lists (filter last) keys))
 
 (defn send-emails! [state]
   (swap! state assoc-in [:refreshing :send] true)
   (let [editor (:editor @state)
-        fields {:recipients (apply concat (map #(-> @state :lists % second) (-> @state :editor :selected-lists keys)))
-                :subject (:subject editor)
-                :text (md-to-email-text (:content editor))
-                :html (:html editor)}]
+        selected-lists (get-selected-lists @state)
+        recipients (apply concat (map #(-> @state :lists (get %) second) selected-lists))
+        subject (:subject editor)
+        text (md-to-email-text (:content editor))
+        html (:html editor)
+        fields {:recipients recipients
+                :subject subject
+                :text text
+                :html html}]
     (-> (js/fetch "/send-emails"
                   #js {:method "POST"
                        :headers #js {:content-type "application/json"}
                        :body (js/JSON.stringify (clj->js fields))})
         (.then (fn [res]
-                 (swap! state update-in [:refreshing] dissoc :send)
-                 ; TODO: update with log, last-post time
+                 (swap! state
+                        #(-> %
+                             (update-in [:refreshing] dissoc :send)
+                             ; TODO update list last post time
+                             ; (update-in [:emails :list-last-post])
+                             (update-in [:emails :log] conj {:lists selected-lists
+                                                             :recipients recipients
+                                                             :subject subject
+                                                             :text text
+                                                             :html html})
+                             (update-in [:editor] assoc :subject nil :content nil)
+                             (assoc :tab :compose)))
+                 (let [prosemirror (@state :prosemirror)
+                       pm-dom (when prosemirror (aget prosemirror "dom"))]
+                   ; hack to tell prosemirror to clear the document
+                   (when pm-dom
+                     (aset pm-dom "innerHTML" "")))
                  (js/console.log "send-emails result" res))))))
 
 ; *** views *** ;
@@ -291,6 +317,7 @@
                  :class :fit}]])
 
 (defn component-editor-prosemirror [editor-state editor]
+  (js/console.log "prosemirror remount")
   [:div {:ref (partial editor-mounted editor-state editor)}])
 
 (defn component-plaintext-view [content]
@@ -299,14 +326,17 @@
    [:pre (md-to-email-text content)]])
 
 (defn component-editor [state]
-  (let [editor (atom nil)
+  (let [editor (r/cursor state [:prosemirror])
         editor-state (r/cursor state [:editor])]
     (fn []
       [:div#editor
        [component-subject editor-state]
        [component-editor-prosemirror editor-state editor]
        [component-plaintext-view (:content @editor-state)]
-       [:button {:on-click (partial send-emails! state)}
+       [:button {:on-click (partial send-emails! state)
+                 :disabled (or (empty? (get-selected-lists @state))
+                               (empty? (-> @editor-state :subject))
+                               (empty? (-> @editor-state :content)))}
         (if (-> @state :refreshing :send)
           [:div {:class "spin"} "( )"]
           [:div "send"])]])))
@@ -323,7 +353,10 @@
      (for [[list-name [newsletter entries]] (:lists @state)]
        [:li {:key list-name
              :on-click #(swap! state update-in [:editor :selected-lists list-name] not)}
-        [:input {:type :checkbox :checked (-> @state :editor :selected-lists list-name) :name (str "cb-" list-name)}]
+        [:input {:type :checkbox
+                 :read-only true
+                 :checked (-> @state :editor :selected-lists (get list-name))
+                 :name (str "cb-" list-name)}]
         [:label {:for (str "cb-" list-name)}
          (str (name list-name) " (" (count entries) ")")]])]
     [:div
