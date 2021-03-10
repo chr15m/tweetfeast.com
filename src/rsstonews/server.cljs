@@ -72,20 +72,31 @@
         html (aget req.body "html")
         subject (aget req.body "subject")
         recipients (aget req.body "recipients")
+        ; TODO: if this is unset bail at startup
         from (web/env "FROM_EMAIL" "chris@mccormick.cx")]
+    (js/console.log "send-emails")
     (go
-      (let [mailer (<p! (mail/create))]
-        ; TODO: promise.all these and send them back
-        (doseq [r (take 3 recipients)]
-          ; to from subject html text unsubscribe-url
-          (let [to (aget r "email")
-                unsubscribe-url (aget r "unsubscribe")
-                text (append-unsubscribe-text text unsubscribe-url)
-                html (append-unsubscribe-html html unsubscribe-url)]
-            (js/console.log "Sending to:" to subject)
-            (-> (mail/send-mail mailer to from subject html text unsubscribe-url)
-                (.then js/console.log)))))))
-  (.json res "Hello."))
+      (let [mailer (<p! (mail/create))
+            send-promises (for [r recipients]
+                            ; to from subject html text unsubscribe-url
+                            (let [to (aget r "email")
+                                  unsubscribe-url (aget r "unsubscribe")
+                                  text (append-unsubscribe-text text unsubscribe-url)
+                                  html (append-unsubscribe-html html unsubscribe-url)]
+                              (js/console.log "Sending to:" to subject)
+                              (-> (mail/send-mail mailer to from subject html text unsubscribe-url)
+                                  (.catch (fn [err] err))
+                                  (.then (fn [sent]
+                                           (js/console.log "sent:" (aget sent "accepted"))
+                                           (if (aget sent "error")
+                                             (let [err (-> sent js/JSON.stringify js/JSON.parse)]
+                                               (aset err "message" (aget sent "error" "message"))
+                                               (aset err "email" to)
+                                               (js/console.log "error:" err)
+                                               err)
+                                             sent))))))
+            send-results (<p! (.all js/Promise (clj->js send-promises)))]
+        (.json res send-results)))))
 
 (defn setup-routes [app]
   (.post app "/login" login)

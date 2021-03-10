@@ -306,7 +306,11 @@
                    ; hack to tell prosemirror to clear the document
                    (when pm-dom
                      (aset pm-dom "innerHTML" "")))
-                 (js/console.log "send-emails result" res))))))
+                 (-> res
+                     (.json)
+                     (.then (fn [emails]
+                              ; TODO: flag failed send count
+                              (js/console.log "email results" emails)))))))))
 
 ; *** views *** ;
 
