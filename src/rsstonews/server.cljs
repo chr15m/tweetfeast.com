@@ -10,8 +10,14 @@
 
 (set! *warn-on-infer* false)
 
+(defn bail [msg]
+  (js/console.error msg)
+  (js/process.exit 1))
+
 (defonce app (web/create))
 (defonce keyv (Keyv. (web/env "DATABASE" "sqlite://./rsstonews.sqlite")))
+(def site-password (or (web/env "PASSWORD") (bail "Set PASSWORD environment variable for site password.")))
+(def site-from-address (or (web/env "FROM_EMAIL") (bail "Set FROM_EMAIL environment variable to the site's 'from' address.")))
 
 (defn authenticate [req res pass]
   (if (not (aget req "session" "authenticated"))
@@ -32,7 +38,7 @@
         (-> res (.status 403) (.json #js {:error "Password already set"}))))))
 
 (defn login [req res]
-  (if (= (aget req.body "password") (web/env "PASSWORD" "password"))
+  (if (= (aget req.body "password") site-password)
     (do
       (aset req.session "authenticated" true)
       (.json res true))
@@ -72,8 +78,7 @@
         html (aget req.body "html")
         subject (aget req.body "subject")
         recipients (aget req.body "recipients")
-        ; TODO: if this is unset bail at startup
-        from (web/env "FROM_EMAIL" "chris@mccormick.cx")]
+        from site-from-address]
     (js/console.log "send-emails")
     (go
       (let [mailer (<p! (mail/create))
