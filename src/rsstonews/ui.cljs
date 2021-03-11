@@ -271,11 +271,19 @@
 (defn get-selected-lists [state]
   (->> state :editor :selected-lists vec (filter last) keys))
 
+(defn append-list-info [list-data recipient]
+  (assoc recipient "list" list-data))
+
+(defn get-recipients [lists list-name]
+  (let [[list-info recipients] (get lists list-name)]
+    (map #(assoc % "list" list-info) recipients)))
+
 (defn send-emails! [state]
   (swap! state assoc-in [:refreshing :send] true)
   (let [editor (:editor @state)
         selected-lists (get-selected-lists @state)
-        recipients (apply concat (map #(-> @state :lists (get %) second) selected-lists))
+        lists (:lists @state)
+        recipients (apply concat (map #(get-recipients lists %) selected-lists))
         subject (:subject editor)
         text (md-to-email-text (:content editor))
         html (:html editor)
@@ -371,7 +379,7 @@
              :on-click #(swap! state update-in [:editor :selected-lists list-name] not)}
         [:input {:type :checkbox
                  :read-only true
-                 :checked (-> @state :editor :selected-lists (get list-name))
+                 :checked (or (-> @state :editor :selected-lists (get list-name)) false)
                  :name (str "cb-" list-name)}]
         [:label {:for (str "cb-" list-name)}
          (str (name list-name) " (" (count entries) ")")]
@@ -440,9 +448,10 @@
 (defn component-page-config [state]
   [:section
    [:h1 "config"]
-   [component-config-items state :newsletters [[:value "https://..."]
+   [component-config-items state :newsletters [[:value "CSV URL https://..."]
                                                [:list-name "List name..."]
-                                               [:email-field "Email field name..."]]]
+                                               [:email-field "Email field name..."]
+                                               [:subscribe-url "Subscribe url https://..."]]]
    [component-config-items state :feeds [[:value "https://..."]]]])
 
 (defn component-tab-item [state tabname]

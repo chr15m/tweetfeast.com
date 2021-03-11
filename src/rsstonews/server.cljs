@@ -64,14 +64,28 @@
                    (.status res f.status)
                    (.send res text)))))))
 
-(defn append-unsubscribe-text [text unsubscribe-url]
+(defn append-subscription-text [text subscribe-url unsubscribe-url]
   (str text "\n\n"
        "--" "\n"
+       "Subscribe to this newsletter: <" subscribe-url ">\n"
        "Unsubscribe: " unsubscribe-url))
 
-(defn append-unsubscribe-html [html unsubscribe-url]
-  (str html "\n<br/>--\n<br/>\n\n"
-       "<p><a href='" unsubscribe-url "'>Unsubscribe</a></p>"))
+(defn append-subscription-html [html subscribe-url unsubscribe-url]
+  (str
+    ; start of the html wrapper table
+    "<body style='background-color:#f6f6f6;'>"
+    "<table border='0' cellspacing='0' width='100%'><tr><td></td>"
+    "<td width='600' style='background-color:white;padding:30px;'>"
+    ; the actual html content
+    html "\n"
+    ; end of the html wrapper table
+    "</td><td></td></tr></table>"
+    "<div style='text-align: center;' align='center'>"
+    "<p>—</p>"
+    "<p>Subscribe to these emails at <a href='" subscribe-url "'>" subscribe-url "</a></p>"
+    "<p>Don't want these emails? <a href='" unsubscribe-url "'>Unsubscribe</a></p>\n"
+    "</div>\n"
+    "</body>"))
 
 (defn send-emails [req res]
   (let [text (aget req.body "text")
@@ -85,9 +99,10 @@
             send-promises (for [r recipients]
                             ; to from subject html text unsubscribe-url
                             (let [to (aget r "email")
+                                  subscribe-url (aget r "list" "subscribe-url")
                                   unsubscribe-url (aget r "unsubscribe")
-                                  text (append-unsubscribe-text text unsubscribe-url)
-                                  html (append-unsubscribe-html html unsubscribe-url)]
+                                  text (append-subscription-text text subscribe-url unsubscribe-url)
+                                  html (append-subscription-html html subscribe-url unsubscribe-url)]
                               (js/console.log "Sending to:" to subject)
                               (-> (mail/send-mail mailer to from subject html text unsubscribe-url)
                                   (.catch (fn [err] err))
