@@ -26,7 +26,7 @@
 
 (defonce turndown-service (turndown))
 
-(def persist-keys #{:feeds :newsletters :last-update :items :lists :editor})
+(def persist-keys #{:feeds :newsletters :last-update :items :lists :editor :emails})
 
 ; *** functions *** ;
 
@@ -269,10 +269,9 @@
       md)))
 
 (defn get-selected-lists [state]
-  (->> state :editor :selected-lists (filter last) keys))
+  (->> state :editor :selected-lists vec (filter last) keys))
 
 (defn send-emails! [state]
-  ; TODO: record the results of the send
   (swap! state assoc-in [:refreshing :send] true)
   (let [editor (:editor @state)
         selected-lists (get-selected-lists @state)
@@ -284,33 +283,38 @@
                 :subject subject
                 :text text
                 :html html}]
+    ; TODO: data images are not being detached correctly
     (-> (js/fetch "/send-emails"
                   #js {:method "POST"
                        :headers #js {:content-type "application/json"}
                        :body (js/JSON.stringify (clj->js fields))})
-        (.then (fn [res]
-                 (swap! state
-                        #(-> %
-                             (update-in [:refreshing] dissoc :send)
-                             ; TODO update list last post time
-                             ; (update-in [:emails :list-last-post])
-                             (update-in [:emails :log] conj {:lists selected-lists
-                                                             :recipients recipients
-                                                             :subject subject
-                                                             :text text
-                                                             :html html})
-                             (update-in [:editor] assoc :subject nil :content nil)
-                             (assoc :tab :compose)))
+        (.then #(.json %))
+        (.then (fn [emails]
+                 (let [now (-> (js/Date.) .getTime)
+                       total-sent (count emails)
+                       total-good (count (remove #(aget % "error") emails))]
+                   (swap! state
+                          #(-> %
+                               (assoc-in [:editor :sent-counts] [total-good total-sent])
+                               (update-in [:refreshing] dissoc :send)
+                               (update-in [:emails :list-last-post]
+                                          (fn [list-last-post]
+                                            (reduce (fn [acc v] (assoc acc v now)) list-last-post selected-lists)))
+                               (update-in [:emails :log] conj {:lists selected-lists
+                                                               :recipients recipients
+                                                               :subject subject
+                                                               :text text
+                                                               :html html
+                                                               :response (js->clj emails)})
+                               (update-in [:editor] assoc :subject nil :content nil)
+                               (assoc :tab :compose)))
+                   (js/console.log "email results" emails)
+                   (js/console.log total-good "/" total-sent))
                  (let [prosemirror (@state :prosemirror)
                        pm-dom (when prosemirror (aget prosemirror "dom"))]
                    ; hack to tell prosemirror to clear the document
                    (when pm-dom
-                     (aset pm-dom "innerHTML" "")))
-                 (-> res
-                     (.json)
-                     (.then (fn [emails]
-                              ; TODO: flag failed send count
-                              (js/console.log "email results" emails)))))))))
+                     (aset pm-dom "innerHTML" ""))))))))
 
 ; *** views *** ;
 
@@ -346,7 +350,12 @@
                                (empty? (-> @editor-state :content)))}
         (if (-> @state :refreshing :send)
           [:div {:class "spin"} "( )"]
-          [:div "send"])]])))
+          [:div "send"])]
+       (let [[sent-count total-count] (:sent-counts @editor-state)]
+         (when total-count
+           [:span.sent-count
+            "sent " sent-count " of " total-count " successfully"
+            [:button {:on-click #(swap! editor-state dissoc :sent-counts)} "ok"]]))])))
 
 (defn component-last-update [state k]
   [:span.last

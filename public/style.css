@@ -127,3 +127,8 @@ nav ul li.selected {
 #plaintext pre {
   white-space: pre-wrap;
 }
+
+#editor .sent-count {
+  margin-left: 1em;
+  margin-right: 1em;
+}
