@@ -374,7 +374,10 @@
                  :checked (-> @state :editor :selected-lists (get list-name))
                  :name (str "cb-" list-name)}]
         [:label {:for (str "cb-" list-name)}
-         (str (name list-name) " (" (count entries) ")")]])]
+         (str (name list-name) " (" (count entries) ")")]
+        (let [last-post-timestamp (-> @state :emails :list-last-post (get list-name))]
+          (when last-post-timestamp
+            [:span (time-since last-post-timestamp) " ago"]))])]
     [:div
      [:button {:on-click (partial #'refresh-lists! state)}
       (if (-> @state :refreshing :lists)
