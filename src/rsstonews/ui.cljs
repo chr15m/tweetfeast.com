@@ -1,7 +1,7 @@
 (ns rsstonews.ui
   (:require [reagent.core :as r]
             [reagent.dom :as rd]
-            ["rss-to-js" :as rss]
+            ["rss-parser" :as rss]
             ["csvtojson" :as csv]
             ["prosemirror-view" :refer [EditorView Decoration DecorationSet]]
             ["prosemirror-state" :refer [EditorState Plugin]]
@@ -98,14 +98,15 @@
         (.then (partial handle-fetch-errors state (:value feed)))
         (.then (fn [text]
                  (when text
-                   (-> (rss.)
+                   (-> (rss. (clj->js {:customFields {:item ["media:group"]}}))
                        (.parseString text)))))
         (.then (fn [rss-struct]
                  (when rss-struct
-                   (doseq [i (aget rss-struct "items")]
-                     (aset i "feed" #js {:title (aget rss-struct "title")
-                                         :url (:value feed)}))
-                   (aget rss-struct "items")))))))
+                   (let [items (aget rss-struct "items")]
+                     (doseq [item items]
+                       (aset item "feed" #js {:title (aget rss-struct "title")
+                                              :url (:value feed)}))
+                     items)))))))
 
 (defn refresh-feeds! [state]
   (swap! state assoc-in [:refreshing :feeds] true)
@@ -186,10 +187,10 @@
 (defn pre-process-html [html-content]
   (.turndown turndown-service html-content))
 
-(defn use-content! [state html-content title link]
+(defn use-content! [state html-content title link link-preamble]
   (swap! state #(-> %
                     (assoc-in [:editor :subject] title)
-                    (assoc-in [:editor :content] (str (pre-process-html html-content) "\n\nRead this article online: <" link ">\n\n"))
+                    (assoc-in [:editor :content] (str (pre-process-html html-content) "\n\n" link-preamble ": <" link ">\n\n"))
                     (assoc :tab :compose))))
 
 ; https://discuss.prosemirror.net/t/how-to-input-like-placeholder-behavior/705/13
@@ -352,6 +353,7 @@
        [component-subject editor-state]
        [component-editor-prosemirror editor-state editor]
        [component-plaintext-view (:content @editor-state)]
+       ; TODO: add the ability to generate a .eml to download into mail client "sent"
        [:button {:on-click (partial send-emails! state)
                  :disabled (or (empty? (get-selected-lists @state))
                                (empty? (-> @editor-state :subject))
@@ -394,20 +396,34 @@
      [component-last-update state :newsletters]]]
    [component-editor state]])
 
+(defn get-content [i]
+  ; if it's a YouTube video handle differently
+  (if (:media:group i)
+    (let [link (-> i :link)
+          thumbnail (-> i :media:group :media:thumbnail first :$ :url)
+          description (-> i :media:group :media:description first)]
+    [(str "<p>" description "</p>" "<a href='" link "'><img src='" thumbnail "'/></a>")
+     (str description)
+     "Watch this on YouTube"])
+    [(or (:content i) (:contentSnippet i) "")
+     (-> (i :contentSnippet) (or "") (.split " ") (.slice 0 33) (.join " "))
+     "Read this article online"]))
+
 (defn component-post-list [state]
   (let [posts (sort-posts (:items @state))]
     [:div
      (for [idx (range (count posts))]
-       (let [i (nth posts idx)]
+       (let [i (nth posts idx)
+             [content short-content link-preamble] (get-content i)]
          (when (not (:archived i))
            [:div.post {:key (:link i)}
             [:h3.title (-> (:title i) (.substr 0 96))]
             [:span.source (-> i :feed :url (.split "//") (.pop))]
             [:span.date (-> i :pubDate (js/Date.) str (.split " ") (.slice 0 4) (.join " "))]
-            [:div.content (-> (i :contentSnippet) (or "") (.split " ") (.slice 0 33) (.join " "))]
+            [:div.content short-content]
             [:div
              [:button {:on-click (partial archive-post! state i)} "archive"]
-             [:button {:on-click (partial use-content! state (or (:content i) (:contentSnippet i) "") (:title i) (:link i))} "compose"]]])))]))
+             [:button {:on-click (partial use-content! state content (:title i) (:link i) link-preamble)} "compose"]]])))]))
 
 (defn component-page-posts [state]
   [:section#posts

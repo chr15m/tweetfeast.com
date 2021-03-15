@@ -64,6 +64,8 @@
                    (.status res f.status)
                    (.send res text)))))))
 
+; TODO: review the design. might be better to make this simpler.
+
 (defn append-subscription-text [text subscribe-url unsubscribe-url]
   (str text "\n\n"
        "--" "\n"
