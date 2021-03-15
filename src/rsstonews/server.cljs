@@ -82,7 +82,7 @@
     "</td><td></td></tr></table>"
     "<div style='text-align: center;' align='center'>"
     "<p>—</p>"
-    "<p>Subscribe to these emails at <a href='" subscribe-url "'>" subscribe-url "</a></p>"
+    "<p>Subscribe to these emails: <a href='" subscribe-url "'>" subscribe-url "</a></p>"
     "<p>Don't want these emails? <a href='" unsubscribe-url "'>Unsubscribe</a></p>\n"
     "</div>\n"
     "</body>"))
