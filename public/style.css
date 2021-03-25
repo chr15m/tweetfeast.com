@@ -132,3 +132,7 @@ nav ul li.selected {
   margin-left: 1em;
   margin-right: 1em;
 }
+
+#editor .ProseMirror img {
+  max-width: 100%;
+}
