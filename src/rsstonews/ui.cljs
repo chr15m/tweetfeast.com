@@ -181,7 +181,9 @@
                     post))
                 posts))))
 
+(def re-linked-image "\\[!\\[(.*?)\\]\\((.*?)\\)\\]\\((.*?)(\\ {0,1}\\\"(.*?)\\\"){0,1}\\)")
 (def re-image-markdown "!\\[(.*?)\\]\\((.*?)\\)")
+(def re-link-markdown "\\[(.*?)\\]\\((.*?)\\)")
 (def re-image-src-html "")
 
 (defn pre-process-html [html-content]
@@ -250,8 +252,6 @@
                     :else "NO")
                   "")))))
 
-(def re-linked-image "\\[!\\[(.*?)\\]\\((.*?)\\)\\]\\((.*?)(\\ {0,1}\\\"(.*?)\\\"){0,1}\\)")
-
 (defn md-to-email-image-link [md]
   (.replace md (js/RegExp. re-linked-image "g")
             (fn [segment]
@@ -263,10 +263,22 @@
                   link link
                   :else segment)))))
 
+(defn md-to-fix-links [md]
+  (.replace md (js/RegExp. re-link-markdown "g")
+            (fn [segment]
+              (let [parsed (.exec (js/RegExp. re-link-markdown) segment)
+                    link-text (when parsed (nth parsed 1))
+                    link (when parsed (nth parsed 2))]
+                (cond
+                  link-text (str link-text " <" link ">")
+                  link link
+                  :else segment)))))
+
 (defn md-to-email-text [md]
   (when md
     (let [md (md-to-email-image-link md)
-          md (md-to-email-image-references md)]
+          md (md-to-email-image-references md)
+          md (md-to-fix-links md)]
       md)))
 
 (defn get-selected-lists [state]
@@ -309,6 +321,7 @@
                                (update-in [:emails :list-last-post]
                                           (fn [list-last-post]
                                             (reduce (fn [acc v] (assoc acc v now)) list-last-post selected-lists)))
+                               ; TODO: deduplicate recipients
                                (update-in [:emails :log] conj {:lists selected-lists
                                                                :recipients recipients
                                                                :subject subject
