@@ -320,7 +320,7 @@
                                (update-in [:refreshing] dissoc :send)
                                (update-in [:emails :list-last-post]
                                           (fn [list-last-post]
-                                            (reduce (fn [acc v] (assoc acc v now)) list-last-post selected-lists)))
+                                            (reduce (fn [acc v] (assoc acc (keyword v) now)) list-last-post selected-lists)))
                                ; TODO: deduplicate recipients
                                (update-in [:emails :log] conj {:lists selected-lists
                                                                :recipients recipients
@@ -398,7 +398,7 @@
                  :name (str "cb-" list-name)}]
         [:label {:for (str "cb-" list-name)}
          (str (name list-name) " (" (count entries) ")")]
-        (let [last-post-timestamp (-> @state :emails :list-last-post (get list-name))]
+        (let [last-post-timestamp (-> @state :emails :list-last-post (get (keyword list-name)))]
           (when last-post-timestamp
             [:span (time-since last-post-timestamp) " ago"]))])]
     [:div
