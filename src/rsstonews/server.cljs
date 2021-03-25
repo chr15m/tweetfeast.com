@@ -24,6 +24,8 @@
     (-> res (.status 403) (.json #js {:error "Not authenticated."}))
     (pass)))
 
+; TODO: add CAS check to these functions so data is never blatted
+
 (defn get-data [req res]
   (go (.json res (<p! (.get keyv "user-data")))))
 
@@ -65,6 +67,7 @@
                    (.send res text)))))))
 
 ; TODO: review the design. might be better to make this simpler.
+; TODO: move this template client side (e.g. in config)
 
 (defn append-subscription-text [text subscribe-url unsubscribe-url]
   (str text "\n\n"
