@@ -20,6 +20,7 @@
     "react": "16.13.0",
     "react-dom": "16.13.0",
     "rotating-file-stream": "2.1.5",
+    "sentiment": "5.0.2",
     "serve-static": "1.14.1",
     "shadow-cljs": "2.12.5",
     "twitter-v2": "1.1.0"

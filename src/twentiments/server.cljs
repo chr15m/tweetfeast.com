@@ -5,6 +5,7 @@
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-v2" :as twitter-v2]
     ["motionless" :as motionless]
+    ["sentiment" :as sentiment]
     [shadow.resource :as rc]
     [applied-science.js-interop :as j]
     [cljs.core.async :refer (go <!) :as async]
@@ -65,17 +66,21 @@
 
 (defn test-search [tw]
   (->
-    (.get tw "tweets/search/recent" (clj->js {:query "from:mccrmx"
-                                       ;:tweet.fields "created_at"
-                                       ;:expansions "author_id"
-                                       ;:user.fields "created_at"
-                                       }))
+    (.get tw "tweets/search/recent"
+          (clj->js {:query "\"$TSLA\""
+                    :max_results 100
+                    ;:tweet.fields "created_at"
+                    ;:expansions "author_id"
+                    ;:user.fields "created_at"
+                    }))
     (.then
       (fn [data]
-        (let [data (aget data "data")]
-          (js/console.log "search:" data)
+        (let [data (aget data "data")
+              s (sentiment.)]
+          ;(js/console.log "search:" data)
           (doseq [d data]
-            (js/console.log d)))))
+            (js/console.log d)
+            (js/console.log (aget (.analyze s (aget d "text")) "comparative"))))))
     (.catch (fn [err] (js/console.error err) nil))))
 
 (defn btoa [s]
