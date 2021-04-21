@@ -16,7 +16,7 @@
 (defn add-default-middleware [app]
   ; set up logging
   (let [logs (str js/__dirname "/logs")
-        access-log (rfs "access.log" #js {:interval "7d" :path logs})]
+        access-log (.createStream rfs "access.log" #js {:interval "7d" :path logs})]
     (.use app (morgan "combined" #js {:stream access-log})))
   ; configure sane server defaults
   (.set app "trust proxy" "loopback")

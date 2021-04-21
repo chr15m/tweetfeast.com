@@ -3,14 +3,14 @@
                 [applied-science/js-interop "0.2.7"]]
  :builds {:server {:target :node-script
                    :output-to "devserver.js"
-                   :main tweapi.server/main!
+                   :main twentiments.server/main!
                    :release {:output-to "server.js"}
-                   :devtools {:after-load tweapi.server/reload!}}
+                   :devtools {:after-load twentiments.server/reload!}}
           :app {:target :browser
                 :output-dir "public/js"
                 :asset-path "js"
-                :modules {:main {:init-fn tweapi.ui/main!}}
-                :devtools {:after-load tweapi.ui/reload!
+                :modules {:main {:init-fn twentiments.ui/main!}}
+                :devtools {:after-load twentiments.ui/reload!
                            :watch-dir "public"}
                 :release {:output-dir "build/js"}}}}
 

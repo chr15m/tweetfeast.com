@@ -13,7 +13,8 @@
 
 (defn component-main [state]
   [:main
-   [:h1 "hello"]])
+   [:h1 "hello"]
+   [:a {:href "/login"} "Sign in with Twitter"]])
 
 (defn reload! []
   (js/console.log "reload!")
