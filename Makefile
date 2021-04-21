@@ -12,7 +12,7 @@ test: test.js
 server:
 	rm -f devserver.js
 	until [ -f devserver.js ]; do sleep 1; done
-	sleep 1 && node devserver.js
+	sleep 1 && while [ 1 ]; do node devserver.js; sleep 3; done
 
 watcher:
 	npx shadow-cljs watch server app
