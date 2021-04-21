@@ -7,7 +7,6 @@
     [cljs.core.async.interop :refer-macros [<p!]]))
 
 (defn twitter-login-done [req res]
-  (js/console.log "twitter-login-done")
   (let [tw (login-with-twitter.
              #js {:consumerKey (util/env "TWITTER_API_KEY")
                   :consumerSecret (util/env "TWITTER_API_SECRET")
@@ -28,23 +27,30 @@
                      (.redirect res "/")))))))
 
 (defn twitter-login [req res]
-  (let [tw (login-with-twitter.
-             #js {:consumerKey (util/env "TWITTER_API_KEY")
-                  :consumerSecret (util/env "TWITTER_API_SECRET")
-                  :callbackUrl (util/build-absolute-uri req "/twitter-callback")})]
-    (.login tw
-            (fn [err token-secret url]
-              (if err
-                (do
-                  (js/console.error err)
-                  (.json res (util/error-to-json err)))
-                (do
-                  (aset req.session "tokenSecret" token-secret)
-                  (.redirect res url)))))))
+  (if (aget req.session "user")
+    (.redirect res "/")
+    (let [tw (login-with-twitter.
+               #js {:consumerKey (util/env "TWITTER_API_KEY")
+                    :consumerSecret (util/env "TWITTER_API_SECRET")
+                    :callbackUrl (util/build-absolute-uri req "/twitter-callback")})]
+      (.login tw
+              (fn [err token-secret url]
+                (if err
+                  (do
+                    (js/console.error err)
+                    (.json res (util/error-to-json err)))
+                  (do
+                    (aset req.session "tokenSecret" token-secret)
+                    (.redirect res url))))))))
+
+(defn twitter-logout [req res]
+  (js-delete req.session "user")
+  (.redirect res "/"))
 
 (defn setup-routes [app]
   (web/reset-routes app)
   (.get app "/login" twitter-login)
+  (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
   ;(.use app authenticate)
   ;(.get app "/data" get-data)
