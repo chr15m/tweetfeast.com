@@ -3,14 +3,14 @@
                 [applied-science/js-interop "0.2.7"]]
  :builds {:server {:target :node-script
                    :output-to "devserver.js"
-                   :main rsstonews.server/main!
+                   :main tweapi.server/main!
                    :release {:output-to "server.js"}
-                   :devtools {:after-load rsstonews.server/reload!}}
+                   :devtools {:after-load tweapi.server/reload!}}
           :app {:target :browser
                 :output-dir "public/js"
                 :asset-path "js"
-                :modules {:main {:init-fn rsstonews.ui/main!}}
-                :devtools {:after-load rsstonews.ui/reload!
+                :modules {:main {:init-fn tweapi.ui/main!}}
+                :devtools {:after-load tweapi.ui/reload!
                            :watch-dir "public"}
                 :release {:output-dir "build/js"}}}}
 

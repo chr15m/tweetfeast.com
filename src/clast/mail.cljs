@@ -1,7 +1,7 @@
-(ns rsstonews.mail
+(ns clast.mail
   (:require
     [applied-science.js-interop :as j]
-    [rsstonews.web :refer [env]]
+    [clast.util :refer [env]]
     ["nodemailer" :as nm]))
 
 (defn create []
