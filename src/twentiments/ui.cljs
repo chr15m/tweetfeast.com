@@ -11,10 +11,31 @@
 
 ; *** functions *** ;
 
+(defn auth []
+  (let [user-data (->
+                    (js/document.querySelector "#app")
+                    (.getAttribute "data-user"))]
+    (when user-data
+      (-> user-data
+          js/atob
+          js/JSON.parse
+          (js->clj :keywordize-keys true)))))
+
+; *** components *** ;
+
 (defn component-main [state]
-  [:main
-   [:h1 "hello"]
-   [:a {:href "/login"} "Sign in with Twitter"]])
+  (let [user (auth)]
+    [:main
+     [:h1 "hello"]
+     (if user
+       [:div
+        [:img {:src (:profile_image_url user)}]
+        [:p (:name user)]
+        [:pre (pr-str user)]
+        [:a {:href "/logout"} "Sign out"]]
+       [:a {:href "/login"} "Sign in with Twitter"])]))
+
+; *** startup *** ;
 
 (defn reload! []
   (js/console.log "reload!")

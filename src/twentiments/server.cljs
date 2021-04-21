@@ -4,7 +4,9 @@
     [clast.util :as util]
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-v2" :as twitter-v2]
+    ["motionless" :as motionless]
     [shadow.resource :as rc]
+    [applied-science.js-interop :as j]
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
@@ -61,17 +63,21 @@
     (.then (fn [data] (-> data (aget "data") first)))
     (.catch (fn [err] (js/console.error err) nil))))
 
+(defn btoa [s]
+  (-> s js/Buffer. (.toString "base64")))
+
 (defn serve-homepage [req res]
-  (js/console.log "homepage")
   (go
     (let [template (rc/inline "index.html")
           user (aget req.session "user")]
       (if user
-        (let [user-id (when user (aget user "userId"))
+        (let [user-id (aget user "userId")
               tw (twitter user)
-              user-data (when tw (<p! (get-user-profile tw user-id)))]
-          (js/console.log "user:" user user-id user-data)
-          (.send res template))
+              user-profile (<p! (get-user-profile tw user-id))
+              dom (motionless/dom template)
+              app (.$ dom "#app")]
+          (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
+          (.send res (.render dom)))
         (.send res template)))))
 
 (defn setup-routes [app]
