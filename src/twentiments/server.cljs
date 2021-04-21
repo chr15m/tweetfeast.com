@@ -63,6 +63,21 @@
     (.then (fn [data] (-> data (aget "data") first)))
     (.catch (fn [err] (js/console.error err) nil))))
 
+(defn test-search [tw]
+  (->
+    (.get tw "tweets/search/recent" (clj->js {:query "from:mccrmx"
+                                       ;:tweet.fields "created_at"
+                                       ;:expansions "author_id"
+                                       ;:user.fields "created_at"
+                                       }))
+    (.then
+      (fn [data]
+        (let [data (aget data "data")]
+          (js/console.log "search:" data)
+          (doseq [d data]
+            (js/console.log d)))))
+    (.catch (fn [err] (js/console.error err) nil))))
+
 (defn btoa [s]
   (-> s js/Buffer. (.toString "base64")))
 
@@ -76,6 +91,7 @@
               user-profile (<p! (get-user-profile tw user-id))
               dom (motionless/dom template)
               app (.$ dom "#app")]
+          (test-search tw)
           (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
           (.send res (.render dom)))
         (.send res template)))))
