@@ -33,9 +33,8 @@
   (.use app (.json body-parser #js {:limit "10mb" :extended true :parameterLimit 1000}))
   app)
 
-(defn add-default-routes [app]
-  ; none yet here
-  (.use app "/" (serve-static (path/join js/__dirname "public")))
+(defn static-folder [app route folder]
+  (.use app route (serve-static (path/join js/__dirname folder)))
   app)
 
 (defn reset-routes [app]
@@ -43,15 +42,12 @@
     (when router
       (js/console.error (str "Deleting " (aget app "_router" "stack" "length") " routes"))
       (set! app._router nil))
-    (-> app
-        (add-default-middleware)
-        (add-default-routes))))
+    (add-default-middleware app)))
 
 (defn create []
   (let [kv (Keyv. (env "DATABASE" "sqlite://./rsstonews.sqlite"))]
     (-> (express)
         (add-default-middleware)
-        (add-default-routes)
         (j/assoc! :kv kv)
         (j/assoc! :db (aget kv "opts" "store")))))
 
