@@ -20,9 +20,9 @@
 (defn twitter [user]
   (when user
     (twitter-v2. #js {:consumer_key (util/env "TWITTER_API_KEY")
-                   :consumer_secret (util/env "TWITTER_API_SECRET")
-                   :access_token_key (aget user "userToken")
-                   :access_token_secret (aget user "userTokenSecret")})))
+                      :consumer_secret (util/env "TWITTER_API_SECRET")
+                      :access_token_key (aget user "userToken")
+                      :access_token_secret (aget user "userTokenSecret")})))
 
 (defn twitter-login-done [req res]
   (let [tw (twitter-sign-in req)]
@@ -87,19 +87,21 @@
   (-> s js/Buffer. (.toString "base64")))
 
 (defn serve-homepage [req res]
-  (go
-    (let [template (rc/inline "index.html")
-          user (aget req.session "user")]
-      (if user
+  (let [template (rc/inline "index.html")
+        user (aget req.session "user")]
+    (if user
+      (go
         (let [user-id (aget user "userId")
               tw (twitter user)
-              user-profile (<p! (get-user-profile tw user-id))
+              user-profile (aget user "profile")
+              user-profile (if user-profile user-profile (<p! (get-user-profile tw user-id)))
               dom (motionless/dom template)
               app (.$ dom "#app")]
-          (test-search tw)
+          (aset user "profile" user-profile)
+          ; (test-search tw)
           (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
-          (.send res (.render dom)))
-        (.send res template)))))
+          (.send res (.render dom))))
+      (.send res template))))
 
 (defn setup-routes [app]
   (web/reset-routes app)
