@@ -23,16 +23,21 @@
 
 ; *** components *** ;
 
+(defn component-main-interface [state user]
+  [:div
+   ;[:pre (pr-str user)]
+   [:div.profile
+    [:img {:src (:profile_image_url user)}]
+    [:p (:name user)]]
+   [:nav
+    [:a {:href "/logout"} "Sign out"]]
+   [:input.fit {:placeholder "Search for tweets..."}]])
+
 (defn component-main [state]
   (let [user (auth)]
     [:main
-     [:h1 "hello"]
      (if user
-       [:div
-        [:img {:src (:profile_image_url user)}]
-        [:p (:name user)]
-        [:pre (pr-str user)]
-        [:a {:href "/logout"} "Sign out"]]
+       [component-main-interface state user]
        [:a {:href "/login"} "Sign in with Twitter"])]))
 
 ; *** startup *** ;
