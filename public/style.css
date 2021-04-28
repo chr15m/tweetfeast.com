@@ -11,128 +11,101 @@ body, html, #app, #loading {
   justify-content: center;
 }
 
-nav ul {
-  margin: 0px;
-  padding: 0px;
+fieldset {
+  border: 0px;
 }
 
-nav ul li {
-  cursor: pointer;
-  list-style-type: none;
-  margin: 0px 0.25em;
-  display: inline-block;
-}
-
-nav ul li.selected {
-  color: red;
-}
-
-.last {
-  margin-left: 1em;
-}
-
-#posts .post {
-  margin-bottom: 2em;
-}
-
-#posts .title {
-  display: block;
-  margin-bottom: 0px;
-}
-
-#posts .date {
-  color: #999;
-}
-
-#posts .source {
-  display: block;
-  color: #999;
-}
-
-#config li {
+fieldset.horizontal {
   display: flex;
+  flex-direction: row;
 }
 
-#config li .list-name {
-  width: 12ch;
+.user-profile {
+  text-align: right;
 }
 
-#config li .email-field {
-  width: 12ch;
-}
-
-#messages {
-  position: fixed;
-  top: 0px;
+nav {
   display: flex;
-  flex-direction: column;
-  width: 50em;
-  max-width: 100%;
-  background-color: white;
+  justify-content: flex-end;
 }
 
-#messages .message {
-  border: 2px solid pink;
-  background-color: #F6E3E6;
-  padding: 0.25em 0.5em;
-  border-radius: 3px;
-  width: inherit;
-  margin: 0.25em 0px;
-  cursor: pointer;
+nav > * {
+  margin: 0px 0.5em;
 }
 
-/*** prosemirror editor styling ***/
+/*** styling tweets ***/
 
-#editor {
-  margin-top: 2em;
+.twitter-tweet {
+  font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 400;
+  margin: 0.5em auto;
+  padding: 1em;
+  border-radius: 0.5em;
+  border: 1px solid #aaa;
+  max-width: 600px;
 }
 
-#editor > * {
-  margin: 1em 0px;
+.twitter-tweet .profile img {
+  border-radius: 64px;
+  margin-right: 0.25em;
 }
 
-#editor .ProseMirror {
-  padding: 0.125em 0.75em;
-  background-color: #eeeeee;
-  border-radius: 0.375em;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  min-height: 10em;
-  outline: 0;
-  border: 2px solid transparent;
+.twitter-tweet .profile {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.5em;
 }
 
-#editor .ProseMirror:active, .ProseMirror:focus {
-  border: 2px solid silver;
-}
-
-#editor .ProseMirror-menubar {
-}
-
-.ProseMirror .placeholder::before {
-  position: absolute;
-  color: #bbb;
-  cursor: text;
+.twitter-tweet .profile a.name {
+  color: black;
   font-weight: bold;
-  font-size: 0.8em;
+  text-decoration: none;
 }
 
-.ProseMirror .placeholder::before {
-  content: "Your newsletter text...";
+.twitter-tweet .profile:hover a.name {
+  text-decoration: underline;
 }
 
-.ProseMirror-focused .placeholder::before {
+.twitter-tweet .profile a.username {
+  text-decoration: none;
+  color: #aaa;
 }
 
-#plaintext pre {
-  white-space: pre-wrap;
+.twitter-tweet .tweet {
+  margin-bottom: 0.5em;
 }
 
-#editor .sent-count {
-  margin-left: 1em;
-  margin-right: 1em;
+.twitter-tweet .username {
+  color: 
 }
 
-#editor .ProseMirror img {
-  max-width: 100%;
+.twitter-tweet .date {
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
 }
+
+.twitter-tweet .date a {
+  text-decoration: none;
+  color: #aaa;
+}
+
+.twitter-tweet .date a:hover {
+  text-decoration: underline;
+}
+
+.twitter-tweet .emoji {
+  width: 1em;
+}
+
+.twitter-tweet.sentiment-positive {
+  border-color: green;
+  background-color: rgba(0, 255, 0, 0.2);
+}
+
+.twitter-tweet.sentiment-negative {
+  border-color: red;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+

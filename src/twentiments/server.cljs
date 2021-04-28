@@ -64,25 +64,6 @@
     (.then (fn [data] (-> data (aget "data") first)))
     (.catch (fn [err] (js/console.error err) nil))))
 
-(defn test-search [tw]
-  (->
-    (.get tw "tweets/search/recent"
-          (clj->js {:query "\"$TSLA\""
-                    :max_results 100
-                    ;:tweet.fields "created_at"
-                    ;:expansions "author_id"
-                    ;:user.fields "created_at"
-                    }))
-    (.then
-      (fn [data]
-        (let [data (aget data "data")
-              s (sentiment.)]
-          ;(js/console.log "search:" data)
-          (doseq [d data]
-            (js/console.log d)
-            (js/console.log (aget (.analyze s (aget d "text")) "comparative"))))))
-    (.catch (fn [err] (js/console.error err) nil))))
-
 (defn btoa [s]
   (-> s js/Buffer. (.toString "base64")))
 
@@ -103,6 +84,28 @@
           (.send res (.render dom))))
       (.send res template))))
 
+(defn search [req res]
+  (let [user (aget req.session "user")
+        tw (twitter user)]
+    (js/console.log (aget req.body "q"))
+    (->
+      (.get tw "tweets/search/recent"
+            (clj->js {:query (str "\"" (aget req.body "q") "\"")
+                      :max_results 100
+                      :expansions "referenced_tweets.id,author_id"
+                      :tweet.fields "created_at,public_metrics,author_id"
+                      :user.fields "username,name,profile_image_url,url,public_metrics"}))
+      (.then
+        (fn [data]
+          (js/console.log "data" data)
+          (let [tweets (aget data "data")
+                s (sentiment.)]
+            (.map tweets
+                  (fn [d] (aset d "sentiment"
+                                (aget (.analyze s (aget d "text")) "comparative"))))
+            (.json res data))))
+      (.catch (fn [err] (js/console.error err) nil)))))
+
 (defn setup-routes [app]
   (web/reset-routes app)
   (.get app "/" serve-homepage)
@@ -110,6 +113,7 @@
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
+  (j/call app :post "/search" search)
   ;(.use app authenticate)
   ;(.get app "/data" get-data)
   ;(.post app "/save" set-data)
