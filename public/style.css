@@ -33,6 +33,11 @@ nav > * {
   margin: 0px 0.5em;
 }
 
+.downloads {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 /*** styling tweets ***/
 
 .twitter-tweet {

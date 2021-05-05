@@ -37,8 +37,14 @@
 (defn get-user [users author_id]
   (first (filter #(= (aget % "id") author_id) users)))
 
-(defn make-json-file-url [tweets users]
-  "#")
+(defn make-json-file-url [results filename]
+  (let [results (js/JSON.parse (js/JSON.stringify results))
+        results-meta (aget results "meta")
+        _ (js-delete results-meta "next_token")
+        txt (js/JSON.stringify results nil 2)
+        file (js/File. #js [txt] (clj->js {:content-type "application/json"
+                                           :name filename}))]
+    (js/URL.createObjectURL file)))
 
 ; *** components *** ;
 
@@ -89,14 +95,16 @@
   (let [users (aget (@state :results) "includes" "users")]
     [:div
      (for [tweet (aget (@state :results) "data")]
-       [component-tweet tweet users])]))
+       (with-meta [component-tweet tweet users] {:key (aget tweet "id")}))]))
 
 (defn component-download-results [state]
   (let [tweets (@state :results)
         users (aget (@state :results) "includes" "users")]
     [:div.downloads
      [:a {:href "#"} "download csv"]
-     [:a {:href (make-json-file-url tweets users)} "download json"]
+     [:a {:href (make-json-file-url (@state :results) "tweets.json")
+          :download "tweets.json"}
+      "download json"]
      [:a {:href "#"} "download simplified json"]]))
 
 (defn component-main-interface [state user]
