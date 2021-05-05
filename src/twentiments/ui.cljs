@@ -34,6 +34,12 @@
                        (assoc-in [:results] json)
                        (update-in [:progress] dissoc :search))))))
 
+(defn get-user [users author_id]
+  (first (filter #(= (aget % "id") author_id) users)))
+
+(defn make-json-file-url [tweets users]
+  "#")
+
 ; *** components *** ;
 
 (defn component-search [state user]
@@ -45,9 +51,6 @@
     [:button
      {:on-click (partial initiate-search state)}
      "search"]])
-
-(defn get-user [users author_id]
-  (first (filter #(= (aget % "id") author_id) users)))
 
 (defn component-tweet [tweet users]
   (let [user (get-user users (aget tweet "author_id"))]
@@ -83,13 +86,18 @@
             "see tweet"]]]))
 
 (defn component-tweets [state]
-  (if (-> @state :progress :search)
-    [:div.spinner.spin]
-    (when (@state :results)
-      (let [users (aget (@state :results) "includes" "users")]
-        [:div
-         (for [tweet (aget (@state :results) "data")]
-           [component-tweet tweet users])]))))
+  (let [users (aget (@state :results) "includes" "users")]
+    [:div
+     (for [tweet (aget (@state :results) "data")]
+       [component-tweet tweet users])]))
+
+(defn component-download-results [state]
+  (let [tweets (@state :results)
+        users (aget (@state :results) "includes" "users")]
+    [:div.downloads
+     [:a {:href "#"} "download csv"]
+     [:a {:href (make-json-file-url tweets users)} "download json"]
+     [:a {:href "#"} "download simplified json"]]))
 
 (defn component-main-interface [state user]
   [:div
@@ -99,7 +107,12 @@
     [:div.user-profile
      [:img {:src (:profile_image_url user)}]]]
    [component-search state]
-   [component-tweets state]])
+   (when (-> @state :progress :search)
+     [:div.spinner.spin])
+   (when (@state :results)
+     [component-download-results state])
+   (when (@state :results)
+     [component-tweets state])])
 
 (defn component-main [state]
   (let [user (auth)]
