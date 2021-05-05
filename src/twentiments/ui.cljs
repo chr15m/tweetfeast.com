@@ -49,6 +49,39 @@
 (defn get-user [users author_id]
   (first (filter #(= (aget % "id") author_id) users)))
 
+(defn component-tweet [tweet users]
+  (let [user (get-user users (aget tweet "author_id"))]
+    [:div.twitter-tweet {:key (aget tweet "id")
+                         :class (cond (>= (aget tweet "sentiment") 0.1) "sentiment-positive"
+                                      (<= (aget tweet "sentiment") -0.1) "sentiment-negative")}
+     [:div.profile
+      [:img {:src (aget user "profile_image_url")}]
+      [:div
+       [:a.name
+        {:href (str "https://twitter.com/" (aget user "username"))} (aget user "name")] [:br]
+       [:a.username
+        {:href (str "https://twitter.com/" (aget user "username"))} "@" (aget user "username")]]]
+     [:div.tweet
+      {:ref (fn [el]
+              (when el
+                (aset el "innerHTML"
+                      (-> (aget tweet "text") (.replace "\n" "<br/>") (twitter-text/autoLink)))
+                (twemoji/parse el)))}]
+     [:div.date
+      [:a {:href (str "https://twitter.com/i/web/status/" (aget tweet "id"))}
+       (-> (aget tweet "created_at") (.split "T") (.join " ") (.split ".") first)]]
+     (let [m (aget tweet "public_metrics")]
+       [:div
+        [:span "likes: " (aget m "like_count") " "]
+        [:span "replies: " (aget m "reply_count") " "]
+        [:span "quotes: " (aget m "quote_count") " "]
+        [:span "retweets: " (aget m "retweet_count")]])
+     [:div [:a {:on-click
+                (fn [ev]
+                  (let [el (-> ev .-target)]
+                    (j/call-in js/twttr [:widgets :createTweet] (aget tweet "id") el)))}
+            "see tweet"]]]))
+
 (defn component-tweets [state]
   (if (-> @state :progress :search)
     [:div.spinner.spin]
@@ -56,37 +89,7 @@
       (let [users (aget (@state :results) "includes" "users")]
         [:div
          (for [tweet (aget (@state :results) "data")]
-           (let [user (get-user users (aget tweet "author_id"))]
-             [:div.twitter-tweet {:key (aget tweet "id")
-                                  :class (cond (>= (aget tweet "sentiment") 0.1) "sentiment-positive"
-                                               (<= (aget tweet "sentiment") -0.1) "sentiment-negative")}
-              [:div.profile
-               [:img {:src (aget user "profile_image_url")}]
-               [:div
-                [:a.name
-                 {:href (str "https://twitter.com/" (aget user "username"))} (aget user "name")] [:br]
-                [:a.username
-                 {:href (str "https://twitter.com/" (aget user "username"))} "@" (aget user "username")]]]
-              [:div.tweet
-               {:ref (fn [el]
-                       (when el
-                         (aset el "innerHTML"
-                               (-> (aget tweet "text") (.replace "\n" "<br/>") (twitter-text/autoLink)))
-                         (twemoji/parse el)))}]
-              [:div.date
-               [:a {:href (str "https://twitter.com/i/web/status/" (aget tweet "id"))}
-                (-> (aget tweet "created_at") (.split "T") (.join " ") (.split ".") first)]]
-              (let [m (aget tweet "public_metrics")]
-                [:div
-                 [:span "likes: " (aget m "like_count") " "]
-                 [:span "replies: " (aget m "reply_count") " "]
-                 [:span "quotes: " (aget m "quote_count") " "]
-                 [:span "retweets: " (aget m "retweet_count")]])
-              [:div [:a {:on-click
-                         (fn [ev]
-                           (let [el (-> ev .-target)]
-                             (j/call-in js/twttr [:widgets :createTweet] (aget tweet "id") el)))}
-                     "see tweet"]]]))]))))
+           [component-tweet tweet users])]))))
 
 (defn component-main-interface [state user]
   [:div
