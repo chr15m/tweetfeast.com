@@ -5,7 +5,8 @@
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
             ["twitter-text" :as twitter-text]
-            ["twemoji" :as twemoji]))
+            ["twemoji" :as twemoji]
+            ["json2csv" :as json2csv]))
 
 (def initial-state {})
 
@@ -41,8 +42,10 @@
   (first (filter #(= (aget % "id") author_id) users)))
 
 (defn make-file-url [content filename content-type]
-  (let [file (js/File. #js [content] (clj->js {:content-type content-type
-                                           :name filename}))]
+  (let [file (js/File.
+               #js [content]
+               (clj->js {:content-type content-type
+                         :name filename}))]
     (js/URL.createObjectURL file)))
 
 (defn make-full-json-string [results]
@@ -130,7 +133,10 @@
   (let [tweets (@state :results)
         users (get-users (@state :results))]
     [:div.downloads
-     [:a {:href "#"
+     [:a {:href (make-file-url
+                  (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
+                  "tweets.csv"
+                  "application/json")
           :download "tweets.csv"} "download csv"]
      [:a {:href (make-file-url
                   (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
