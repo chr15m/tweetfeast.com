@@ -34,17 +34,46 @@
                        (assoc-in [:results] json)
                        (update-in [:progress] dissoc :search))))))
 
+(defn get-users [results]
+  (aget results "includes" "users"))
+
 (defn get-user [users author_id]
   (first (filter #(= (aget % "id") author_id) users)))
 
-(defn make-json-file-url [results filename]
-  (let [results (js/JSON.parse (js/JSON.stringify results))
-        results-meta (aget results "meta")
-        _ (js-delete results-meta "next_token")
-        txt (js/JSON.stringify results nil 2)
-        file (js/File. #js [txt] (clj->js {:content-type "application/json"
+(defn make-file-url [content filename content-type]
+  (let [file (js/File. #js [content] (clj->js {:content-type content-type
                                            :name filename}))]
     (js/URL.createObjectURL file)))
+
+(defn make-full-json-string [results]
+  (let [results (js/JSON.parse (js/JSON.stringify results))
+        results-meta (aget results "meta")
+        _ (js-delete results-meta "next_token")]
+    (js/JSON.stringify results nil 2)))
+
+(defn make-flat-json [results]
+  (let [users (get-users results)
+        tweets (aget results "data")]
+    (.map (aget results "data")
+          (fn [tweet i]
+            (let [user (get-user users (aget tweet "author_id"))
+                  m (aget tweet "public_metrics")]
+              (clj->js
+                {:id (aget tweet "id")
+                 :text (aget tweet "text")
+                 :date-time-iso (aget tweet "created_at")
+
+                 :metric-likes (aget m "like_count")
+                 :metric-replies (aget m "reply_count")
+                 :metric-quotes (aget m "quote_count")
+                 :metric-retweets (aget m "retweet_count")
+
+                 :ai-sentiment (aget tweet "sentiment")
+
+                 :user-id (aget tweet "author_id")
+                 :user-name (aget user "username")
+                 :user-full-name (aget user "name")
+                 :user-image-url (aget user "profile_image_url")}))))))
 
 ; *** components *** ;
 
@@ -92,20 +121,28 @@
             "see tweet"]]]))
 
 (defn component-tweets [state]
-  (let [users (aget (@state :results) "includes" "users")]
+  (let [users (get-users (@state :results))]
     [:div
      (for [tweet (aget (@state :results) "data")]
        (with-meta [component-tweet tweet users] {:key (aget tweet "id")}))]))
 
 (defn component-download-results [state]
   (let [tweets (@state :results)
-        users (aget (@state :results) "includes" "users")]
+        users (get-users (@state :results))]
     [:div.downloads
-     [:a {:href "#"} "download csv"]
-     [:a {:href (make-json-file-url (@state :results) "tweets.json")
+     [:a {:href "#"
+          :download "tweets.csv"} "download csv"]
+     [:a {:href (make-file-url
+                  (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
+                  "tweets.json"
+                  "application/json")
+          :download "tweets.json"} "download json"]
+     [:a {:href (make-file-url
+                  (make-full-json-string (@state :results))
+                  "tweets-full.json"
+                  "application/json")
           :download "tweets.json"}
-      "download json"]
-     [:a {:href "#"} "download simplified json"]]))
+      "download API json"]]))
 
 (defn component-main-interface [state user]
   [:div
