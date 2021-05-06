@@ -5,6 +5,10 @@ body, html, #app, #loading {
   height: 100%;
 }
 
+body {
+  max-width: 1200px;
+}
+
 #loading {
   display: flex;
   flex-direction: column;
@@ -36,6 +40,58 @@ nav > * {
 .downloads {
   display: flex;
   justify-content: space-evenly;
+}
+
+main > * {
+  margin-bottom: 2em;
+}
+
+section.options {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/*** styling table ***/
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+}
+
+thead tr {
+  border-bottom: 1px solid #333;
+}
+
+thead th {
+  padding: 0.25em;
+}
+
+table td {
+  text-align: center;
+  padding: 0.25em;
+}
+
+tr:nth-child(even) {
+  background: #f4f4f4;
+}
+
+td {
+  vertical-align: top;
+}
+
+td.column-date-time-iso {
+  text-align: left;
+}
+
+td.column-text {
+  text-align: left;
+  vertical-align: top;
+}
+
+table img.user-image {
+  border-radius: 64px;
 }
 
 /*** styling tweets ***/

@@ -8,9 +8,26 @@
             ["twemoji" :as twemoji]
             ["json2csv" :as json2csv]))
 
-(def initial-state {})
+(def initial-state {:results-view-table true})
 
 (defonce state (r/atom initial-state))
+
+(def tweet-data-keys
+  [:id
+   :text
+   :date-time-iso
+
+   :metric-likes
+   :metric-replies
+   :metric-quotes
+   :metric-retweets
+
+   :ai-sentiment
+
+   :user-id
+   :user-name
+   :user-full-name
+   :user-image-url])
 
 ; *** functions *** ;
 
@@ -34,6 +51,9 @@
       (swap! state #(-> %
                        (assoc-in [:results] json)
                        (update-in [:progress] dissoc :search))))))
+
+(defn split-date-time [dt]
+  (-> dt (.split "T") (.join " ") (.split ".") first))
 
 (defn get-users [results]
   (aget results "includes" "users"))
@@ -61,22 +81,26 @@
           (fn [tweet i]
             (let [user (get-user users (aget tweet "author_id"))
                   m (aget tweet "public_metrics")]
-              (clj->js
-                {:id (aget tweet "id")
-                 :text (aget tweet "text")
-                 :date-time-iso (aget tweet "created_at")
+              #js {:id (aget tweet "id")
+                   :text (aget tweet "text")
+                   :date-time-iso (split-date-time (aget tweet "created_at"))
 
-                 :metric-likes (aget m "like_count")
-                 :metric-replies (aget m "reply_count")
-                 :metric-quotes (aget m "quote_count")
-                 :metric-retweets (aget m "retweet_count")
+                   :metric-likes (aget m "like_count")
+                   :metric-replies (aget m "reply_count")
+                   :metric-quotes (aget m "quote_count")
+                   :metric-retweets (aget m "retweet_count")
 
-                 :ai-sentiment (aget tweet "sentiment")
+                   :ai-sentiment (aget tweet "sentiment")
 
-                 :user-id (aget tweet "author_id")
-                 :user-name (aget user "username")
-                 :user-full-name (aget user "name")
-                 :user-image-url (aget user "profile_image_url")}))))))
+                   :user-id (aget tweet "author_id")
+                   :user-name (aget user "username")
+                   :user-full-name (aget user "name")
+                   :user-image-url (aget user "profile_image_url")})))))
+
+(defn decode-html [html]
+  (let [txt (.createElement js/document "textarea")]
+    (aset txt "innerHTML" html)
+    (aget txt "value")))
 
 ; *** components *** ;
 
@@ -105,12 +129,13 @@
      [:div.tweet
       {:ref (fn [el]
               (when el
+                ; TODO: sanitize this? security issue if somebody tweets a script tag.
                 (aset el "innerHTML"
                       (-> (aget tweet "text") (.replace "\n" "<br/>") (twitter-text/autoLink)))
                 (twemoji/parse el)))}]
      [:div.date
       [:a {:href (str "https://twitter.com/i/web/status/" (aget tweet "id"))}
-       (-> (aget tweet "created_at") (.split "T") (.join " ") (.split ".") first)]]
+       (split-date-time (aget tweet "created_at"))]]
      (let [m (aget tweet "public_metrics")]
        [:div
         [:span "likes: " (aget m "like_count") " "]
@@ -128,6 +153,38 @@
     [:div
      (for [tweet (aget (@state :results) "data")]
        (with-meta [component-tweet tweet users] {:key (aget tweet "id")}))]))
+
+(defn component-tweets-table [state]
+  (let [tweet-table-keys
+        [[:user-image-url "Pic"]
+         [:user-name "Username"]
+         [:date-time-iso "Timestamp"]
+         [:metric-likes "Likes"]
+         [:metric-retweets "RTs"]
+         [:metric-quotes "Quotes"]
+         [:metric-replies "Replies"]
+         [:ai-sentiment "Sentiment"]
+         [:text "Tweet"]]]
+    [:table
+     [:thead
+      [:tr
+       (for [[k n] tweet-table-keys]
+         [:th {:class (str "column-" (name k))} n])]]
+     [:tbody
+      (let [data (make-flat-json (@state :results))]
+        (for [row data]
+          [:tr
+           (for [[k n] tweet-table-keys]
+             [:td {:class (str "column-" (name k))}
+              (case k
+                :id nil
+                :user-id nil
+                :ai-sentiment (.toFixed (aget row "ai-sentiment") 2)
+                :user-image-url [:img.user-image {:src (aget row "user-image-url")}]
+                :text [:a {:href (str "https://twitter.com/i/web/status/" (aget row "id"))
+                           :target "_blank"}
+                       (decode-html (aget row "text"))]
+                (aget row (name k)))])]))]]))
 
 (defn component-download-results [state]
   (let [tweets (@state :results)
@@ -151,26 +208,37 @@
       "download API json"]]))
 
 (defn component-main-interface [state user]
-  [:div
-   ;[:pre (pr-str user)]
-   [:nav
-    [:a {:href "/logout"} "Sign out"]
-    [:div.user-profile
-     [:img {:src (:profile_image_url user)}]]]
-   [component-search state]
-   (when (-> @state :progress :search)
-     [:div.spinner.spin])
-   (when (@state :results)
-     [component-download-results state])
-   (when (@state :results)
-     [component-tweets state])])
+  (let [searching (-> @state :progress :search)
+        results (@state :results)]
+    [:main
+     [:nav
+      [:a {:href "/logout"} "Sign out"]
+      [:div.user-profile
+       [:img {:src (:profile_image_url user)}]]]
+     [component-search state]
+     [:section.options
+      [:input {:name "search-state-check"
+               :id "search-state-check"
+               :type "checkbox"
+               :checked (@state :results-view-table)
+               :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
+      [:label {:for "search-state-check"} "table view"]]
+     (when searching [:div.spinner.spin])
+     (when (and (not searching) results)
+       [component-download-results state])
+     (when (and (not searching) results)
+       (if (@state :results-view-table)
+         [component-tweets-table state]
+         [component-tweets state]))]))
+
+(defn component-front-page []
+  [:a {:href "/login"} "Sign in with Twitter"])
 
 (defn component-main [state]
   (let [user (auth)]
-    [:main
-     (if user
-       [component-main-interface state user]
-       [:a {:href "/login"} "Sign in with Twitter"])]))
+    (if user
+      [component-main-interface state user]
+      [component-front-page])))
 
 ; *** startup *** ;
 
