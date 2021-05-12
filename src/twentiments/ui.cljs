@@ -117,8 +117,8 @@
 (defn component-tweet [tweet users]
   (let [user (get-user users (aget tweet "author_id"))]
     [:div.twitter-tweet {:key (aget tweet "id")
-                         :class (cond (>= (aget tweet "sentiment") 0.1) "sentiment-positive"
-                                      (<= (aget tweet "sentiment") -0.1) "sentiment-negative")}
+                         :class (cond (>= (aget tweet "sentiment") 2) "sentiment-positive"
+                                      (<= (aget tweet "sentiment") 2) "sentiment-negative")}
      [:div.profile
       [:img {:src (aget user "profile_image_url")}]
       [:div
@@ -179,7 +179,7 @@
               (case k
                 :id nil
                 :user-id nil
-                :ai-sentiment (.toFixed (aget row "ai-sentiment") 2)
+                :ai-sentiment (aget row "ai-sentiment")
                 :user-image-url [:img.user-image {:src (aget row "user-image-url")}]
                 :text [:a {:href (str "https://twitter.com/i/web/status/" (aget row "id"))
                            :target "_blank"}

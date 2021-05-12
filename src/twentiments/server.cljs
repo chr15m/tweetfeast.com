@@ -5,7 +5,7 @@
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-api-v2/dist" :refer [TwitterApi]]
     ["motionless" :as motionless]
-    ["sentiment" :as sentiment]
+    ["wink-sentiment" :as sentiment]
     [shadow.resource :as rc]
     [applied-science.js-interop :as j]
     [cljs.core.async :refer (go <!) :as async]
@@ -100,11 +100,12 @@
       (.then
         (fn [data]
           (js/console.log "data" data)
-          (let [tweets (aget data "data")
-                s (sentiment.)]
-            (.map tweets
-                  (fn [d] (aset d "sentiment"
-                                (aget (.analyze s (aget d "text")) "comparative"))))
+          (let [tweets (aget data "data")]
+            (when tweets
+              (.map tweets
+                    (fn [d]
+                      (aset d "sentiment"
+                            (aget (sentiment (aget d "text")) "score")))))
             (.json res data))))
       (.catch (fn [err] (js/console.error err) nil)))))
 
