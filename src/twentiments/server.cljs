@@ -3,7 +3,7 @@
     [clast.web :as web]
     [clast.util :as util]
     ["login-with-twitter" :as login-with-twitter]
-    ["twitter-v2" :as twitter-v2]
+    ["twitter-api-v2/dist" :refer [TwitterApi]]
     ["motionless" :as motionless]
     ["sentiment" :as sentiment]
     [shadow.resource :as rc]
@@ -19,10 +19,12 @@
 
 (defn twitter [user]
   (when user
-    (twitter-v2. #js {:consumer_key (util/env "TWITTER_API_KEY")
-                      :consumer_secret (util/env "TWITTER_API_SECRET")
-                      :access_token_key (aget user "userToken")
-                      :access_token_secret (aget user "userTokenSecret")})))
+    (aget
+      (TwitterApi. #js {:appKey (util/env "TWITTER_API_KEY")
+                        :appSecret (util/env "TWITTER_API_SECRET")
+                        :accessToken (aget user "userToken")
+                        :accessSecret (aget user "userTokenSecret")})
+      "readOnly")))
 
 (defn twitter-login-done [req res]
   (let [tw (twitter-sign-in req)]
@@ -60,7 +62,7 @@
 
 (defn get-user-profile [tw user-id]
   (->
-    (.get tw "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
+    (.get (aget tw "v2") "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
     (.then (fn [data] (-> data (aget "data") first)))
     (.catch (fn [err] (js/console.error err) nil))))
 
@@ -89,8 +91,8 @@
         tw (twitter user)]
     (js/console.log (aget req.body "q"))
     (->
-      (.get tw "tweets/search/recent"
-            (clj->js {:query (str "\"" (aget req.body "q") "\"")
+      (.get (aget tw "v2") "tweets/search/recent"
+            (clj->js {:query (aget req.body "q") ; (str "\"" (aget req.body "q") "\"")
                       :max_results 100
                       :expansions "referenced_tweets.id,author_id"
                       :tweet.fields "created_at,public_metrics,author_id"
