@@ -15,7 +15,7 @@
 (def tweet-data-keys
   [:id
    :text
-   :date-time-iso
+   :date-time
 
    :metric-likes
    :metric-replies
@@ -70,20 +70,24 @@
 
 (defn make-full-json-string [results]
   (let [results (js/JSON.parse (js/JSON.stringify results))
-        results-meta (aget results "meta")
-        _ (js-delete results-meta "next_token")]
+        results-meta (aget results "meta")]
+    (when results-meta (js-delete results-meta "next_token"))
+    (js-delete results "next")
+    (js-delete results "requestParameters")
     (js/JSON.stringify results nil 2)))
 
-(defn make-flat-json [results]
+; for the new v2 search API
+(defn make-flat-json-v2 [results]
   (let [users (get-users results)
         tweets (aget results "data")]
-    (.map (aget results "data")
+    (.map tweets
           (fn [tweet i]
             (let [user (get-user users (aget tweet "author_id"))
                   m (aget tweet "public_metrics")]
               #js {:id (aget tweet "id")
+                   :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
                    :text (aget tweet "text")
-                   :date-time-iso (split-date-time (aget tweet "created_at"))
+                   :date-time (split-date-time (aget tweet "created_at"))
 
                    :metric-likes (aget m "like_count")
                    :metric-replies (aget m "reply_count")
@@ -96,6 +100,30 @@
                    :user-name (aget user "username")
                    :user-full-name (aget user "name")
                    :user-image-url (aget user "profile_image_url")})))))
+
+; for the old v1.1 search API
+(defn make-flat-json-v1 [results]
+  (let [tweets (aget results "results")]
+    (.map tweets
+          (fn [tweet i]
+            #js {:id (aget tweet "id")
+                 :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
+                 :text (aget tweet "text")
+                 :date-time (-> (aget tweet "created_at") js/Date. .toISOString split-date-time)
+
+                 :metric-likes (aget tweet "favourite_count")
+                 :metric-replies (aget tweet "reply_count")
+                 :metric-quotes (aget tweet "quote_count")
+                 :metric-retweets (aget tweet "retweet_count")
+
+                 :ai-sentiment (aget tweet "sentiment")
+
+                 :user-id (aget tweet "author_id")
+                 :user-name (aget tweet "user" "screen_name")
+                 :user-full-name (aget tweet "user" "name")
+                 :user-image-url (aget tweet "user" "profile_image_url_https")}))))
+
+(def make-flat-json make-flat-json-v1)
 
 (defn decode-html [html]
   (let [txt (.createElement js/document "textarea")]
@@ -115,50 +143,48 @@
      "search"]])
 
 (defn component-tweet [tweet users]
-  (let [user (get-user users (aget tweet "author_id"))]
-    [:div.twitter-tweet {:key (aget tweet "id")
-                         :class (cond (>= (aget tweet "sentiment") 2) "sentiment-positive"
-                                      (<= (aget tweet "sentiment") -2) "sentiment-negative")}
-     [:div.profile
-      [:img {:src (aget user "profile_image_url")}]
-      [:div
-       [:a.name
-        {:href (str "https://twitter.com/" (aget user "username"))} (aget user "name")] [:br]
-       [:a.username
-        {:href (str "https://twitter.com/" (aget user "username"))} "@" (aget user "username")]]]
-     [:div.tweet
-      {:ref (fn [el]
-              (when el
-                ; TODO: sanitize this? security issue if somebody tweets a script tag.
-                (aset el "innerHTML"
-                      (-> (aget tweet "text") (.replace "\n" "<br/>") (twitter-text/autoLink)))
-                (twemoji/parse el)))}]
-     [:div.date
-      [:a {:href (str "https://twitter.com/i/web/status/" (aget tweet "id"))}
-       (split-date-time (aget tweet "created_at"))]]
-     (let [m (aget tweet "public_metrics")]
-       [:div
-        [:span "likes: " (aget m "like_count") " "]
-        [:span "replies: " (aget m "reply_count") " "]
-        [:span "quotes: " (aget m "quote_count") " "]
-        [:span "retweets: " (aget m "retweet_count")]])
-     [:div [:a {:on-click
-                (fn [ev]
-                  (let [el (-> ev .-target)]
-                    (j/call-in js/twttr [:widgets :createTweet] (aget tweet "id") el)))}
-            "see tweet"]]]))
+  [:div.twitter-tweet {:key (aget tweet "id")
+                       :class (cond (>= (aget tweet "sentiment") 2) "sentiment-positive"
+                                    (<= (aget tweet "sentiment") -2) "sentiment-negative")}
+   [:div.profile
+    [:img {:src (aget tweet "user-image-url")}]
+    [:div
+     [:a.name
+      {:href (str "https://twitter.com/" (aget tweet "user-name"))} (aget tweet "user-full-name")] [:br]
+     [:a.username
+      {:href (str "https://twitter.com/" (aget tweet "user-name"))} "@" (aget tweet "user-name")]]]
+   [:div.tweet
+    {:ref (fn [el]
+            (when el
+              ; TODO: sanitize this? security issue if somebody tweets a script tag.
+              (aset el "innerHTML"
+                    (-> (aget tweet "text") (.replace "\n" "<br/>") (twitter-text/autoLink)))
+              (twemoji/parse el)))}]
+   [:div.date
+    [:a {:href (aget tweet "link")}
+     (split-date-time (aget tweet "created_at"))]]
+   [:div
+    [:span "likes: " (aget tweet "metric-likes") " "]
+    [:span "replies: " (aget tweet "metric-replies") " "]
+    [:span "quotes: " (aget tweet "metric-quotes") " "]
+    [:span "retweets: " (aget tweet "metric-retweets")]]
+   [:div [:a {:on-click
+              (fn [ev]
+                (let [el (-> ev .-target)]
+                  (j/call-in js/twttr [:widgets :createTweet] (aget tweet "id") el)))}
+          "see tweet"]]])
 
 (defn component-tweets [state]
   (let [users (get-users (@state :results))]
     [:div
-     (for [tweet (aget (@state :results) "data")]
+     (for [tweet (make-flat-json (@state :results))]
        (with-meta [component-tweet tweet users] {:key (aget tweet "id")}))]))
 
 (defn component-tweets-table [state]
   (let [tweet-table-keys
         [[:user-image-url "Pic"]
          [:user-name "Username"]
-         [:date-time-iso "Timestamp"]
+         [:date-time "Datetime"]
          [:metric-likes "Likes"]
          [:metric-retweets "RTs"]
          [:metric-quotes "Quotes"]
@@ -181,14 +207,13 @@
                 :user-id nil
                 :ai-sentiment (aget row "ai-sentiment")
                 :user-image-url [:img.user-image {:src (aget row "user-image-url")}]
-                :text [:a {:href (str "https://twitter.com/i/web/status/" (aget row "id"))
+                :text [:a {:href (aget row "link")
                            :target "_blank"}
                        (decode-html (aget row "text"))]
                 (aget row (name k)))])]))]]))
 
 (defn component-download-results [state]
-  (let [tweets (@state :results)
-        users (get-users (@state :results))]
+  (let [tweets (@state :results)]
     [:div.downloads
      [:a {:href (make-file-url
                   (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
@@ -228,12 +253,15 @@
          (cond
            (aget results "error") [:div.errors
                                    (for [e (js->clj (aget results "error" "errors"))]
-                                     [:p.error (get e "message")])]
-           (aget results "data") [:span
-                                  [component-download-results state]
-                                  (if (@state :results-view-table)
-                                    [component-tweets-table state]
-                                    [component-tweets state])]
+                                     [:p.error (get e "message")])
+                                   (let [e (aget results "error" "error")]
+                                     [:p.error (aget e "message")])]
+           (or (aget results "data")
+               (aget results "results")) [:span
+                                          [component-download-results state]
+                                          (if (@state :results-view-table)
+                                            [component-tweets-table state]
+                                            [component-tweets state])]
            :else "No tweets found.")))]))
 
 (defn component-front-page []

@@ -89,6 +89,7 @@
   (let [user (aget req.session "user")
         tw (twitter user)]
     (js/console.log (aget req.body "q"))
+    ; https://developer.twitter.com/en/docs/twitter-api/tweets/search/quick-start/recent-search
     (->
       (.get (aget tw "v2") "tweets/search/recent"
             (clj->js {:query (aget req.body "q") ; (str "\"" (aget req.body "q") "\"")
@@ -110,6 +111,27 @@
                 (js/console.error err)
                 (.json res (util/error-to-json (aget err "data"))))))))
 
+(defn search-old [req res]
+  (let [user (aget req.session "user")
+        tw (twitter user)]
+    ; https://developer.twitter.com/en/docs/twitter-api/premium/search-api/overview
+    (-> (.get (aget tw "v1") "tweets/search/fullarchive/devfullarchive.json"
+              #js {:query (aget req.body "q")
+                   :maxResults 100})
+        (.then
+          (fn [data]
+            (let [tweets (aget data "results")]
+              (when tweets
+                (.map tweets
+                      (fn [d]
+                        (aset d "sentiment"
+                              (aget (sentiment (aget d "text")) "score"))))))
+            (.json res data)))
+        (.catch
+          (fn [err]
+            (js/console.error err)
+            (.json res (util/error-to-json (aget err "data"))))))))
+
 (defn setup-routes [app]
   (web/reset-routes app)
   (.get app "/" serve-homepage)
@@ -117,7 +139,7 @@
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
-  (j/call app :post "/search" search)
+  (j/call app :post "/search" search-old)
   ;(.use app authenticate)
   ;(.get app "/data" get-data)
   ;(.post app "/save" set-data)
@@ -130,3 +152,42 @@
       (util/reloader (partial #'setup-routes app))
       (setup-routes app)
       (println "main!"))))
+
+
+; api calls i didn't use
+
+    #_ (-> (.get (aget tw "v1") "statuses/user_timeline.json" #js {:user_id (aget user "id")})
+           (.then
+             (fn [data]
+               (js/console.log data))))
+
+    #_ (-> (.get (aget tw "v1") "search/tweets.json" #js {:q (aget req.body "q")
+                                                       :count 100
+                                                       :result_type "recent"
+                                                       :include_entities true})
+        (.then
+          (fn [data]
+            (js/console.log data))))
+
+
+
+    #_ (->
+         (.get (aget tw "v1") "tweets/search"
+               (clj->js {:q (aget req.body "q")
+                         :result_type "recent"}))
+         (.then
+           (fn [data]
+             (js/console.log "data" data)
+
+             (.json res data)
+
+             #_ (let [tweets (aget data "data")]
+                  (when tweets
+                    (.map tweets
+                          (fn [d]
+                            (aset d "sentiment"
+                                  (aget (sentiment (aget d "text")) "score")))))
+                  )))
+         (.catch (fn [err]
+                   (js/console.error err)
+                   (.json res (util/error-to-json (aget err "data"))))))
