@@ -66,9 +66,6 @@
     (.then (fn [data] (-> data (aget "data") first)))
     (.catch (fn [err] (js/console.error err) nil))))
 
-(defn btoa [s]
-  (-> s js/Buffer. (.toString "base64")))
-
 (defn serve-homepage [req res]
   (let [template (rc/inline "index.html")
         user (aget req.session "user")]
@@ -82,7 +79,7 @@
               app (.$ dom "#app")]
           (aset user "profile" user-profile)
           ; (test-search tw)
-          (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
+          (.setAttribute app "data-user" (-> user-profile js/JSON.stringify util/btoa))
           (.send res (.render dom))))
       (.send res template))))
 

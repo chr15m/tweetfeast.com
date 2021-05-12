@@ -16,6 +16,9 @@
     (aset e "message" (str err))
     e))
 
+(defn btoa [s]
+  (-> s js/Buffer. (.toString "base64")))
+
 (defn reloader [reload-function]
   (let [caller (.getData caller-id)
         caller-path (aget caller "filePath")]
