@@ -169,13 +169,13 @@
      [:thead
       [:tr
        (for [[k n] tweet-table-keys]
-         [:th {:class (str "column-" (name k))} n])]]
+         [:th {:key k :class (str "column-" (name k))} n])]]
      [:tbody
       (let [data (make-flat-json (@state :results))]
         (for [row data]
-          [:tr
+          [:tr {:key (aget row "id")}
            (for [[k n] tweet-table-keys]
-             [:td {:class (str "column-" (name k))}
+             [:td {:key k :class (str "column-" (name k))}
               (case k
                 :id nil
                 :user-id nil
