@@ -118,7 +118,7 @@
   (let [user (get-user users (aget tweet "author_id"))]
     [:div.twitter-tweet {:key (aget tweet "id")
                          :class (cond (>= (aget tweet "sentiment") 2) "sentiment-positive"
-                                      (<= (aget tweet "sentiment") 2) "sentiment-negative")}
+                                      (<= (aget tweet "sentiment") -2) "sentiment-negative")}
      [:div.profile
       [:img {:src (aget user "profile_image_url")}]
       [:div
@@ -223,13 +223,18 @@
                :checked (@state :results-view-table)
                :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
       [:label {:for "search-state-check"} "table view"]]
-     (when searching [:div.spinner.spin])
-     (when (and (not searching) results)
-       [component-download-results state])
-     (when (and (not searching) results)
-       (if (@state :results-view-table)
-         [component-tweets-table state]
-         [component-tweets state]))]))
+     (if searching [:div.spinner.spin]
+       (when results
+         (cond
+           (aget results "error") [:div.errors
+                                   (for [e (js->clj (aget results "error" "errors"))]
+                                     [:p.error (get e "message")])]
+           (aget results "data") [:span
+                                  [component-download-results state]
+                                  (if (@state :results-view-table)
+                                    [component-tweets-table state]
+                                    [component-tweets state])]
+           :else "No tweets found.")))]))
 
 (defn component-front-page []
   [:a {:href "/login"} "Sign in with Twitter"])
@@ -248,7 +253,6 @@
 
 (defn main! []
   (go
-      ;(<! (fetch-data! state))
       (reload!))
   (js/console.log "main!"))
 

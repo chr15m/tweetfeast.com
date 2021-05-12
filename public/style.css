@@ -42,7 +42,7 @@ nav > * {
   justify-content: space-evenly;
 }
 
-main > * {
+main > *, main > span > * {
   margin-bottom: 2em;
 }
 
@@ -92,6 +92,10 @@ td.column-text {
 
 table img.user-image {
   border-radius: 64px;
+}
+
+.errors {
+  color: #F56A6A;
 }
 
 /*** styling tweets ***/

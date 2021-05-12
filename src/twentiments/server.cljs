@@ -64,7 +64,9 @@
   (->
     (.get (aget tw "v2") "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
     (.then (fn [data] (-> data (aget "data") first)))
-    (.catch (fn [err] (js/console.error err) nil))))
+    (.catch (fn [err]
+              (js/console.error err)
+              (util/error-to-json err)))))
 
 (defn serve-homepage [req res]
   (let [template (rc/inline "index.html")
@@ -104,7 +106,9 @@
                       (aset d "sentiment"
                             (aget (sentiment (aget d "text")) "score")))))
             (.json res data))))
-      (.catch (fn [err] (js/console.error err) nil)))))
+      (.catch (fn [err]
+                (js/console.error err)
+                (.json res (util/error-to-json (aget err "data"))))))))
 
 (defn setup-routes [app]
   (web/reset-routes app)

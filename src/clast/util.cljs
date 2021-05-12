@@ -14,7 +14,7 @@
 (defn error-to-json [err]
   (let [e (js/JSON.parse (js/JSON.stringify err))]
     (aset e "message" (str err))
-    e))
+    #js {:error e}))
 
 (defn btoa [s]
   (-> s js/Buffer. (.toString "base64")))
