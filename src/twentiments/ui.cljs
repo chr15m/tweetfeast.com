@@ -167,7 +167,7 @@
      {:on-click (partial initiate-search state)}
      "search"]])
 
-(defn component-tweet [tweet users]
+(defn component-tweet [tweet]
   [:div.twitter-tweet {:key (aget tweet "id")
                        :class (cond (>= (aget tweet "sentiment") 2) "sentiment-positive"
                                     (<= (aget tweet "sentiment") -2) "sentiment-negative")}
@@ -187,7 +187,7 @@
               (twemoji/parse el)))}]
    [:div.date
     [:a {:href (aget tweet "link")}
-     (split-date-time (aget tweet "created_at"))]]
+     (aget tweet "date-time")]]
    [:div
     [:span "likes: " (aget tweet "metric-likes") " "]
     [:span "replies: " (aget tweet "metric-replies") " "]
@@ -196,14 +196,13 @@
    [:div [:a {:on-click
               (fn [ev]
                 (let [el (-> ev .-target)]
-                  (j/call-in js/twttr [:widgets :createTweet] (aget tweet "id") el)))}
+                  (j/call-in js/twttr [:widgets :createTweet] (aget tweet "id_str") el)))}
           "see tweet"]]])
 
 (defn component-tweets [state]
-  (let [users (get-users (@state :results))]
-    [:div
-     (for [tweet (make-flat-json (@state :results))]
-       (with-meta [component-tweet tweet users] {:key (aget tweet "id")}))]))
+  [:div
+   (for [tweet (make-flat-json (@state :results))]
+     (with-meta [component-tweet tweet] {:key (aget tweet "id")}))])
 
 (defn component-tweets-table [state]
   (let [tweet-table-keys
