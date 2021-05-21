@@ -83,45 +83,59 @@
     (.map tweets
           (fn [tweet i]
             (let [user (get-user users (aget tweet "author_id"))
-                  m (aget tweet "public_metrics")]
-              #js {:id (aget tweet "id")
-                   :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
-                   :text (aget tweet "text")
-                   :date-time (split-date-time (aget tweet "created_at"))
+                  m (aget tweet "public_metrics")
+                  values [:id (aget tweet "id_str")
+                          :date-time (split-date-time (aget tweet "created_at"))
 
-                   :metric-likes (aget m "like_count")
-                   :metric-replies (aget m "reply_count")
-                   :metric-quotes (aget m "quote_count")
-                   :metric-retweets (aget m "retweet_count")
+                          :metric-likes (aget m "like_count")
+                          :metric-replies (aget m "reply_count")
+                          :metric-quotes (aget m "quote_count")
+                          :metric-retweets (aget m "retweet_count")
 
-                   :ai-sentiment (aget tweet "sentiment")
+                          :ai-sentiment (aget tweet "sentiment")
 
-                   :user-id (aget tweet "author_id")
-                   :user-name (aget user "username")
-                   :user-full-name (aget user "name")
-                   :user-image-url (aget user "profile_image_url")})))))
+                          :user-id (aget tweet "author_id")
+                          :user-name (aget user "username")
+                          :user-full-name (aget user "name")
+                          :user-image-url (aget user "profile_image_url")
+                          :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
+                          :text (aget tweet "text")]
+                  js-struct #js {}]
+              ; this is to preserve CSV column order as js
+              ; key order is stable in practice
+              (doseq [[k v] (partition 2 values)]
+                (aset js-struct (name k) v))
+              js-struct)))))
 
 ; for the old v1.1 search API
 (defn make-flat-json-v1 [results]
   (let [tweets (aget results "results")]
+    (js/console.log "TWEETS" tweets)
     (.map tweets
           (fn [tweet i]
-            #js {:id (aget tweet "id")
-                 :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
-                 :text (aget tweet "text")
-                 :date-time (-> (aget tweet "created_at") js/Date. .toISOString split-date-time)
+            (let [extended (aget tweet "extended_tweet")
+                  values [:id (str "id:" (aget tweet "id_str"))
+                          :date-time (-> (aget tweet "created_at") js/Date. .toISOString split-date-time)
 
-                 :metric-likes (aget tweet "favourite_count")
-                 :metric-replies (aget tweet "reply_count")
-                 :metric-quotes (aget tweet "quote_count")
-                 :metric-retweets (aget tweet "retweet_count")
+                          :metric-likes (aget tweet "favorite_count")
+                          :metric-replies (aget tweet "reply_count")
+                          :metric-quotes (aget tweet "quote_count")
+                          :metric-retweets (aget tweet "retweet_count")
 
-                 :ai-sentiment (aget tweet "sentiment")
+                          :ai-sentiment (aget tweet "sentiment")
 
-                 :user-id (aget tweet "author_id")
-                 :user-name (aget tweet "user" "screen_name")
-                 :user-full-name (aget tweet "user" "name")
-                 :user-image-url (aget tweet "user" "profile_image_url_https")}))))
+                          :user-id (aget tweet "author_id")
+                          :user-name (aget tweet "user" "screen_name")
+                          :user-full-name (aget tweet "user" "name")
+                          :user-image-url (aget tweet "user" "profile_image_url_https")
+                          :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
+                          :text (if extended (aget extended "full_text") (aget tweet "text"))]
+                  js-struct #js {}]
+              ; this is to preserve CSV column order as js
+              ; key order is stable in practice
+              (doseq [[k v] (partition 2 values)]
+                (aset js-struct (name k) v))
+              js-struct)))))
 
 (def make-flat-json make-flat-json-v1)
 
