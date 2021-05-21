@@ -11,17 +11,20 @@
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
+(def twitter-key (or (util/env "TWITTER_API_KEY") (util/bail "TWITTER_API_KEY not set.")))
+(def twitter-secret (or (util/env "TWITTER_API_SECRET") (util/bail "TWITTER_API_SECRET not set.")))
+
 (defn twitter-sign-in [req]
   (login-with-twitter.
-    #js {:consumerKey (util/env "TWITTER_API_KEY")
-         :consumerSecret (util/env "TWITTER_API_SECRET")
+    #js {:consumerKey twitter-key
+         :consumerSecret twitter-secret
          :callbackUrl (util/build-absolute-uri req "/twitter-callback")}))
 
 (defn twitter [user]
   (when user
     (aget
-      (TwitterApi. #js {:appKey (util/env "TWITTER_API_KEY")
-                        :appSecret (util/env "TWITTER_API_SECRET")
+      (TwitterApi. #js {:appKey twitter-key
+                        :appSecret twitter-secret
                         :accessToken (aget user "userToken")
                         :accessSecret (aget user "userTokenSecret")})
       "readOnly")))
