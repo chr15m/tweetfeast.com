@@ -44,13 +44,16 @@
 (defn initiate-search [state]
   (swap! state assoc-in [:progress :search] :loading)
   (go
-    (let [response (<p! (js/fetch "/search" #js {:method "POST"
+    (let [json (<p! (-> (js/fetch "/search" #js {:method "POST"
                                                  :body (js/JSON.stringify #js {:q (@state :q)})
-                                                 :headers #js {:content-type "application/json"}}))
-          json (<p! (.json response))]
+                                                 :headers #js {:content-type "application/json"}})
+                        (.then (fn [response] (.json response)))
+                        (.catch (fn [err]
+                                  (clj->js {"error" {"error" err}})))))]
       (swap! state #(-> %
-                       (assoc-in [:results] json)
-                       (update-in [:progress] dissoc :search))))))
+                        (assoc :results json)
+                        (assoc :results-q (@state :q))
+                        (update-in [:progress] dissoc :search))))))
 
 (defn split-date-time [dt]
   (-> dt (.split "T") (.join " ") (.split ".") first))
@@ -67,6 +70,14 @@
                (clj->js {:content-type content-type
                          :name filename}))]
     (js/URL.createObjectURL file)))
+
+(def slug-regex (js/RegExp. "\\W+" "g"))
+
+(defn slug [text]
+  (-> text
+      .toString
+      .toLowerCase
+      (.replace slug-regex "-")))
 
 (defn make-full-json-string [results]
   (let [results (js/JSON.parse (js/JSON.stringify results))
@@ -227,23 +238,28 @@
                 (aget row (name k)))])]))]]))
 
 (defn component-download-results [state]
-  (let [tweets (@state :results)]
+  (let [tweets (@state :results)
+        date (js/Date.)
+        day (-> (str "0" (.getDate date)) (.slice -2))
+        month (-> (str "0" (inc (.getMonth date))) (.slice -2))
+        year (.getFullYear date)
+        file-name (str "tweets-" year "-" month "-" day "-" (slug (@state :results-q)))]
     [:div.downloads
      [:a {:href (make-file-url
                   (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
-                  "tweets.csv"
+                  (str file-name ".csv")
                   "application/json")
-          :download "tweets.csv"} "download csv"]
+          :download (str file-name ".csv")} "download csv"]
      [:a {:href (make-file-url
                   (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
-                  "tweets.json"
+                  (str file-name ".json")
                   "application/json")
-          :download "tweets.json"} "download json"]
+          :download (str file-name ".json")} "download json"]
      [:a {:href (make-file-url
                   (make-full-json-string (@state :results))
-                  "tweets-full.json"
+                  (str file-name ".json")
                   "application/json")
-          :download "tweets.json"}
+          :download (str file-name "-full.json")}
       "download API json"]]))
 
 (defn component-main-interface [state user]
