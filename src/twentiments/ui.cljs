@@ -243,23 +243,23 @@
         month (-> (str "0" (inc (.getMonth date))) (.slice -2))
         year (.getFullYear date)
         file-name (str "tweets-" year "-" month "-" day "-" (slug (@state :results-q)))]
-    (when (> (aget (@state :results) "length") 0)
+    (when tweets
       [:div.downloads
-       [:a {:href (make-file-url
-                    (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
-                    (str file-name ".csv")
-                    "application/json")
-            :download (str file-name ".csv")} "download csv"]
-       [:a {:href (make-file-url
-                    (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
-                    (str file-name ".json")
-                    "application/json")
-            :download (str file-name ".json")} "download json"]
-       [:a {:href (make-file-url
-                    (make-full-json-string (@state :results))
-                    (str file-name ".json")
-                    "application/json")
-            :download (str file-name "-full.json")}
+       [:a.button.primary {:href (make-file-url
+                                   (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
+                                   (str file-name ".csv")
+                                   "application/json")
+                           :download (str file-name ".csv")} "download csv"]
+       [:a.button.primary {:href (make-file-url
+                                   (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
+                                   (str file-name ".json")
+                                   "application/json")
+                           :download (str file-name ".json")} "download json"]
+       [:a.button.primary {:href (make-file-url
+                                   (make-full-json-string (@state :results))
+                                   (str file-name ".json")
+                                   "application/json")
+                           :download (str file-name "-full.json")}
         "download API json"]])))
 
 (defn component-help-text []
