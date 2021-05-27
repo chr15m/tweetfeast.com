@@ -98,6 +98,11 @@ table img.user-image {
   color: #F56A6A;
 }
 
+table#help td, table#help th {
+  text-align: left;
+  padding: 0.25em 1em;
+}
+
 /*** styling tweets ***/
 
 .twitter-tweet {

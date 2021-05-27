@@ -262,6 +262,77 @@
             :download (str file-name "-full.json")}
         "download API json"]])))
 
+(defn component-help-text []
+  [:section
+   [:h3 "Help"]
+   [:p "Search for tweets from the past 30 days and export them as CSV or JSON."]
+   [:table#help
+    [:thead
+     [:tr
+      [:th "Search parameter"]
+      [:th "Description"]]]
+    [:tbody
+     [:tr
+      [:td "keyword"]
+      [:td "Matches a keyword within the body of a Tweet."]]
+     [:tr
+      [:td "\"exact phrase match\""]
+      [:td "Matches an exact phrase within the body of a Tweet."]]
+     [:tr
+      [:td "@username"]
+      [:td "Matches any Tweet that mentions the given username."]]
+     [:tr
+      [:td "#hashtag"]
+      [:td "Matches any Tweet with the given hashtag."]]
+
+     [:tr
+      [:td "<emoji>"]
+      [:td "Matches an emoji within the body of a Tweet e.g. 🍕"]]
+
+     [:tr 
+      [:td "from:username"]
+      [:td "Matches any Tweet from a specific user."]]
+
+     [:tr
+      [:td "to:username"]
+      [:td "Matches any Tweet to the specific user."]]
+
+     [:tr
+      [:td "retweets_of:username"]
+      [:td "Matches any Tweet that are Retweets of the given user."]]
+
+     [:tr
+      [:td "url:..."]
+      [:td "Performs a tokenized match on the expanded URLs of a Tweet e.g. url:/developer or url:\"https://developer.twitter.com\"."]]
+
+     [:tr
+      [:td "has:images/links/media/mentions/videos"]
+      [:td "Match any Tweet that has images, links, media, mentions, or video."]]
+
+     [:tr
+      [:td "lang:..."]
+      [:td "Matches Tweets that have been classified by Twitter as being of a particular language e.g. en/es/zh etc. "
+       "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details of valid language codes."]]
+
+     [:tr
+      [:td "place_country:..."]
+      [:td "Matches Tweets tagged with the alpha-1 country code."
+       "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]
+
+     [:tr
+      [:td "place:\"Place name\""]
+      [:td "Matches Tweets tagged with specified location e.g. \"San Francisco\"."]]
+
+     [:tr
+      [:td "point_radius:..."]
+      [:td "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]
+
+     [:tr
+      [:td "bounding_box:..."]
+      [:td "Matches against the exact location (long, lat) of the Tweet (when present), and against a geo polygon
+           (where the Place is fully contained within the defined region). "
+       "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]]]])
+
 (defn component-main-interface [state user]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
@@ -277,9 +348,12 @@
                :type "checkbox"
                :checked (@state :results-view-table)
                :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
-      [:label {:for "search-state-check"} "table view"]]
-     (if searching [:div.spinner.spin]
-       (when results
+      [:label {:for "search-state-check"} "table view"]
+      (when results
+        [:button {:on-click #(swap! state dissoc :results :q)} "clear"])]
+     (if searching
+       [:div.spinner.spin]
+       (if results
          (cond
            (aget results "error") [:div.errors
                                    (for [e (js->clj (aget results "error" "errors"))]
@@ -292,7 +366,8 @@
                                           (if (@state :results-view-table)
                                             [component-tweets-table state]
                                             [component-tweets state])]
-           :else "No tweets found.")))]))
+           :else "No tweets found.")
+         [component-help-text]))]))
 
 (defn component-front-page []
   [:a {:href "/login"} "Sign in with Twitter"])
