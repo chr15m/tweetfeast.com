@@ -50,6 +50,7 @@
                         (.then (fn [response] (.json response)))
                         (.catch (fn [err]
                                   (clj->js {"error" {"error" err}})))))]
+      (js/console.log "Results:" json)
       (swap! state #(-> %
                         (assoc :results json)
                         (assoc :results-q (@state :q))
@@ -121,7 +122,6 @@
 ; for the old v1.1 search API
 (defn make-flat-json-v1 [results]
   (let [tweets (aget results "results")]
-    (js/console.log "TWEETS" tweets)
     (.map tweets
           (fn [tweet i]
             (let [extended (aget tweet "extended_tweet")
@@ -243,23 +243,24 @@
         month (-> (str "0" (inc (.getMonth date))) (.slice -2))
         year (.getFullYear date)
         file-name (str "tweets-" year "-" month "-" day "-" (slug (@state :results-q)))]
-    [:div.downloads
-     [:a {:href (make-file-url
-                  (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
-                  (str file-name ".csv")
-                  "application/json")
-          :download (str file-name ".csv")} "download csv"]
-     [:a {:href (make-file-url
-                  (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
-                  (str file-name ".json")
-                  "application/json")
-          :download (str file-name ".json")} "download json"]
-     [:a {:href (make-file-url
-                  (make-full-json-string (@state :results))
-                  (str file-name ".json")
-                  "application/json")
-          :download (str file-name "-full.json")}
-      "download API json"]]))
+    (when (> (aget (@state :results) "length") 0)
+      [:div.downloads
+       [:a {:href (make-file-url
+                    (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
+                    (str file-name ".csv")
+                    "application/json")
+            :download (str file-name ".csv")} "download csv"]
+       [:a {:href (make-file-url
+                    (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
+                    (str file-name ".json")
+                    "application/json")
+            :download (str file-name ".json")} "download json"]
+       [:a {:href (make-file-url
+                    (make-full-json-string (@state :results))
+                    (str file-name ".json")
+                    "application/json")
+            :download (str file-name "-full.json")}
+        "download API json"]])))
 
 (defn component-main-interface [state user]
   (let [searching (-> @state :progress :search)
