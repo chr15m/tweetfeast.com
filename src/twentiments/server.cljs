@@ -81,8 +81,24 @@
               user-profile (aget user "profile")
               user-profile (if user-profile user-profile (<p! (get-user-profile tw user-id)))
               dom (motionless/dom template)
-              app (.$ dom "#app")]
+              app (.$ dom "main")
+              nav (.$ dom "nav")
+              signout-link (.h dom "a" #js {:href "/logout"
+                                            :role "link"
+                                            :aria-label "Sign out"
+                                            :className "ui-section-header--nav-link"}
+                               "Sign out")
+              profile-image (.h dom "div" #js {:className "user-profile"}
+                                (.h dom "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
+                                                      :target "_BLANK"})
+                                    (.h dom "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
           (aset user "profile" user-profile)
+          (aset app "innerHTML" "")
+          (.appendChild app (.h dom "div" #js {:id "loading"} (.h dom "div" #js {:className "spinner spin"})))
+          (.after app (.h dom "script" #js {:src "js/main.js"}))
+          (aset nav "innerHTML" "")
+          (.appendChild nav signout-link)
+          (.appendChild nav profile-image)
           ; (test-search tw)
           (.setAttribute app "data-user" (-> user-profile js/JSON.stringify util/btoa))
           (.send res (.render dom))))

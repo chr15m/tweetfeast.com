@@ -33,7 +33,7 @@
 
 (defn auth []
   (let [user-data (->
-                    (js/document.querySelector "#app")
+                    (js/document.querySelector "main")
                     (.getAttribute "data-user"))]
     (when user-data
       (-> user-data
@@ -337,10 +337,6 @@
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     [:main
-     [:nav
-      [:a {:href "/logout"} "Sign out"]
-      [:div.user-profile
-       [:img {:src (:profile_image_url user)}]]]
      [component-search state]
      [:section.options
       [:input {:name "search-state-check"
@@ -369,20 +365,16 @@
            :else "No tweets found.")
          [component-help-text]))]))
 
-(defn component-front-page []
-  [:a {:href "/login"} "Sign in with Twitter"])
-
 (defn component-main [state]
   (let [user (auth)]
-    (if user
-      [component-main-interface state user]
-      [component-front-page])))
+    (when user
+      [component-main-interface state user])))
 
 ; *** startup *** ;
 
 (defn reload! []
   (js/console.log "reload!")
-  (rd/render [component-main state] (js/document.querySelector "#app")))
+  (rd/render [component-main state] (js/document.querySelector "main")))
 
 (defn main! []
   (go
