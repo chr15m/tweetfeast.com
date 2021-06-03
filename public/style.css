@@ -57,6 +57,19 @@ section.options {
   margin-right: auto;
 }
 
+#feedback a {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  padding: 1em;
+  background-color: #eee;
+  border-top-left-radius: 5px;
+  border-top: 2px solid #ccc;
+  border-left: 2px solid #ccc;
+  color: #f56a6a;
+  text-decoration: none;
+}
+
 /*** design mods ***/
 
 .ui-section-hero__layout img {
@@ -64,8 +77,37 @@ section.options {
   border-radius: var(--ui-radius-card);
 }
 
-.ui-layout-flex, .ui-layout-grid {
+.ui-section-faq h2 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.ui-section-faq__layout.ui-layout-grid {
   align-items: start;
+}
+
+.ui-component-card--pricing-amount-1::before {
+  content: "$7"
+}
+
+#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-1::before {
+  content: "$6";
+}
+
+.ui-component-card--pricing-amount-2::before {
+  content: "$19";
+}
+
+#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-2::before {
+  content: "$16";
+}
+
+.ui-component-card--pricing-amount-3::before {
+  content: "$250";
+}
+
+#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-3::before {
+  content: "$212";
 }
 
 /*** styling table ***/

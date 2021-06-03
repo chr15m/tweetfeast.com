@@ -56,7 +56,7 @@
             <!-- COPYWRITING -->
             <div>
               <h1>Download tweet data.</h1>
-              <p class="ui-text-intro">Download bulk tweets as CSV or JSON data. Sentiment analysis included. No API key is required.</p>
+              <p class="ui-text-intro">Download bulk tweets as CSV or JSON data. Sentiment analysis included. No API key required.</p>
               <!-- CTA -->
               <div class="ui-component-cta ui-layout-flex">
                 <a href="/login" role="link" aria-label="#" class="ui-component-button ui-component-button-normal ui-component-button-primary">Sign in with Twitter</a>
@@ -70,10 +70,11 @@
       </section>
       <section class="ui-section-faq">
         <div class="ui-layout-container">
+          <h2><a name="features"></a>Features</h2>
           <div class="ui-section-faq__layout ui-layout-grid ui-layout-grid-2">
             <div>
-              <h4 class="ui-component-list--item ui-section-faq--question">Export tweets to CSV or JSON</h4>
-              <p class="ui-section-faq--answer">Exporting tweets to a format you can use locally has never been easier. Simply type a search to find the tweets you want and then click "Download CSV". The CSV file full of tweets will be downloaded onto your computer or straight into Excel for your analysis.</p>
+              <h4 class="ui-component-list--item ui-section-faq--question">Export tweets to CSV</h4>
+              <p class="ui-section-faq--answer">Exporting tweets to a CSV file has never been easier. Simply type a search to find the tweets you want and then click "Download CSV". The CSV file full of tweets will be downloaded onto your computer or straight into Excel for your analysis.</p>
             </div>
             <div>
               <h4 class="ui-component-list--item ui-section-faq--question">Tweet data from search</h4>
@@ -81,57 +82,20 @@
             </div>
             <div>
               <h4 class="ui-component-list--item ui-section-faq--question">Export tweets to JSON</h4>
-              <p class="ui-section-faq--answer">Perfect for testing how your app renders tweet data. You don't have to set up API access yourself, you can just download some tweets as JSON and start testing.</p>
+              <p class="ui-section-faq--answer">Perfect for testing how your app renders tweet data. You don't have to set up API keys or write server code. Just download some tweets as JSON and start testing.</p>
             </div>
             <div>
-              <h4 class="ui-component-list--item ui-section-faq--question">Twitter sentiument analysis</h4>
-              <p class="ui-section-faq--answer">It's never been easier to perform sentiment analysis on tweets. Our tool automatically includes sentiment analysis. There's no need to write code or install libraries. Just perform the search you want and download the data. A column with sentiment analysis is included in every download.</p>
+              <h4 class="ui-component-list--item ui-section-faq--question">Twitter sentiment analysis</h4>
+              <p class="ui-section-faq--answer">It's never been easier to perform sentiment analysis on tweets. Just use our tool to search and then click "download" to get the data. A sentiment analysis column is included so there's no need to write code or install libraries.</p>
             </div>
           </div>
           <p class="ui-section-faq--note">Still have questions? <a href="https://twitter.com/mccrmx" role="link" aria-label="Contact us">Contact us</a>.</p>
         </div>
       </section>
-      <section class="ui-section-feature">
-        <a name="features"></a>
-        <div class="ui-layout-container">
-          <div class="ui-section-feature__layout ui-layout-grid ui-layout-grid-3">
-            <div class="ui-component-card ui-component-card--feature">
-              <img src="https://res.cloudinary.com/uisual/image/upload/assets/graphics/notification.png" alt="#" loading="lazy">
-              <div class="ui-component-card--feature-content">
-                <h4 class="ui-component-card--feature-title">Lorem ipsum dolor.</h4>
-                <p>Lorem ipsum dolor sit amet sed eiusmod tempor incididunt.</p>
-              </div>
-            </div>
-            <div class="ui-component-card ui-component-card--feature">
-              <img src="https://res.cloudinary.com/uisual/image/upload/assets/graphics/notification.png" alt="#" loading="lazy">
-              <div class="ui-component-card--feature-content">
-                <h4 class="ui-component-card--feature-title">Lorem ipsum dolor.</h4>
-                <p>Lorem ipsum dolor sit amet sed eiusmod tempor incididunt.</p>
-              </div>
-            </div>
-            <div class="ui-component-card ui-component-card--feature">
-              <img src="https://res.cloudinary.com/uisual/image/upload/assets/graphics/notification.png" alt="#" loading="lazy">
-              <div class="ui-component-card--feature-content">
-                <h4 class="ui-component-card--feature-title">Lorem ipsum dolor.</h4>
-                <p>Lorem ipsum dolor sit amet sed eiusmod tempor incididunt.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="ui-section-testimonial">
-        <div class="ui-layout-container">
-          <div class="ui-layout-column-4 ui-layout-column-center">
-            <img src="https://res.cloudinary.com/uisual/image/upload/assets/icons/avatar.svg" alt="#" class="ui-section-testimonial--avatar">
-            <p class="ui-section-testimonial--quote ui-text-intro">&ldquo;Lorem ipsum dolor sit amet, consec adipiscing elit, sed do eiusmod tempor incididunt labore dolore magna.&rdquo;</p>
-            <p class="ui-section-testimonial--author"><strong>Jane Doe</strong><br><small class="ui-text-note">CEO of Company</small></p>
-          </div>
-        </div>
-      </section>
       <section class="ui-section-pricing">
         <div class="ui-layout-container">
-          <h2><a name="pricing"></a>Fair Prices</h2>
-          <p class="ui-text-intro">Lorem ipsum dolor sit amet.</p>
+          <h2><a name="pricing"></a>Pricing</h2>
+          <p class="ui-text-intro">Our simple pricing is based on volume and features.</p>
           <!-- TOGGLE -->
           <input type="radio" name="toggle" id="ui-component-toggle__monthly" checked>
           <input type="radio" name="toggle" id="ui-component-toggle__yearly">
@@ -150,12 +114,14 @@
                 <span>/</span>
                 <span>month</span>
               </div>
-              <span><small>Perfect for early-stage startups.</small></span>
+              <span><small>For low data requirements.</small></span>
               <!-- LIST -->
               <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
-                <li class="ui-component-list--item ui-component-list--item-check">1 domain name.</li>
-                <li class="ui-component-list--item ui-component-list--item-check">HTML components.</li>
-                <li class="ui-component-list--item ui-component-list--item-cross">Priority support.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Up to 50 rows of data.</li>
+                <li class="ui-component-list--item ui-component-list--item-cross">No sentiment analysis.</li>
+                <li class="ui-component-list--item ui-component-list--item-cross">Limited support.</li>
               </ul>
               <!-- CTA -->
               <a href="/login" class="ui-component-button ui-component-button-big ui-component-button-secondary" role="link" aria-label="#">Sign in with Twitter</a>
@@ -168,11 +134,13 @@
                 <span>/</span>
                 <span>month</span>
               </div>
-              <span><small>Perfect for early-stage startups.</small></span>
+              <span><small>Setiment analysis and 1k rows.</small></span>
               <!-- LIST -->
               <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
-                <li class="ui-component-list--item ui-component-list--item-check">1 domain name.</li>
-                <li class="ui-component-list--item ui-component-list--item-check">HTML components.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Up to 10k rows of data.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Sentiment analysis.</li>
                 <li class="ui-component-list--item ui-component-list--item-check">Priority support.</li>
               </ul>
               <!-- CTA -->
@@ -186,12 +154,14 @@
                 <span>/</span>
                 <span>month</span>
               </div>
-              <span><small>Perfect for early-stage startups.</small></span>
+              <span><small>High volume machine learning.</small></span>
               <!-- LIST -->
               <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
-                <li class="ui-component-list--item ui-component-list--item-check">1 domain name.</li>
-                <li class="ui-component-list--item ui-component-list--item-check">HTML components.</li>
-                <li class="ui-component-list--item ui-component-list--item-check">Priority support.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Unlimited rows of data.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Machine learning algos.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">24hr support response.</li>
               </ul>
               <!-- CTA -->
               <a href="/login" class="ui-component-button ui-component-button-big ui-component-button-secondary" role="link" aria-label="#">Sign in with Twitter</a>

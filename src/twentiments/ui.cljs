@@ -363,12 +363,14 @@
                                             [component-tweets-table state]
                                             [component-tweets state])]
            :else "No tweets found.")
-         [component-help-text]))]))
+         [component-help-text]))
+     [:div#feedback [:a {:href "mailto:chris@mccormickit.com?subject=TweetFeast+feedback"} "Send feedback"]]]))
 
 (defn component-main [state]
   (let [user (auth)]
-    (when user
-      [component-main-interface state user])))
+    (if user
+      [component-main-interface state user]
+      [:div "Whoops, something went wrong."])))
 
 ; *** startup *** ;
 
