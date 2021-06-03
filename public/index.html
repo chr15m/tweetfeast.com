@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="minimal-inputs.css">
     <!-- TITLE -->
-    <title>Curve: Free Landing Page Template from Uisual</title>
+    <title>Download Twitter data as CSV including sentiment analysis with TweetFeast</title>
   </head>
   <body>
     <header role="banner" class="ui-section-header">
@@ -35,18 +35,16 @@
         <div class="ui-section-header__layout ui-layout-flex">
           <!-- LOGO -->
           <a href="#" role="link" aria-label="#" class="ui-section-header--logo">
-            <svg viewBox="0 0 18 18" height="18" width="18" role="img" aria-label="#">
-              <path fill="#353535" d="M0 0h4.5v9a4.5 4.5 0 109 0V6H18v3A9 9 0 110 9V0zm18 4.5V0h-4.5v4.5H18z"/>
-            </svg>
+            <img src="logo.svg"/>
           </a>
           <!-- HAMBURGER -->
           <input type="checkbox" id="ui-section-header--menu-id">
           <label for="ui-section-header--menu-id" class="ui-section-header--menu-icon"></label>
           <!-- MENU -->
           <nav role="navigation" class="ui-section-header--nav ui-layout-flex">
-            <a href="#" role="link" aria-label="#" class="ui-section-header--nav-link">Features</a>
-            <a href="#" role="link" aria-label="#" class="ui-section-header--nav-link">Pricing</a>
-            <a href="#" role="link" aria-label="#" class="ui-section-header--nav-link">About</a>
+            <a href="#features" role="link" aria-label="#" class="ui-section-header--nav-link">Features</a>
+            <a href="#pricing" role="link" aria-label="#" class="ui-section-header--nav-link">Pricing</a>
+            <a href="/login" role="link" aria-label="#" class="ui-section-header--nav-link">Sign In</a>
           </nav>
         </div>
       </div>
@@ -57,31 +55,44 @@
           <div class="ui-section-hero__layout ui-layout-grid ui-layout-grid-2">
             <!-- COPYWRITING -->
             <div>
-              <h1>Design better.</h1>
-              <p class="ui-text-intro">Lorem ipsum dolor sit amet, consectetur lit, enimad eiusmod tempor incididunt ut labore et dolore magna aliqua ullamco laboris nisi.</p>
+              <h1>Download tweet data.</h1>
+              <p class="ui-text-intro">Download bulk tweets as CSV or JSON data. Sentiment analysis included. No API key is required.</p>
               <!-- CTA -->
               <div class="ui-component-cta ui-layout-flex">
                 <a href="/login" role="link" aria-label="#" class="ui-component-button ui-component-button-normal ui-component-button-primary">Sign in with Twitter</a>
-                <p class="ui-text-note"><small>30 days free trial.</small></p>
+                <p class="ui-text-note"><small>7 day free trial.</small></p>
               </div>
             </div>
             <!-- IMAGE -->
-            <img src="https://res.cloudinary.com/uisual/image/upload/assets/devices/ipad.png" loading="lazy" alt="#" class="ui-image-half-right">
+            <img src="search.gif" loading="lazy" alt="Animated gif of the tweet search process." class="ui-image-half-right">
           </div>
         </div>
       </section>
-      <section class="ui-section-customer">
+      <section class="ui-section-faq">
         <div class="ui-layout-container">
-          <div class="ui-section-customer__layout ui-layout-flex">
-            <img src="https://res.cloudinary.com/uisual/image/upload/assets/logos/facebook.svg" alt="#" class="ui-section-customer--logo">
-            <img src="https://res.cloudinary.com/uisual/image/upload/assets/logos/pinterest.svg" alt="#" class="ui-section-customer--logo">
-            <img src="https://res.cloudinary.com/uisual/image/upload/assets/logos/stripe.svg" alt="#" class="ui-section-customer--logo ui-section-customer--logo-str">
-            <img src="https://res.cloudinary.com/uisual/image/upload/assets/logos/dribbble.svg" alt="#" class="ui-section-customer--logo">
-            <img src="https://res.cloudinary.com/uisual/image/upload/assets/logos/behance.svg" alt="#" class="ui-section-customer--logo ui-section-customer--logo-bhn">
+          <div class="ui-section-faq__layout ui-layout-grid ui-layout-grid-2">
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Export tweets to CSV or JSON</h4>
+              <p class="ui-section-faq--answer">Exporting tweets to a format you can use locally has never been easier. Simply type a search to find the tweets you want and then click "Download CSV". The CSV file full of tweets will be downloaded onto your computer or straight into Excel for your analysis.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Tweet data from search</h4>
+              <p class="ui-section-faq--answer">If you can search for it on Twitter you can download it as CSV or JSON. You can search for hash tags or topics. You can search for stock ticker symbols a like AAPL or TSLA. Get a spreadsheet full of tweets with sentiment analysis included. Figure out what the sentiment of the market is.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Export tweets to JSON</h4>
+              <p class="ui-section-faq--answer">Perfect for testing how your app renders tweet data. You don't have to set up API access yourself, you can just download some tweets as JSON and start testing.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Twitter sentiument analysis</h4>
+              <p class="ui-section-faq--answer">It's never been easier to perform sentiment analysis on tweets. Our tool automatically includes sentiment analysis. There's no need to write code or install libraries. Just perform the search you want and download the data. A column with sentiment analysis is included in every download.</p>
+            </div>
           </div>
+          <p class="ui-section-faq--note">Still have questions? <a href="https://twitter.com/mccrmx" role="link" aria-label="Contact us">Contact us</a>.</p>
         </div>
       </section>
       <section class="ui-section-feature">
+        <a name="features"></a>
         <div class="ui-layout-container">
           <div class="ui-section-feature__layout ui-layout-grid ui-layout-grid-3">
             <div class="ui-component-card ui-component-card--feature">
@@ -119,7 +130,7 @@
       </section>
       <section class="ui-section-pricing">
         <div class="ui-layout-container">
-          <h2>Fair Prices</h2>
+          <h2><a name="pricing"></a>Fair Prices</h2>
           <p class="ui-text-intro">Lorem ipsum dolor sit amet.</p>
           <!-- TOGGLE -->
           <input type="radio" name="toggle" id="ui-component-toggle__monthly" checked>
@@ -188,40 +199,17 @@
           </div>
         </div>
       </section>
-      <section class="ui-section-faq">
-        <div class="ui-layout-container">
-          <div class="ui-section-faq__layout ui-layout-grid ui-layout-grid-2">
-            <div>
-              <h4 class="ui-component-list--item ui-section-faq--question">Lorem ipsum dolor?</h4>
-              <p class="ui-section-faq--answer">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-            <div>
-              <h4 class="ui-component-list--item ui-section-faq--question">Lorem ipsum dolor?</h4>
-              <p class="ui-section-faq--answer">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-            <div>
-              <h4 class="ui-component-list--item ui-section-faq--question">Lorem ipsum dolor?</h4>
-              <p class="ui-section-faq--answer">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-            <div>
-              <h4 class="ui-component-list--item ui-section-faq--question">Lorem ipsum dolor?</h4>
-              <p class="ui-section-faq--answer">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-          </div>
-          <p class="ui-section-faq--note">Still have questions? <a href="#" role="link" aria-label="#">Contact us</a>.</p>
-        </div>
-      </section>
       <section class="ui-section-close">
         <div class="ui-layout-container">
           <div class="ui-section-close__layout ui-layout-flex">
             <div>
               <h2>Ready to start?</h2>
-              <p class="ui-text-intro">Lorem ipsum dolor sit amet consectetur.</p>
+              <p class="ui-text-intro">Sign in with Twitter to start downloading tweet data.</p>
             </div>
             <!-- CTA -->
             <div class="ui-component-cta ui-layout-flex">
               <a href="/login" role="link" aria-label="#" class="ui-component-button ui-component-button-normal ui-component-button-primary">Sign in with Twitter</a>
-              <p class="ui-text-note"><small>30 days free trial.</small></p>
+              <p class="ui-text-note"><small>7 day free trial.</small></p>
             </div>
           </div>
         </div>
@@ -231,23 +219,11 @@
       <div class="ui-layout-container">
         <div class="ui-section-footer__layout ui-layout-flex">
           <!-- COPYRIGHT -->
-          <p class="ui-section-footer--copyright ui-text-note"><small>&copy; 0000 Uisual</small></p>
+          <p class="ui-section-footer--copyright ui-text-note"><small>&copy; <a href="https://mccormickit.com/">McCormick IT</a> 2021. Design by <a href="https://uisual.com/">Uisual</a></small></p>
           <!-- MENU -->
-          <a href="#" role="link" aria-label="#">
+          <a href="https://twitter.com/mccrmx" role="link" aria-label="#">
             <svg viewBox="0 0 24 24" height="16" width="16" fill="none" stroke="#AEAEAE" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" role="img" aria-label="#">
               <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
-            </svg>
-          </a>
-          <a href="#" role="link" aria-label="#">
-            <svg viewBox="0 0 24 24" height="16" width="16" fill="none" stroke="#AEAEAE" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" role="img" aria-label="#">
-              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
-              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zM17.5 6.5h.01"/>
-            </svg>
-          </a>
-          <a href="#" role="link" aria-label="#">
-            <svg viewBox="0 0 24 24" height="16" width="16" fill="none" stroke="#AEAEAE" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" role="img" aria-label="#">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/>
             </svg>
           </a>
         </div>

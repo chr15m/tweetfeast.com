@@ -47,10 +47,25 @@ main > *, main > span > * {
   margin-bottom: 2em;
 }
 
+main#app {
+  margin-top: 3em;
+}
+
 section.options {
   max-width: 800px;
   margin-left: auto;
   margin-right: auto;
+}
+
+/*** design mods ***/
+
+.ui-section-hero__layout img {
+  border: .0625rem solid var(--ui-color-border);
+  border-radius: var(--ui-radius-card);
+}
+
+.ui-layout-flex, .ui-layout-grid {
+  align-items: start;
 }
 
 /*** styling table ***/

@@ -336,7 +336,7 @@
 (defn component-main-interface [state user]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
-    [:main
+    [:main#app
      [component-search state]
      [:section.options
       [:input {:name "search-state-check"
