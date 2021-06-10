@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- META -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="uisual" content="Made with Uisual (uisual.com)">
+    <meta name="author" content="#">
+    <meta name="description" content="#">
+    <meta name="referrer" content="unsafe-url">
+    <meta name="robots" content="index, follow">
+    <!-- SPEED -->
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    <link rel="dns-prefetch" href="https://res.cloudinary.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <!-- LINK -->
+    <link rel="me" href="#">
+    <link rel="canonical" href="#">
+    <link rel="icon" type="image/png" href="#" sizes="48x48">
+    <!-- PERFORMANCE -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
+    <link rel="preload" as="style" href="curve-style.css">
+    <link rel="stylesheet" href="curve-style.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="minimal-inputs.css">
+    <!-- TITLE -->
+    <title>Download Twitter data as CSV including sentiment analysis with TweetFeast</title>
+  </head>
+  <body>
+    <header role="banner" class="ui-section-header">
+      <div class="ui-layout-container">
+        <div class="ui-section-header__layout ui-layout-flex">
+          <!-- LOGO -->
+          <a href="#" role="link" aria-label="#" class="ui-section-header--logo">
+            <img src="logo.svg"/>
+          </a>
+          <!-- HAMBURGER -->
+          <input type="checkbox" id="ui-section-header--menu-id">
+          <label for="ui-section-header--menu-id" class="ui-section-header--menu-icon"></label>
+          <!-- MENU -->
+          <nav role="navigation" class="ui-section-header--nav ui-layout-flex">
+            <a href="#features" role="link" aria-label="#" class="ui-section-header--nav-link">Features</a>
+            <a href="#pricing" role="link" aria-label="#" class="ui-section-header--nav-link">Pricing</a>
+            <a href="/login" role="link" aria-label="#" class="ui-section-header--nav-link">Sign In</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <main role="main">
+      <section class="ui-section-hero">
+        <div class="ui-layout-container">
+          <div class="ui-section-hero__layout ui-layout-grid ui-layout-grid-2">
+            <!-- COPYWRITING -->
+            <div>
+              <h1>Download tweet data.</h1>
+              <p class="ui-text-intro">Download bulk tweets as CSV or JSON data. Sentiment analysis included. No API key required.</p>
+              <!-- CTA -->
+              <div class="ui-component-cta ui-layout-flex">
+                <a href="/login" role="link" aria-label="#" class="ui-component-button ui-component-button-normal ui-component-button-primary">Sign in with Twitter</a>
+                <p class="ui-text-note"><small>7 day free trial.</small></p>
+              </div>
+            </div>
+            <!-- IMAGE -->
+            <img src="search.gif" loading="lazy" alt="Animated gif of the tweet search process." class="ui-image-half-right">
+          </div>
+        </div>
+      </section>
+      <section class="ui-section-faq">
+        <div class="ui-layout-container">
+          <h2><a name="features"></a>Features</h2>
+          <div class="ui-section-faq__layout ui-layout-grid ui-layout-grid-2">
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Download tweets</h4>
+              <p class="ui-section-faq--answer">With our simple tool you can download tweets for analysis or backup on your own computer. You can download the tweets in JSON or CSV format and use them however you like.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Twitter sentiment analysis</h4>
+              <p class="ui-section-faq--answer">It's never been easier to perform sentiment analysis on tweets. Just use our tool to search and then click "download" to get the data. A sentiment analysis column is included so there's no need to write code or install libraries.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Export tweets to Excel</h4>
+              <p class="ui-section-faq--answer">Exporting tweets to a CSV file has never been easier. Simply type a search to find the tweets you want and then click "Download CSV". The CSV file full of tweets will be downloaded onto your computer or straight into Excel for your analysis.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Export tweets to JSON</h4>
+              <p class="ui-section-faq--answer">Perfect for testing how your app renders tweet data. You don't have to set up API keys or write server code. Just download some tweets as JSON and start testing.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Twitter data science</h4>
+              <p class="ui-section-faq--answer">Whether you're a data scientist or looking for somebody you will need to get raw tweet data in a format that can be analyzed. Our simple tool is the perfect way to download the twitter data onto your own computer for analysis, or to send to somebody else for analysis.</p>
+            </div>
+            <div>
+              <h4 class="ui-component-list--item ui-section-faq--question">Tweet data from search</h4>
+              <p class="ui-section-faq--answer">If you can search for it on Twitter you can download it as CSV or JSON. You can search for hash tags or topics. You can search for stock ticker symbols a like AAPL or TSLA. Get a spreadsheet full of tweets with sentiment analysis included. Figure out what the sentiment of the market is.</p>
+            </div>
+          </div>
+          <p class="ui-section-faq--note">Still have questions? <a href="https://twitter.com/mccrmx" role="link" aria-label="Contact us">Contact us</a>.</p>
+        </div>
+      </section>
+      <section class="ui-section-pricing">
+        <div class="ui-layout-container">
+          <h2><a name="pricing"></a>Pricing</h2>
+          <p class="ui-text-intro">Our simple pricing is based on volume and features.</p>
+          <!-- TOGGLE -->
+          <input type="radio" name="toggle" id="ui-component-toggle__monthly" checked>
+          <input type="radio" name="toggle" id="ui-component-toggle__yearly">
+          <div class="ui-component-toggle ui-layout-flex">
+            <label for="ui-component-toggle__monthly" class="ui-component-toggle--label">Billed Monthly</label>
+            <label for="ui-component-toggle__yearly" class="ui-component-toggle--label">Billed Yearly</label>
+          </div>
+          <p class="ui-text-note"><small>Save 15% with a yearly plan.</small></p>
+          <!-- PRICING -->
+          <div class="ui-section-pricing__layout ui-layout-grid ui-layout-grid-3">
+            <div class="ui-component-card ui-component-card--pricing">
+              <span><strong>Basic</strong></span>
+              <!-- AMOUNT -->
+              <div class="ui-component-card--pricing-price">
+                <span class="ui-component-card--pricing-amount ui-component-card--pricing-amount-1"></span>
+                <span>/</span>
+                <span>month</span>
+              </div>
+              <span><small>For low data requirements.</small></span>
+              <!-- LIST -->
+              <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Up to 50 rows of data.</li>
+                <li class="ui-component-list--item ui-component-list--item-cross">No sentiment analysis.</li>
+                <li class="ui-component-list--item ui-component-list--item-cross">Limited support.</li>
+              </ul>
+              <!-- CTA -->
+              <a href="/login" class="ui-component-button ui-component-button-big ui-component-button-secondary" role="link" aria-label="#">Sign in with Twitter</a>
+            </div>
+            <div class="ui-component-card ui-component-card--pricing">
+              <span><strong>Standard</strong></span>
+              <!-- AMOUNT -->
+              <div class="ui-component-card--pricing-price">
+                <span class="ui-component-card--pricing-amount ui-component-card--pricing-amount-2"></span>
+                <span>/</span>
+                <span>month</span>
+              </div>
+              <span><small>Setiment analysis and 1k rows.</small></span>
+              <!-- LIST -->
+              <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Up to 10k rows of data.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Sentiment analysis.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Priority support.</li>
+              </ul>
+              <!-- CTA -->
+              <a href="/login" class="ui-component-button ui-component-button-big ui-component-button-primary" role="link" aria-label="#">Sign in with Twitter</a>
+            </div>
+            <div class="ui-component-card ui-component-card--pricing">
+              <span><strong>Special</strong></span>
+              <!-- AMOUNT -->
+              <div class="ui-component-card--pricing-price">
+                <span class="ui-component-card--pricing-amount ui-component-card--pricing-amount-3"></span>
+                <span>/</span>
+                <span>month</span>
+              </div>
+              <span><small>High volume machine learning.</small></span>
+              <!-- LIST -->
+              <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Unlimited rows of data.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Machine learning algos.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">24hr support response.</li>
+              </ul>
+              <!-- CTA -->
+              <a href="/login" class="ui-component-button ui-component-button-big ui-component-button-secondary" role="link" aria-label="#">Sign in with Twitter</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="ui-section-close">
+        <div class="ui-layout-container">
+          <div class="ui-section-close__layout ui-layout-flex">
+            <div>
+              <h2>Ready to start?</h2>
+              <p class="ui-text-intro">Sign in with Twitter to start downloading tweet data.</p>
+            </div>
+            <!-- CTA -->
+            <div class="ui-component-cta ui-layout-flex">
+              <a href="/login" role="link" aria-label="#" class="ui-component-button ui-component-button-normal ui-component-button-primary">Sign in with Twitter</a>
+              <p class="ui-text-note"><small>7 day free trial.</small></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer role="contentinfo" class="ui-section-footer">
+      <div class="ui-layout-container">
+        <div class="ui-section-footer__layout ui-layout-flex">
+          <!-- COPYRIGHT -->
+          <p class="ui-section-footer--copyright ui-text-note"><small>&copy; <a href="https://mccormickit.com/">McCormick IT</a> 2021. Design by <a href="https://uisual.com/">Uisual</a></small></p>
+          <!-- MENU -->
+          <a href="https://twitter.com/mccrmx" role="link" aria-label="#">
+            <svg viewBox="0 0 24 24" height="16" width="16" fill="none" stroke="#AEAEAE" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" role="img" aria-label="#">
+              <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

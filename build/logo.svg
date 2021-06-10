@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 32 32"
+   height="32"
+   width="32"
+   role="img"
+   aria-label="#"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="logo.svg"
+   inkscape:export-filename="/home/chrism/dev/twentiments/public/icon.png"
+   inkscape:export-xdpi="720"
+   inkscape:export-ydpi="720">
+  <metadata
+     id="metadata10">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs8" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     id="namedview6"
+     showgrid="false"
+     inkscape:zoom="7.9999996"
+     inkscape:cx="25.064279"
+     inkscape:cy="13.501041"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2"
+     borderlayer="true"
+     inkscape:showpageshadow="false" />
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:6, 12;stroke-dashoffset:0;stroke-opacity:1"
+     id="rect4140"
+     width="48"
+     height="48"
+     x="-8"
+     y="-8"
+     inkscape:export-filename="/home/chrism/dev/twentiments/icon-padded.png"
+     inkscape:export-xdpi="720"
+     inkscape:export-ydpi="720" />
+  <circle
+     style="opacity:1;fill:#353535;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:30, 30;stroke-dashoffset:0;stroke-opacity:1"
+     id="path4140"
+     cx="13.374353"
+     cy="4.9498982"
+     r="4.0133429" />
+  <circle
+     r="4.0133429"
+     cy="14.383321"
+     cx="25.124758"
+     id="circle4142"
+     style="opacity:1;fill:#353535;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:30, 30;stroke-dashoffset:0;stroke-opacity:1" />
+  <circle
+     style="opacity:1;fill:#353535;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:30, 30;stroke-dashoffset:0;stroke-opacity:1"
+     id="circle4144"
+     cx="25.869503"
+     cy="27.209469"
+     r="4.0133429" />
+  <circle
+     r="4.0133429"
+     cy="27.12672"
+     cx="6.0096622"
+     id="circle4146"
+     style="opacity:1;fill:#353535;fill-opacity:1;stroke:none;stroke-width:10;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:30, 30;stroke-dashoffset:0;stroke-opacity:1" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#353535;stroke-width:1.8724035px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+     d="m 25.745377,27.499089 -20.4390834,0 19.8598374,-13.157142 z"
+     id="path4150"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#353535;stroke-width:1.8724035px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+     d="M 25.24888,14.424696 13.250229,4.9912731 5.2235446,27.250842"
+     id="path4154"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#353535;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+     d="m 55.187502,19.062499 13.812501,0 13.6875,0 -13.4375,9.750001 z"
+     id="path4138"
+     inkscape:connector-curvature="0" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#353535;stroke-width:1px;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1"
+     d="m 61.250003,18.999999 5.4375,-15.5625 9.1875,6.625 1.5,8.875 z"
+     id="path4141"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="ccccc" />
+</svg>

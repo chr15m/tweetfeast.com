@@ -1,0 +1,239 @@
+/* site specific styles go here */
+
+body, html, #app, #loading {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  max-width: 1200px;
+}
+
+#loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 50vh;
+}
+
+fieldset {
+  border: 0px;
+}
+
+fieldset.horizontal {
+  display: flex;
+  flex-direction: row;
+}
+
+.user-profile {
+  text-align: right;
+}
+
+nav {
+  display: flex;
+  justify-content: flex-end;
+}
+
+nav > * {
+  margin: 0px 0.5em;
+}
+
+.downloads {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+main > *, main > span > * {
+  margin-bottom: 2em;
+}
+
+main#app {
+  margin-top: 3em;
+}
+
+section.options {
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#feedback a {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+  padding: 1em;
+  background-color: #eee;
+  border-top-left-radius: 5px;
+  border-top: 2px solid #ccc;
+  border-left: 2px solid #ccc;
+  color: #f56a6a;
+  text-decoration: none;
+}
+
+/*** design mods ***/
+
+.ui-section-hero__layout img {
+  border: .0625rem solid var(--ui-color-border);
+  border-radius: var(--ui-radius-card);
+}
+
+.ui-section-faq h2 {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.ui-section-faq__layout.ui-layout-grid {
+  align-items: start;
+}
+
+.ui-component-card--pricing-amount-1::before {
+  content: "$7"
+}
+
+#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-1::before {
+  content: "$6";
+}
+
+.ui-component-card--pricing-amount-2::before {
+  content: "$19";
+}
+
+#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-2::before {
+  content: "$16";
+}
+
+.ui-component-card--pricing-amount-3::before {
+  content: "$250";
+}
+
+#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-3::before {
+  content: "$212";
+}
+
+/*** styling table ***/
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+}
+
+thead tr {
+  border-bottom: 1px solid #333;
+}
+
+thead th {
+  padding: 0.25em;
+}
+
+table td {
+  text-align: center;
+  padding: 0.25em;
+}
+
+tr:nth-child(even) {
+  background: #f4f4f4;
+}
+
+td {
+  vertical-align: top;
+}
+
+td.column-date-time-iso {
+  text-align: left;
+}
+
+td.column-text {
+  text-align: left;
+  vertical-align: top;
+}
+
+table img.user-image {
+  border-radius: 64px;
+}
+
+.errors {
+  color: #F56A6A;
+}
+
+table#help td, table#help th {
+  text-align: left;
+  padding: 0.25em 1em;
+}
+
+/*** styling tweets ***/
+
+.twitter-tweet {
+  font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 400;
+  margin: 0.5em auto;
+  padding: 1em;
+  border-radius: 0.5em;
+  border: 1px solid #aaa;
+  max-width: 600px;
+}
+
+.twitter-tweet .profile img {
+  border-radius: 64px;
+  margin-right: 0.25em;
+}
+
+.twitter-tweet .profile {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 0.5em;
+}
+
+.twitter-tweet .profile a.name {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.twitter-tweet .profile:hover a.name {
+  text-decoration: underline;
+}
+
+.twitter-tweet .profile a.username {
+  text-decoration: none;
+  color: #aaa;
+}
+
+.twitter-tweet .tweet {
+  margin-bottom: 0.5em;
+}
+
+.twitter-tweet .username {
+  color: 
+}
+
+.twitter-tweet .date {
+  border-bottom: 1px solid #aaa;
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+
+.twitter-tweet .date a {
+  text-decoration: none;
+  color: #aaa;
+}
+
+.twitter-tweet .date a:hover {
+  text-decoration: underline;
+}
+
+.twitter-tweet .emoji {
+  width: 1em;
+}
+
+.twitter-tweet.sentiment-positive {
+  border-color: green;
+  background-color: rgba(0, 255, 0, 0.2);
+}
+
+.twitter-tweet.sentiment-negative {
+  border-color: red;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
