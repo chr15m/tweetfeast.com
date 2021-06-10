@@ -153,8 +153,6 @@
             (js/console.error err)
             (.json res (util/error-to-json (aget err "data"))))))))
 
-(js/console.log "server name" (util/env "NGINX_SERVER_NAME"))
-
 (defn setup-routes [app]
   (web/reset-routes app)
   (.get app "/" serve-homepage)
