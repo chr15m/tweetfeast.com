@@ -30,6 +30,9 @@
     (aset e "set" (fn [sid session callback]
                     (go (<p! (j/call kv :set sid session))
                         (callback))))
+    (aset e "touch" (fn [sid session callback]
+                    (go (<p! (j/call kv :set sid session))
+                        (callback))))
     (aset e "clear" (fn [callback]
                       (go (<p! (js/call kv :clear))
                           (callback))))
@@ -41,7 +44,6 @@
         access-log (.createStream rfs "access.log" #js {:interval "7d" :path logs})
         kv-session (Keyv. database-url #js {:namespace "session"})
         store (create-store kv-session)]
-    (.use app (morgan "combined" #js {:stream access-log}))
     ; set up sessions table
     (.use app (session #js {:secret (env "SECRET" "DEVMODE")
                             :saveUninitialized false
@@ -50,10 +52,12 @@
                                          :httpOnly true
                                          ; 10 years
                                          :maxAge (* 10 365 24 60 60 1000)}
-                            :store store})))
+                            :store store}))
+    ; set up logging
+    (.use app (morgan "combined" #js {:stream access-log})))
   ; configure sane server defaults
   (.set app "trust proxy" "loopback")
-  (.use app (cookies))
+  (.use app (cookies (env "SECRET" "DEVMODE")))
   ; json body parser
   (.use app (.json body-parser #js {:limit "10mb" :extended true :parameterLimit 1000}))
   app)

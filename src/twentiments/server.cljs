@@ -34,19 +34,20 @@
     (.callback tw 
                #js {:oauth_token (aget req "query" "oauth_token")
                     :oauth_verifier (aget req "query" "oauth_verifier")}
-               (aget req.session "tokenSecret")
+               (j/get-in req [:session :tokenSecret])
                (fn [err user]
                  (if err
                    (do
                      (js/console.error err)
                      (.json res (util/error-to-json err)))
                    (do
-                     (js-delete req.session "tokenSecret")
-                     (aset req.session "user" user)
+                     (when-let [session (j/get req "session")]
+                       (js-delete session "tokenSecret"))
+                     (j/assoc-in! req [:session :user] user) 
                      (.redirect res "/")))))))
 
 (defn twitter-login [req res]
-  (if (aget req.session "user")
+  (if (j/get-in req [:session :user])
     (.redirect res "/")
     (let [tw (twitter-sign-in req)]
       (.login tw
@@ -56,11 +57,12 @@
                     (js/console.error err)
                     (.json res (util/error-to-json err)))
                   (do
-                    (aset req.session "tokenSecret" token-secret)
+                    (j/assoc-in! req [:session :tokenSecret] token-secret)
                     (.redirect res url))))))))
 
 (defn twitter-logout [req res]
-  (js-delete req.session "user")
+  (when-let [session (j/get req "session")]
+    (js-delete session "user"))
   (.redirect res "/"))
 
 (defn get-user-profile [tw user-id]
@@ -73,7 +75,7 @@
 
 (defn serve-homepage [req res]
   (let [template (rc/inline "index.html")
-        user (aget req.session "user")]
+        user (j/get-in req [:session :user])]
     (if user
       (go
         (let [user-id (aget user "userId")
@@ -105,7 +107,7 @@
       (.send res template))))
 
 (defn search [req res]
-  (let [user (aget req.session "user")
+  (let [user (j/get-in req [:session :user])
         tw (twitter user)]
     (js/console.log (aget req.body "q"))
     ; https://developer.twitter.com/en/docs/twitter-api/tweets/search/quick-start/recent-search
@@ -131,7 +133,7 @@
                 (.json res (util/error-to-json (aget err "data"))))))))
 
 (defn search-old [req res]
-  (let [user (aget req.session "user")
+  (let [user (j/get-in req [:session :user])
         tw (twitter user)]
     ; https://developer.twitter.com/en/docs/twitter-api/premium/search-api/overview
     (-> (.get (aget tw "v1") "tweets/search/fullarchive/devfullarchive.json"
@@ -150,6 +152,8 @@
           (fn [err]
             (js/console.error err)
             (.json res (util/error-to-json (aget err "data"))))))))
+
+(js/console.log "server name" (util/env "NGINX_SERVER_NAME"))
 
 (defn setup-routes [app]
   (web/reset-routes app)
