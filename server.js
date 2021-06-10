@@ -7461,361 +7461,364 @@ function $cljs$core$async$put_BANG_$cljs$0core$0IFn$0_invoke$0arity$02$$($port$j
   });
   return $c$jscomp$203$$;
 }
-;var $clast$web$database_url$$ = $clast$util$env$cljs$0core$0IFn$0_invoke$0arity$0variadic$$("DATABASE", $cljs$core$prim_seq$cljs$0core$0IFn$0_invoke$0arity$02$$(["sqlite://./database.sqlite"]));
+;var $clast$web$$ = {}, $clast$web$database_url$$ = $clast$util$env$cljs$0core$0IFn$0_invoke$0arity$0variadic$$("DATABASE", $cljs$core$prim_seq$cljs$0core$0IFn$0_invoke$0arity$02$$(["sqlite://./database.sqlite"]));
 function $clast$web$create_store$$($kv$$) {
   var $e$jscomp$184$$ = new $shadow$js$shim$module$0express_session$$.Store;
   $e$jscomp$184$$.destroy = function($sid$$, $callback$jscomp$59$$) {
-    var $c__9787__auto__$jscomp$5$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
+    var $c__7523__auto__$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
     $cljs$core$async$impl$dispatch$run$$(function() {
-      var $f__9788__auto__$jscomp$21$$ = function() {
-        function $switch__9190__auto__$jscomp$23$$($state_11933$$) {
-          var $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ = $state_11933$$[1];
-          if (1 === $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$) {
-            return $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ = $kv$$.destroy.call($kv$$, $sid$$), $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ = $cljs$core$async$interop$p__GT_c$$($inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_11933$$, 2, $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$);
+      var $f__7524__auto__$$ = function() {
+        function $switch__7484__auto__$$($state_7614$$) {
+          var $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ = $state_7614$$[1];
+          if (1 === $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$) {
+            return $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ = $kv$$.destroy.call($kv$$, $sid$$), $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ = $cljs$core$async$interop$p__GT_c$$($inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7614$$, 2, $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$);
           }
-          if (2 === $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$) {
-            $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ = $state_11933$$[2];
-            var $inst_11921_inst_11931$$ = $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ instanceof $cljs$core$ExceptionInfo$$, $inst_11923_inst_11924$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$));
-            $inst_11923_inst_11924$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_11923_inst_11924$$, $cljs$cst$keyword$promise_DASH_error$$);
-            $state_11933$$[7] = $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$;
-            $state_11933$$[1] = $cljs$core$truth_$$($inst_11921_inst_11931$$ && $inst_11923_inst_11924$$) ? 3 : 4;
+          if (2 === $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$) {
+            $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ = $state_7614$$[2];
+            var $inst_7602_inst_7612$$ = $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7604_inst_7605$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$));
+            $inst_7604_inst_7605$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7604_inst_7605$$, $cljs$cst$keyword$promise_DASH_error$$);
+            $state_7614$$[7] = $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$;
+            $state_7614$$[1] = $cljs$core$truth_$$($inst_7602_inst_7612$$ && $inst_7604_inst_7605$$) ? 3 : 4;
             return $cljs$cst$keyword$recur$$;
           }
-          if (3 === $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$) {
-            throw $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ = $state_11933$$[7], $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$;
+          if (3 === $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$) {
+            throw $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ = $state_7614$$[7], $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$;
           }
-          return 4 === $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ ? ($inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ = $state_11933$$[7], $state_11933$$[2] = $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$, $state_11933$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ ? ($inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$ = 
-          $state_11933$$[2], $inst_11921_inst_11931$$ = $callback$jscomp$59$$.$cljs$core$IFn$_invoke$arity$0$ ? $callback$jscomp$59$$.$cljs$core$IFn$_invoke$arity$0$() : $callback$jscomp$59$$.call(null), $state_11933$$[8] = $inst_11913_inst_11914_inst_11916_inst_11916__$1_inst_11930_state_val_11934$$, $cljs$core$async$impl$ioc_helpers$return_chan$$($state_11933$$, $inst_11921_inst_11931$$)) : null;
+          return 4 === $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ ? ($inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ = $state_7614$$[7], $state_7614$$[2] = $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$, $state_7614$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ ? ($inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$ = $state_7614$$[2], 
+          $inst_7602_inst_7612$$ = $callback$jscomp$59$$.$cljs$core$IFn$_invoke$arity$0$ ? $callback$jscomp$59$$.$cljs$core$IFn$_invoke$arity$0$() : $callback$jscomp$59$$.call(null), $state_7614$$[8] = $inst_7598_inst_7599_inst_7601_inst_7601__$1_inst_7611_state_val_7615$$, $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7614$$, $inst_7602_inst_7612$$)) : null;
         }
         return function() {
-          function $clast$web$create_store_$_state_machine__9191__auto____1$$($state_11933$jscomp$1$$) {
+          function $clast$web$create_store_$_state_machine__7485__auto____1$$($state_7614$jscomp$1$$) {
             for (;;) {
               a: {
                 try {
                   for (;;) {
-                    var $result__9193__auto__$jscomp$inline_820$$ = $switch__9190__auto__$jscomp$23$$($state_11933$jscomp$1$$);
-                    if (!$cljs$core$keyword_identical_QMARK_$$($result__9193__auto__$jscomp$inline_820$$, $cljs$cst$keyword$recur$$)) {
-                      var $ex__9194__auto__$jscomp$inline_821_ret_value__9192__auto__$jscomp$21$$ = $result__9193__auto__$jscomp$inline_820$$;
+                    var $result__7487__auto__$jscomp$inline_820$$ = $switch__7484__auto__$$($state_7614$jscomp$1$$);
+                    if (!$cljs$core$keyword_identical_QMARK_$$($result__7487__auto__$jscomp$inline_820$$, $cljs$cst$keyword$recur$$)) {
+                      var $ex__7488__auto__$jscomp$inline_821_ret_value__7486__auto__$$ = $result__7487__auto__$jscomp$inline_820$$;
                       break a;
                     }
                   }
-                } catch ($e11962$jscomp$inline_822$$) {
-                  $ex__9194__auto__$jscomp$inline_821_ret_value__9192__auto__$jscomp$21$$ = $e11962$jscomp$inline_822$$;
-                  $state_11933$jscomp$1$$[2] = $ex__9194__auto__$jscomp$inline_821_ret_value__9192__auto__$jscomp$21$$;
-                  if ($cljs$core$seq$$($state_11933$jscomp$1$$[4])) {
-                    $state_11933$jscomp$1$$[1] = $cljs$core$first$$($state_11933$jscomp$1$$[4]);
+                } catch ($e7623$jscomp$inline_822$$) {
+                  $ex__7488__auto__$jscomp$inline_821_ret_value__7486__auto__$$ = $e7623$jscomp$inline_822$$;
+                  $state_7614$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_821_ret_value__7486__auto__$$;
+                  if ($cljs$core$seq$$($state_7614$jscomp$1$$[4])) {
+                    $state_7614$jscomp$1$$[1] = $cljs$core$first$$($state_7614$jscomp$1$$[4]);
                   } else {
-                    throw $ex__9194__auto__$jscomp$inline_821_ret_value__9192__auto__$jscomp$21$$;
+                    throw $ex__7488__auto__$jscomp$inline_821_ret_value__7486__auto__$$;
                   }
-                  $ex__9194__auto__$jscomp$inline_821_ret_value__9192__auto__$jscomp$21$$ = $cljs$cst$keyword$recur$$;
+                  $ex__7488__auto__$jscomp$inline_821_ret_value__7486__auto__$$ = $cljs$cst$keyword$recur$$;
                 }
               }
-              if (!$cljs$core$keyword_identical_QMARK_$$($ex__9194__auto__$jscomp$inline_821_ret_value__9192__auto__$jscomp$21$$, $cljs$cst$keyword$recur$$)) {
-                return $ex__9194__auto__$jscomp$inline_821_ret_value__9192__auto__$jscomp$21$$;
+              if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_821_ret_value__7486__auto__$$, $cljs$cst$keyword$recur$$)) {
+                return $ex__7488__auto__$jscomp$inline_821_ret_value__7486__auto__$$;
               }
             }
           }
-          function $clast$web$create_store_$_state_machine__9191__auto____0$$() {
-            var $statearr_11957$$ = [null, null, null, null, null, null, null, null, null];
-            $statearr_11957$$[0] = $clast$web$create_store_$_state_machine__9191__auto__$$;
-            $statearr_11957$$[1] = 1;
-            return $statearr_11957$$;
+          function $clast$web$create_store_$_state_machine__7485__auto____0$$() {
+            var $statearr_7622$$ = [null, null, null, null, null, null, null, null, null];
+            $statearr_7622$$[0] = $clast$web$create_store_$_state_machine__7485__auto__$$;
+            $statearr_7622$$[1] = 1;
+            return $statearr_7622$$;
           }
-          var $clast$web$create_store_$_state_machine__9191__auto__$$ = null;
-          $clast$web$create_store_$_state_machine__9191__auto__$$ = function($state_11933$jscomp$2$$) {
+          var $clast$web$create_store_$_state_machine__7485__auto__$$ = null;
+          $clast$web$create_store_$_state_machine__7485__auto__$$ = function($state_7614$jscomp$2$$) {
             switch(arguments.length) {
               case 0:
-                return $clast$web$create_store_$_state_machine__9191__auto____0$$.call(this);
+                return $clast$web$create_store_$_state_machine__7485__auto____0$$.call(this);
               case 1:
-                return $clast$web$create_store_$_state_machine__9191__auto____1$$.call(this, $state_11933$jscomp$2$$);
+                return $clast$web$create_store_$_state_machine__7485__auto____1$$.call(this, $state_7614$jscomp$2$$);
             }
             throw Error("Invalid arity: " + arguments.length);
           };
-          $clast$web$create_store_$_state_machine__9191__auto__$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__9191__auto____0$$;
-          $clast$web$create_store_$_state_machine__9191__auto__$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__9191__auto____1$$;
-          return $clast$web$create_store_$_state_machine__9191__auto__$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__7485__auto____0$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__7485__auto____1$$;
+          return $clast$web$create_store_$_state_machine__7485__auto__$$;
         }();
-      }(), $state__9789__auto__$jscomp$21$$ = function() {
-        var $statearr_11970$$ = $f__9788__auto__$jscomp$21$$();
-        $statearr_11970$$[6] = $c__9787__auto__$jscomp$5$$;
-        return $statearr_11970$$;
+      }(), $state__7525__auto__$$ = function() {
+        var $statearr_7626$$ = $f__7524__auto__$$();
+        $statearr_7626$$[6] = $c__7523__auto__$$;
+        return $statearr_7626$$;
       }();
-      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__9789__auto__$jscomp$21$$);
+      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$$);
     });
-    return $c__9787__auto__$jscomp$5$$;
+    return $c__7523__auto__$$;
   };
   $e$jscomp$184$$.get = function($sid$jscomp$1$$, $callback$jscomp$60$$) {
-    var $c__9787__auto__$jscomp$6$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
+    var $c__7523__auto__$jscomp$1$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
     $cljs$core$async$impl$dispatch$run$$(function() {
-      var $f__9788__auto__$jscomp$22$$ = function() {
-        function $switch__9190__auto__$jscomp$24$$($state_11999$$) {
-          var $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = $state_11999$$[1];
-          if (1 === $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$) {
-            return $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = $kv$$.get.call($kv$$, $sid$jscomp$1$$), $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = $cljs$core$async$interop$p__GT_c$$($inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_11999$$, 2, $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$);
+      var $f__7524__auto__$jscomp$1$$ = function() {
+        function $switch__7484__auto__$jscomp$1$$($state_7645$$) {
+          var $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = $state_7645$$[1];
+          if (1 === $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$) {
+            return $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = $kv$$.get.call($kv$$, $sid$jscomp$1$$), $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = $cljs$core$async$interop$p__GT_c$$($inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7645$$, 2, $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$);
           }
-          if (2 === $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$) {
-            $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = $state_11999$$[2];
-            var $inst_11985$$ = $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ instanceof $cljs$core$ExceptionInfo$$, $inst_11987_inst_11988$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$));
-            $inst_11987_inst_11988$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_11987_inst_11988$$, $cljs$cst$keyword$promise_DASH_error$$);
-            $state_11999$$[7] = $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$;
-            $state_11999$$[1] = $cljs$core$truth_$$($inst_11985$$ && $inst_11987_inst_11988$$) ? 3 : 4;
+          if (2 === $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$) {
+            $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = $state_7645$$[2];
+            var $inst_7633$$ = $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7635_inst_7636$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$));
+            $inst_7635_inst_7636$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7635_inst_7636$$, $cljs$cst$keyword$promise_DASH_error$$);
+            $state_7645$$[7] = $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$;
+            $state_7645$$[1] = $cljs$core$truth_$$($inst_7633$$ && $inst_7635_inst_7636$$) ? 3 : 4;
             return $cljs$cst$keyword$recur$$;
           }
-          if (3 === $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$) {
-            throw $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = $state_11999$$[7], $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$;
+          if (3 === $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$) {
+            throw $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = $state_7645$$[7], $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$;
           }
-          return 4 === $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ ? ($inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = $state_11999$$[7], $state_11999$$[2] = $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$, $state_11999$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ ? ($inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = 
-          $state_11999$$[2], $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$ = $callback$jscomp$60$$.$cljs$core$IFn$_invoke$arity$2$ ? $callback$jscomp$60$$.$cljs$core$IFn$_invoke$arity$2$(null, $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$) : $callback$jscomp$60$$.call(null, null, $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$), $cljs$core$async$impl$ioc_helpers$return_chan$$($state_11999$$, 
-          $inst_11981_inst_11982_inst_11984_inst_11984__$1_inst_11994_inst_11995_state_val_12000$$)) : null;
+          return 4 === $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ ? ($inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = $state_7645$$[7], $state_7645$$[2] = $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$, $state_7645$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ ? ($inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = 
+          $state_7645$$[2], $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$ = $callback$jscomp$60$$.$cljs$core$IFn$_invoke$arity$2$ ? $callback$jscomp$60$$.$cljs$core$IFn$_invoke$arity$2$(null, $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$) : $callback$jscomp$60$$.call(null, null, $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$), $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7645$$, $inst_7629_inst_7630_inst_7632_inst_7632__$1_inst_7642_inst_7643_state_val_7646$$)) : 
+          null;
         }
         return function() {
-          function $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$1$$($state_11999$jscomp$1$$) {
+          function $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$1$$($state_7645$jscomp$1$$) {
             for (;;) {
               a: {
                 try {
                   for (;;) {
-                    var $result__9193__auto__$jscomp$inline_826$$ = $switch__9190__auto__$jscomp$24$$($state_11999$jscomp$1$$);
-                    if (!$cljs$core$keyword_identical_QMARK_$$($result__9193__auto__$jscomp$inline_826$$, $cljs$cst$keyword$recur$$)) {
-                      var $ex__9194__auto__$jscomp$inline_827_ret_value__9192__auto__$jscomp$22$$ = $result__9193__auto__$jscomp$inline_826$$;
+                    var $result__7487__auto__$jscomp$inline_826$$ = $switch__7484__auto__$jscomp$1$$($state_7645$jscomp$1$$);
+                    if (!$cljs$core$keyword_identical_QMARK_$$($result__7487__auto__$jscomp$inline_826$$, $cljs$cst$keyword$recur$$)) {
+                      var $ex__7488__auto__$jscomp$inline_827_ret_value__7486__auto__$jscomp$1$$ = $result__7487__auto__$jscomp$inline_826$$;
                       break a;
                     }
                   }
-                } catch ($e12030$jscomp$inline_828$$) {
-                  $ex__9194__auto__$jscomp$inline_827_ret_value__9192__auto__$jscomp$22$$ = $e12030$jscomp$inline_828$$;
-                  $state_11999$jscomp$1$$[2] = $ex__9194__auto__$jscomp$inline_827_ret_value__9192__auto__$jscomp$22$$;
-                  if ($cljs$core$seq$$($state_11999$jscomp$1$$[4])) {
-                    $state_11999$jscomp$1$$[1] = $cljs$core$first$$($state_11999$jscomp$1$$[4]);
+                } catch ($e7653$jscomp$inline_828$$) {
+                  $ex__7488__auto__$jscomp$inline_827_ret_value__7486__auto__$jscomp$1$$ = $e7653$jscomp$inline_828$$;
+                  $state_7645$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_827_ret_value__7486__auto__$jscomp$1$$;
+                  if ($cljs$core$seq$$($state_7645$jscomp$1$$[4])) {
+                    $state_7645$jscomp$1$$[1] = $cljs$core$first$$($state_7645$jscomp$1$$[4]);
                   } else {
-                    throw $ex__9194__auto__$jscomp$inline_827_ret_value__9192__auto__$jscomp$22$$;
+                    throw $ex__7488__auto__$jscomp$inline_827_ret_value__7486__auto__$jscomp$1$$;
                   }
-                  $ex__9194__auto__$jscomp$inline_827_ret_value__9192__auto__$jscomp$22$$ = $cljs$cst$keyword$recur$$;
+                  $ex__7488__auto__$jscomp$inline_827_ret_value__7486__auto__$jscomp$1$$ = $cljs$cst$keyword$recur$$;
                 }
               }
-              if (!$cljs$core$keyword_identical_QMARK_$$($ex__9194__auto__$jscomp$inline_827_ret_value__9192__auto__$jscomp$22$$, $cljs$cst$keyword$recur$$)) {
-                return $ex__9194__auto__$jscomp$inline_827_ret_value__9192__auto__$jscomp$22$$;
+              if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_827_ret_value__7486__auto__$jscomp$1$$, $cljs$cst$keyword$recur$$)) {
+                return $ex__7488__auto__$jscomp$inline_827_ret_value__7486__auto__$jscomp$1$$;
               }
             }
           }
-          function $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$1$$() {
-            var $statearr_12027$$ = [null, null, null, null, null, null, null, null];
-            $statearr_12027$$[0] = $clast$web$create_store_$_state_machine__9191__auto__$jscomp$1$$;
-            $statearr_12027$$[1] = 1;
-            return $statearr_12027$$;
+          function $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$1$$() {
+            var $statearr_7652$$ = [null, null, null, null, null, null, null, null];
+            $statearr_7652$$[0] = $clast$web$create_store_$_state_machine__7485__auto__$jscomp$1$$;
+            $statearr_7652$$[1] = 1;
+            return $statearr_7652$$;
           }
-          var $clast$web$create_store_$_state_machine__9191__auto__$jscomp$1$$ = null;
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$1$$ = function($state_11999$jscomp$2$$) {
+          var $clast$web$create_store_$_state_machine__7485__auto__$jscomp$1$$ = null;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$1$$ = function($state_7645$jscomp$2$$) {
             switch(arguments.length) {
               case 0:
-                return $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$1$$.call(this);
+                return $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$1$$.call(this);
               case 1:
-                return $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$1$$.call(this, $state_11999$jscomp$2$$);
+                return $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$1$$.call(this, $state_7645$jscomp$2$$);
             }
             throw Error("Invalid arity: " + arguments.length);
           };
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$1$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$1$$;
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$1$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$1$$;
-          return $clast$web$create_store_$_state_machine__9191__auto__$jscomp$1$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$1$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$1$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$1$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$1$$;
+          return $clast$web$create_store_$_state_machine__7485__auto__$jscomp$1$$;
         }();
-      }(), $state__9789__auto__$jscomp$22$$ = function() {
-        var $statearr_12036$$ = $f__9788__auto__$jscomp$22$$();
-        $statearr_12036$$[6] = $c__9787__auto__$jscomp$6$$;
-        return $statearr_12036$$;
+      }(), $state__7525__auto__$jscomp$1$$ = function() {
+        var $statearr_7656$$ = $f__7524__auto__$jscomp$1$$();
+        $statearr_7656$$[6] = $c__7523__auto__$jscomp$1$$;
+        return $statearr_7656$$;
       }();
-      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__9789__auto__$jscomp$22$$);
+      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$jscomp$1$$);
     });
-    return $c__9787__auto__$jscomp$6$$;
+    return $c__7523__auto__$jscomp$1$$;
   };
   $e$jscomp$184$$.set = function($sid$jscomp$2$$, $session$$, $callback$jscomp$61$$) {
-    var $c__9787__auto__$jscomp$7$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
+    var $c__7523__auto__$jscomp$2$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
     $cljs$core$async$impl$dispatch$run$$(function() {
-      var $f__9788__auto__$jscomp$23$$ = function() {
-        function $switch__9190__auto__$jscomp$25$$($state_12064$$) {
-          var $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ = $state_12064$$[1];
-          if (1 === $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$) {
-            return $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ = $kv$$.set.call($kv$$, $sid$jscomp$2$$, $session$$), $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ = $cljs$core$async$interop$p__GT_c$$($inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_12064$$, 2, $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$);
+      var $f__7524__auto__$jscomp$2$$ = function() {
+        function $switch__7484__auto__$jscomp$2$$($state_7675$$) {
+          var $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ = $state_7675$$[1];
+          if (1 === $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$) {
+            return $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ = $kv$$.set.call($kv$$, $sid$jscomp$2$$, $session$$), $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ = $cljs$core$async$interop$p__GT_c$$($inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7675$$, 2, $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$);
           }
-          if (2 === $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$) {
-            $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ = $state_12064$$[2];
-            var $inst_12049_inst_12060$$ = $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ instanceof $cljs$core$ExceptionInfo$$, $inst_12051_inst_12053$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$));
-            $inst_12051_inst_12053$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_12051_inst_12053$$, $cljs$cst$keyword$promise_DASH_error$$);
-            $state_12064$$[7] = $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$;
-            $state_12064$$[1] = $cljs$core$truth_$$($inst_12049_inst_12060$$ && $inst_12051_inst_12053$$) ? 3 : 4;
+          if (2 === $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$) {
+            $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ = $state_7675$$[2];
+            var $inst_7663_inst_7673$$ = $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7665_inst_7666$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$));
+            $inst_7665_inst_7666$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7665_inst_7666$$, $cljs$cst$keyword$promise_DASH_error$$);
+            $state_7675$$[7] = $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$;
+            $state_7675$$[1] = $cljs$core$truth_$$($inst_7663_inst_7673$$ && $inst_7665_inst_7666$$) ? 3 : 4;
             return $cljs$cst$keyword$recur$$;
           }
-          if (3 === $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$) {
-            throw $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ = $state_12064$$[7], $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$;
+          if (3 === $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$) {
+            throw $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ = $state_7675$$[7], $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$;
           }
-          return 4 === $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ ? ($inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ = $state_12064$$[7], $state_12064$$[2] = $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$, $state_12064$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ ? ($inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$ = 
-          $state_12064$$[2], $inst_12049_inst_12060$$ = $callback$jscomp$61$$.$cljs$core$IFn$_invoke$arity$0$ ? $callback$jscomp$61$$.$cljs$core$IFn$_invoke$arity$0$() : $callback$jscomp$61$$.call(null), $state_12064$$[8] = $inst_12044_inst_12045_inst_12047_inst_12047__$1_inst_12059_state_val_12065$$, $cljs$core$async$impl$ioc_helpers$return_chan$$($state_12064$$, $inst_12049_inst_12060$$)) : null;
+          return 4 === $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ ? ($inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ = $state_7675$$[7], $state_7675$$[2] = $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$, $state_7675$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ ? ($inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$ = $state_7675$$[2], 
+          $inst_7663_inst_7673$$ = $callback$jscomp$61$$.$cljs$core$IFn$_invoke$arity$0$ ? $callback$jscomp$61$$.$cljs$core$IFn$_invoke$arity$0$() : $callback$jscomp$61$$.call(null), $state_7675$$[8] = $inst_7659_inst_7660_inst_7662_inst_7662__$1_inst_7672_state_val_7676$$, $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7675$$, $inst_7663_inst_7673$$)) : null;
         }
         return function() {
-          function $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$2$$($state_12064$jscomp$1$$) {
+          function $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$2$$($state_7675$jscomp$1$$) {
             for (;;) {
               a: {
                 try {
                   for (;;) {
-                    var $result__9193__auto__$jscomp$inline_833$$ = $switch__9190__auto__$jscomp$25$$($state_12064$jscomp$1$$);
-                    if (!$cljs$core$keyword_identical_QMARK_$$($result__9193__auto__$jscomp$inline_833$$, $cljs$cst$keyword$recur$$)) {
-                      var $ex__9194__auto__$jscomp$inline_834_ret_value__9192__auto__$jscomp$23$$ = $result__9193__auto__$jscomp$inline_833$$;
+                    var $result__7487__auto__$jscomp$inline_833$$ = $switch__7484__auto__$jscomp$2$$($state_7675$jscomp$1$$);
+                    if (!$cljs$core$keyword_identical_QMARK_$$($result__7487__auto__$jscomp$inline_833$$, $cljs$cst$keyword$recur$$)) {
+                      var $ex__7488__auto__$jscomp$inline_834_ret_value__7486__auto__$jscomp$2$$ = $result__7487__auto__$jscomp$inline_833$$;
                       break a;
                     }
                   }
-                } catch ($e12096$jscomp$inline_835$$) {
-                  $ex__9194__auto__$jscomp$inline_834_ret_value__9192__auto__$jscomp$23$$ = $e12096$jscomp$inline_835$$;
-                  $state_12064$jscomp$1$$[2] = $ex__9194__auto__$jscomp$inline_834_ret_value__9192__auto__$jscomp$23$$;
-                  if ($cljs$core$seq$$($state_12064$jscomp$1$$[4])) {
-                    $state_12064$jscomp$1$$[1] = $cljs$core$first$$($state_12064$jscomp$1$$[4]);
+                } catch ($e7684$jscomp$inline_835$$) {
+                  $ex__7488__auto__$jscomp$inline_834_ret_value__7486__auto__$jscomp$2$$ = $e7684$jscomp$inline_835$$;
+                  $state_7675$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_834_ret_value__7486__auto__$jscomp$2$$;
+                  if ($cljs$core$seq$$($state_7675$jscomp$1$$[4])) {
+                    $state_7675$jscomp$1$$[1] = $cljs$core$first$$($state_7675$jscomp$1$$[4]);
                   } else {
-                    throw $ex__9194__auto__$jscomp$inline_834_ret_value__9192__auto__$jscomp$23$$;
+                    throw $ex__7488__auto__$jscomp$inline_834_ret_value__7486__auto__$jscomp$2$$;
                   }
-                  $ex__9194__auto__$jscomp$inline_834_ret_value__9192__auto__$jscomp$23$$ = $cljs$cst$keyword$recur$$;
+                  $ex__7488__auto__$jscomp$inline_834_ret_value__7486__auto__$jscomp$2$$ = $cljs$cst$keyword$recur$$;
                 }
               }
-              if (!$cljs$core$keyword_identical_QMARK_$$($ex__9194__auto__$jscomp$inline_834_ret_value__9192__auto__$jscomp$23$$, $cljs$cst$keyword$recur$$)) {
-                return $ex__9194__auto__$jscomp$inline_834_ret_value__9192__auto__$jscomp$23$$;
+              if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_834_ret_value__7486__auto__$jscomp$2$$, $cljs$cst$keyword$recur$$)) {
+                return $ex__7488__auto__$jscomp$inline_834_ret_value__7486__auto__$jscomp$2$$;
               }
             }
           }
-          function $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$2$$() {
-            var $statearr_12095$$ = [null, null, null, null, null, null, null, null, null];
-            $statearr_12095$$[0] = $clast$web$create_store_$_state_machine__9191__auto__$jscomp$2$$;
-            $statearr_12095$$[1] = 1;
-            return $statearr_12095$$;
+          function $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$2$$() {
+            var $statearr_7683$$ = [null, null, null, null, null, null, null, null, null];
+            $statearr_7683$$[0] = $clast$web$create_store_$_state_machine__7485__auto__$jscomp$2$$;
+            $statearr_7683$$[1] = 1;
+            return $statearr_7683$$;
           }
-          var $clast$web$create_store_$_state_machine__9191__auto__$jscomp$2$$ = null;
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$2$$ = function($state_12064$jscomp$2$$) {
+          var $clast$web$create_store_$_state_machine__7485__auto__$jscomp$2$$ = null;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$2$$ = function($state_7675$jscomp$2$$) {
             switch(arguments.length) {
               case 0:
-                return $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$2$$.call(this);
+                return $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$2$$.call(this);
               case 1:
-                return $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$2$$.call(this, $state_12064$jscomp$2$$);
+                return $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$2$$.call(this, $state_7675$jscomp$2$$);
             }
             throw Error("Invalid arity: " + arguments.length);
           };
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$2$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$2$$;
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$2$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$2$$;
-          return $clast$web$create_store_$_state_machine__9191__auto__$jscomp$2$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$2$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$2$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$2$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$2$$;
+          return $clast$web$create_store_$_state_machine__7485__auto__$jscomp$2$$;
         }();
-      }(), $state__9789__auto__$jscomp$23$$ = function() {
-        var $statearr_12101$$ = $f__9788__auto__$jscomp$23$$();
-        $statearr_12101$$[6] = $c__9787__auto__$jscomp$7$$;
-        return $statearr_12101$$;
+      }(), $state__7525__auto__$jscomp$2$$ = function() {
+        var $statearr_7687$$ = $f__7524__auto__$jscomp$2$$();
+        $statearr_7687$$[6] = $c__7523__auto__$jscomp$2$$;
+        return $statearr_7687$$;
       }();
-      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__9789__auto__$jscomp$23$$);
+      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$jscomp$2$$);
     });
-    return $c__9787__auto__$jscomp$7$$;
+    return $c__7523__auto__$jscomp$2$$;
   };
   $e$jscomp$184$$.clear = function($callback$jscomp$62$$) {
-    var $c__9787__auto__$jscomp$8$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
+    var $c__7523__auto__$jscomp$3$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
     $cljs$core$async$impl$dispatch$run$$(function() {
-      var $f__9788__auto__$jscomp$24$$ = function() {
-        function $switch__9190__auto__$jscomp$26$$($state_12123$$) {
-          var $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ = $state_12123$$[1];
-          if (1 === $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$) {
-            return $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ = call($kv$$, $cljs$cst$keyword$clear$$), $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ = $cljs$core$async$interop$p__GT_c$$($inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_12123$$, 2, $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$);
+      var $f__7524__auto__$jscomp$3$$ = function() {
+        function $switch__7484__auto__$jscomp$3$$($state_7704$$) {
+          var $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ = $state_7704$$[1];
+          if (1 === $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$) {
+            return $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ = call($kv$$, $cljs$cst$keyword$clear$$), $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ = $cljs$core$async$interop$p__GT_c$$($inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7704$$, 2, $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$);
           }
-          if (2 === $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$) {
-            $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ = $state_12123$$[2];
-            var $inst_12109_inst_12120$$ = $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ instanceof $cljs$core$ExceptionInfo$$, $inst_12111_inst_12112$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$));
-            $inst_12111_inst_12112$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_12111_inst_12112$$, $cljs$cst$keyword$promise_DASH_error$$);
-            $state_12123$$[7] = $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$;
-            $state_12123$$[1] = $cljs$core$truth_$$($inst_12109_inst_12120$$ && $inst_12111_inst_12112$$) ? 3 : 4;
+          if (2 === $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$) {
+            $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ = $state_7704$$[2];
+            var $inst_7692_inst_7702$$ = $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7694_inst_7695$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$));
+            $inst_7694_inst_7695$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7694_inst_7695$$, $cljs$cst$keyword$promise_DASH_error$$);
+            $state_7704$$[7] = $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$;
+            $state_7704$$[1] = $cljs$core$truth_$$($inst_7692_inst_7702$$ && $inst_7694_inst_7695$$) ? 3 : 4;
             return $cljs$cst$keyword$recur$$;
           }
-          if (3 === $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$) {
-            throw $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ = $state_12123$$[7], $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$;
+          if (3 === $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$) {
+            throw $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ = $state_7704$$[7], $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$;
           }
-          return 4 === $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ ? ($inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ = $state_12123$$[7], $state_12123$$[2] = $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$, $state_12123$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ ? ($inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$ = 
-          $state_12123$$[2], $inst_12109_inst_12120$$ = $callback$jscomp$62$$.$cljs$core$IFn$_invoke$arity$0$ ? $callback$jscomp$62$$.$cljs$core$IFn$_invoke$arity$0$() : $callback$jscomp$62$$.call(null), $state_12123$$[8] = $inst_12105_inst_12106_inst_12108_inst_12108__$1_inst_12119_state_val_12124$$, $cljs$core$async$impl$ioc_helpers$return_chan$$($state_12123$$, $inst_12109_inst_12120$$)) : null;
+          return 4 === $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ ? ($inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ = $state_7704$$[7], $state_7704$$[2] = $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$, $state_7704$$[1] = 5, $cljs$cst$keyword$recur$$) : 5 === $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ ? ($inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$ = $state_7704$$[2], 
+          $inst_7692_inst_7702$$ = $callback$jscomp$62$$.$cljs$core$IFn$_invoke$arity$0$ ? $callback$jscomp$62$$.$cljs$core$IFn$_invoke$arity$0$() : $callback$jscomp$62$$.call(null), $state_7704$$[8] = $inst_7688_inst_7689_inst_7691_inst_7691__$1_inst_7701_state_val_7705$$, $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7704$$, $inst_7692_inst_7702$$)) : null;
         }
         return function() {
-          function $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$3$$($state_12123$jscomp$1$$) {
+          function $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$3$$($state_7704$jscomp$1$$) {
             for (;;) {
               a: {
                 try {
                   for (;;) {
-                    var $result__9193__auto__$jscomp$inline_840$$ = $switch__9190__auto__$jscomp$26$$($state_12123$jscomp$1$$);
-                    if (!$cljs$core$keyword_identical_QMARK_$$($result__9193__auto__$jscomp$inline_840$$, $cljs$cst$keyword$recur$$)) {
-                      var $ex__9194__auto__$jscomp$inline_841_ret_value__9192__auto__$jscomp$24$$ = $result__9193__auto__$jscomp$inline_840$$;
+                    var $result__7487__auto__$jscomp$inline_840$$ = $switch__7484__auto__$jscomp$3$$($state_7704$jscomp$1$$);
+                    if (!$cljs$core$keyword_identical_QMARK_$$($result__7487__auto__$jscomp$inline_840$$, $cljs$cst$keyword$recur$$)) {
+                      var $ex__7488__auto__$jscomp$inline_841_ret_value__7486__auto__$jscomp$3$$ = $result__7487__auto__$jscomp$inline_840$$;
                       break a;
                     }
                   }
-                } catch ($e12165$jscomp$inline_842$$) {
-                  $ex__9194__auto__$jscomp$inline_841_ret_value__9192__auto__$jscomp$24$$ = $e12165$jscomp$inline_842$$;
-                  $state_12123$jscomp$1$$[2] = $ex__9194__auto__$jscomp$inline_841_ret_value__9192__auto__$jscomp$24$$;
-                  if ($cljs$core$seq$$($state_12123$jscomp$1$$[4])) {
-                    $state_12123$jscomp$1$$[1] = $cljs$core$first$$($state_12123$jscomp$1$$[4]);
+                } catch ($e7713$jscomp$inline_842$$) {
+                  $ex__7488__auto__$jscomp$inline_841_ret_value__7486__auto__$jscomp$3$$ = $e7713$jscomp$inline_842$$;
+                  $state_7704$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_841_ret_value__7486__auto__$jscomp$3$$;
+                  if ($cljs$core$seq$$($state_7704$jscomp$1$$[4])) {
+                    $state_7704$jscomp$1$$[1] = $cljs$core$first$$($state_7704$jscomp$1$$[4]);
                   } else {
-                    throw $ex__9194__auto__$jscomp$inline_841_ret_value__9192__auto__$jscomp$24$$;
+                    throw $ex__7488__auto__$jscomp$inline_841_ret_value__7486__auto__$jscomp$3$$;
                   }
-                  $ex__9194__auto__$jscomp$inline_841_ret_value__9192__auto__$jscomp$24$$ = $cljs$cst$keyword$recur$$;
+                  $ex__7488__auto__$jscomp$inline_841_ret_value__7486__auto__$jscomp$3$$ = $cljs$cst$keyword$recur$$;
                 }
               }
-              if (!$cljs$core$keyword_identical_QMARK_$$($ex__9194__auto__$jscomp$inline_841_ret_value__9192__auto__$jscomp$24$$, $cljs$cst$keyword$recur$$)) {
-                return $ex__9194__auto__$jscomp$inline_841_ret_value__9192__auto__$jscomp$24$$;
+              if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_841_ret_value__7486__auto__$jscomp$3$$, $cljs$cst$keyword$recur$$)) {
+                return $ex__7488__auto__$jscomp$inline_841_ret_value__7486__auto__$jscomp$3$$;
               }
             }
           }
-          function $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$3$$() {
-            var $statearr_12164$$ = [null, null, null, null, null, null, null, null, null];
-            $statearr_12164$$[0] = $clast$web$create_store_$_state_machine__9191__auto__$jscomp$3$$;
-            $statearr_12164$$[1] = 1;
-            return $statearr_12164$$;
+          function $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$3$$() {
+            var $statearr_7712$$ = [null, null, null, null, null, null, null, null, null];
+            $statearr_7712$$[0] = $clast$web$create_store_$_state_machine__7485__auto__$jscomp$3$$;
+            $statearr_7712$$[1] = 1;
+            return $statearr_7712$$;
           }
-          var $clast$web$create_store_$_state_machine__9191__auto__$jscomp$3$$ = null;
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$3$$ = function($state_12123$jscomp$2$$) {
+          var $clast$web$create_store_$_state_machine__7485__auto__$jscomp$3$$ = null;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$3$$ = function($state_7704$jscomp$2$$) {
             switch(arguments.length) {
               case 0:
-                return $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$3$$.call(this);
+                return $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$3$$.call(this);
               case 1:
-                return $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$3$$.call(this, $state_12123$jscomp$2$$);
+                return $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$3$$.call(this, $state_7704$jscomp$2$$);
             }
             throw Error("Invalid arity: " + arguments.length);
           };
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$3$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__9191__auto____0$jscomp$3$$;
-          $clast$web$create_store_$_state_machine__9191__auto__$jscomp$3$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__9191__auto____1$jscomp$3$$;
-          return $clast$web$create_store_$_state_machine__9191__auto__$jscomp$3$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$3$$.$cljs$core$IFn$_invoke$arity$0$ = $clast$web$create_store_$_state_machine__7485__auto____0$jscomp$3$$;
+          $clast$web$create_store_$_state_machine__7485__auto__$jscomp$3$$.$cljs$core$IFn$_invoke$arity$1$ = $clast$web$create_store_$_state_machine__7485__auto____1$jscomp$3$$;
+          return $clast$web$create_store_$_state_machine__7485__auto__$jscomp$3$$;
         }();
-      }(), $state__9789__auto__$jscomp$24$$ = function() {
-        var $statearr_12185$$ = $f__9788__auto__$jscomp$24$$();
-        $statearr_12185$$[6] = $c__9787__auto__$jscomp$8$$;
-        return $statearr_12185$$;
+      }(), $state__7525__auto__$jscomp$3$$ = function() {
+        var $statearr_7716$$ = $f__7524__auto__$jscomp$3$$();
+        $statearr_7716$$[6] = $c__7523__auto__$jscomp$3$$;
+        return $statearr_7716$$;
       }();
-      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__9789__auto__$jscomp$24$$);
+      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$jscomp$3$$);
     });
-    return $c__9787__auto__$jscomp$8$$;
+    return $c__7523__auto__$jscomp$3$$;
   };
   return $e$jscomp$184$$;
 }
 function $clast$web$add_default_middleware$$($app$jscomp$1$$) {
-  var $access_log_12300_logs_12299$$ = [$cljs$core$str$$.$cljs$core$IFn$_invoke$arity$1$(__dirname), "/logs"].join("");
-  $access_log_12300_logs_12299$$ = $shadow$js$shim$module$0rotating_file_stream$$.createStream("access.log", {interval:"7d", path:$access_log_12300_logs_12299$$});
-  var $kv_session_12301_store_12302$$ = new $shadow$js$shim$module$0keyv$$($clast$web$database_url$$, {namespace:"session"});
-  $kv_session_12301_store_12302$$ = $clast$web$create_store$$($kv_session_12301_store_12302$$);
-  $app$jscomp$1$$.use($shadow$js$shim$module$0morgan$$("combined", {stream:$access_log_12300_logs_12299$$}));
-  $app$jscomp$1$$.use($shadow$js$shim$module$0express_session$$({secret:$clast$util$env$cljs$0core$0IFn$0_invoke$0arity$0variadic$$("SECRET", $cljs$core$prim_seq$cljs$0core$0IFn$0_invoke$0arity$02$$(["DEVMODE"])), saveUninitialized:!1, resave:!0, cookie:{secure:"auto", httpOnly:!0, maxAge:31536E7}, store:$kv_session_12301_store_12302$$}));
+  var $kv_session_7862_logs_7860$$ = [$cljs$core$str$$.$cljs$core$IFn$_invoke$arity$1$(__dirname), "/logs"].join("");
+  $shadow$js$shim$module$0rotating_file_stream$$.createStream("access.log", {interval:"7d", path:$kv_session_7862_logs_7860$$});
+  $kv_session_7862_logs_7860$$ = new $shadow$js$shim$module$0keyv$$($clast$web$database_url$$, {namespace:"session"});
+  var $store_7863$$ = $clast$web$create_store$$($kv_session_7862_logs_7860$$);
+  $kv_session_7862_logs_7860$$.set.call($kv_session_7862_logs_7860$$, "TEST", "this is test session data");
+  console.log("kv-session:", $kv_session_7862_logs_7860$$);
+  console.log("store:", $store_7863$$);
+  $app$jscomp$1$$.use($shadow$js$shim$module$0express_session$$({secret:$clast$util$env$cljs$0core$0IFn$0_invoke$0arity$0variadic$$("SECRET", $cljs$core$prim_seq$cljs$0core$0IFn$0_invoke$0arity$02$$(["DEVMODE"])), saveUninitialized:!1, resave:!0, cookie:{httpOnly:!0, maxAge:31536E7}, store:$store_7863$$}));
+  $app$jscomp$1$$.use($shadow$js$shim$module$0morgan$$("combined", {stream:$clast$web$$.$access_log$}));
   $app$jscomp$1$$.set("trust proxy", "loopback");
   $app$jscomp$1$$.use($shadow$js$shim$module$0cookie_parser$$());
   $app$jscomp$1$$.use($shadow$js$shim$module$0body_parser$$.json({limit:"10mb", extended:!0, parameterLimit:1000}));
   return $app$jscomp$1$$;
 }
 function $clast$web$create$$() {
-  var $kv$jscomp$1$$ = new $shadow$js$shim$module$0keyv$$($clast$web$database_url$$), $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$ = $shadow$js$shim$module$0express$$();
-  $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$ = null != $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$ ? $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$ : {};
-  $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$.kv = $kv$jscomp$1$$;
-  $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$ = null != $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$ ? $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$ : {};
-  $obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$.db = $kv$jscomp$1$$.opts.store;
-  return $clast$web$add_default_middleware$$($obj12210$jscomp$inline_1084_obj12212$jscomp$inline_1085_obj12223$jscomp$inline_1086$$);
+  var $kv$jscomp$1$$ = new $shadow$js$shim$module$0keyv$$($clast$web$database_url$$), $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$ = $shadow$js$shim$module$0express$$();
+  $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$ = null != $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$ ? $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$ : {};
+  $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$.kv = $kv$jscomp$1$$;
+  $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$ = null != $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$ ? $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$ : {};
+  $obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$.db = $kv$jscomp$1$$.opts.store;
+  return $clast$web$add_default_middleware$$($obj7718$jscomp$inline_1084_obj7719$jscomp$inline_1085_obj7722$jscomp$inline_1086$$);
 }
 function $clast$web$serve$$($app$jscomp$4$$) {
   var $host$jscomp$1$$ = $clast$util$env$cljs$0core$0IFn$0_invoke$0arity$0variadic$$("BIND_ADDRESS", $cljs$core$prim_seq$cljs$0core$0IFn$0_invoke$0arity$02$$(["127.0.0.1"])), $port$jscomp$18$$ = $clast$util$env$cljs$0core$0IFn$0_invoke$0arity$0variadic$$("PORT", $cljs$core$prim_seq$cljs$0core$0IFn$0_invoke$0arity$02$$(["8000"])), $srv$$ = $app$jscomp$4$$.listen.bind($app$jscomp$4$$, $port$jscomp$18$$, $host$jscomp$1$$);
   return new Promise(function($res$jscomp$15$$) {
-    function $G__12234$$() {
+    function $G__7725$$() {
       console.log("Web server started: ", ["http://", $cljs$core$str$$.$cljs$core$IFn$_invoke$arity$1$($host$jscomp$1$$), ":", $cljs$core$str$$.$cljs$core$IFn$_invoke$arity$1$($port$jscomp$18$$)].join(""));
-      var $G__12235$$ = [$host$jscomp$1$$, $port$jscomp$18$$];
-      return $res$jscomp$15$$.$cljs$core$IFn$_invoke$arity$1$ ? $res$jscomp$15$$.$cljs$core$IFn$_invoke$arity$1$($G__12235$$) : $res$jscomp$15$$.call(null, $G__12235$$);
+      var $G__7726$jscomp$1$$ = [$host$jscomp$1$$, $port$jscomp$18$$];
+      return $res$jscomp$15$$.$cljs$core$IFn$_invoke$arity$1$ ? $res$jscomp$15$$.$cljs$core$IFn$_invoke$arity$1$($G__7726$jscomp$1$$) : $res$jscomp$15$$.call(null, $G__7726$jscomp$1$$);
     }
-    return $srv$$.$cljs$core$IFn$_invoke$arity$1$ ? $srv$$.$cljs$core$IFn$_invoke$arity$1$($G__12234$$) : $srv$$.call(null, $G__12234$$);
+    return $srv$$.$cljs$core$IFn$_invoke$arity$1$ ? $srv$$.$cljs$core$IFn$_invoke$arity$1$($G__7725$$) : $srv$$.call(null, $G__7725$$);
   });
 }
 ;var $shadow$js$shim$module$0login_with_twitter$$ = require("login-with-twitter");
@@ -7869,117 +7872,117 @@ function $twentiments$server$serve_homepage$$($req$jscomp$5$$, $res$jscomp$19$$)
   $req$jscomp$5$$.$session$.nothingburger = !0;
   var $user$jscomp$2$$ = $req$jscomp$5$$.$session$.user;
   if ($cljs$core$truth_$$($user$jscomp$2$$)) {
-    var $c__7523__auto__$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
+    var $c__7523__auto__$jscomp$4$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
     $cljs$core$async$impl$dispatch$run$$(function() {
-      var $f__7524__auto__$$ = function() {
-        function $switch__7484__auto__$$($state_7651$$) {
-          var $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $state_7651$$[1];
-          if (1 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$) {
-            $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $user$jscomp$2$$.userId;
-            var $inst_7597_inst_7605_inst_7618_inst_7647$$ = $twentiments$server$twitter$$($user$jscomp$2$$), $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$ = $user$jscomp$2$$.profile;
-            $state_7651$$[7] = $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$;
-            $state_7651$$[8] = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$;
-            $state_7651$$[9] = $inst_7597_inst_7605_inst_7618_inst_7647$$;
-            $state_7651$$[1] = $cljs$core$truth_$$($inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$) ? 2 : 3;
+      var $f__7524__auto__$jscomp$4$$ = function() {
+        function $switch__7484__auto__$jscomp$4$$($state_7788$$) {
+          var $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $state_7788$$[1];
+          if (1 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$) {
+            $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $user$jscomp$2$$.userId;
+            var $inst_7732_inst_7740_inst_7753_inst_7784$$ = $twentiments$server$twitter$$($user$jscomp$2$$), $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$ = $user$jscomp$2$$.profile;
+            $state_7788$$[7] = $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$;
+            $state_7788$$[8] = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$;
+            $state_7788$$[9] = $inst_7732_inst_7740_inst_7753_inst_7784$$;
+            $state_7788$$[1] = $cljs$core$truth_$$($inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$) ? 2 : 3;
             return $cljs$cst$keyword$recur$$;
           }
-          if (2 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$) {
-            return $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $state_7651$$[7], $state_7651$$[2] = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$, $state_7651$$[1] = 4, $cljs$cst$keyword$recur$$;
+          if (2 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$) {
+            return $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $state_7788$$[7], $state_7788$$[2] = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$, $state_7788$$[1] = 4, $cljs$cst$keyword$recur$$;
           }
-          if (3 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$) {
-            return $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $state_7651$$[8], $inst_7597_inst_7605_inst_7618_inst_7647$$ = $state_7651$$[9], $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $twentiments$server$get_user_profile$$($inst_7597_inst_7605_inst_7618_inst_7647$$, $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$), 
-            $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $cljs$core$async$interop$p__GT_c$$($inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7651$$, 5, $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$);
+          if (3 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$) {
+            return $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $state_7788$$[8], $inst_7732_inst_7740_inst_7753_inst_7784$$ = $state_7788$$[9], $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $twentiments$server$get_user_profile$$($inst_7732_inst_7740_inst_7753_inst_7784$$, $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$), 
+            $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $cljs$core$async$interop$p__GT_c$$($inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$), $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7788$$, 5, $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$);
           }
-          if (4 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$) {
-            $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$ = $state_7651$$[2];
-            $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $shadow$js$shim$module$0motionless$$.dom('\x3c!DOCTYPE html\x3e\n\x3chtml lang\x3d"en"\x3e\n  \x3chead\x3e\n    \x3c!-- META --\x3e\n    \x3cmeta charset\x3d"UTF-8"\x3e\n    \x3cmeta name\x3d"viewport" content\x3d"width\x3ddevice-width, initial-scale\x3d1"\x3e\n    \x3cmeta name\x3d"uisual" content\x3d"Made with Uisual (uisual.com)"\x3e\n    \x3cmeta name\x3d"author" content\x3d"#"\x3e\n    \x3cmeta name\x3d"description" content\x3d"#"\x3e\n    \x3cmeta name\x3d"referrer" content\x3d"unsafe-url"\x3e\n    \x3cmeta name\x3d"robots" content\x3d"index, follow"\x3e\n    \x3c!-- SPEED --\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://res.cloudinary.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://res.cloudinary.com"\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://fonts.googleapis.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://fonts.googleapis.com"\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://fonts.gstatic.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://fonts.gstatic.com"\x3e\n    \x3c!-- LINK --\x3e\n    \x3clink rel\x3d"me" href\x3d"#"\x3e\n    \x3clink rel\x3d"canonical" href\x3d"#"\x3e\n    \x3clink rel\x3d"icon" type\x3d"image/png" href\x3d"#" sizes\x3d"48x48"\x3e\n    \x3c!-- PERFORMANCE --\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"https://fonts.googleapis.com/css2?family\x3dInter:wght@400;700\x26display\x3dswap"\x3e\n    \x3clink rel\x3d"preload" as\x3d"style" href\x3d"curve-style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"curve-style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"minimal-inputs.css"\x3e\n    \x3c!-- TITLE --\x3e\n    \x3ctitle\x3eDownload Twitter data as CSV including sentiment analysis with TweetFeast\x3c/title\x3e\n  \x3c/head\x3e\n  \x3cbody\x3e\n    \x3cheader role\x3d"banner" class\x3d"ui-section-header"\x3e\n      \x3cdiv class\x3d"ui-layout-container"\x3e\n        \x3cdiv class\x3d"ui-section-header__layout ui-layout-flex"\x3e\n          \x3c!-- LOGO --\x3e\n          \x3ca href\x3d"#" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--logo"\x3e\n            \x3cimg src\x3d"logo.svg"/\x3e\n          \x3c/a\x3e\n          \x3c!-- HAMBURGER --\x3e\n          \x3cinput type\x3d"checkbox" id\x3d"ui-section-header--menu-id"\x3e\n          \x3clabel for\x3d"ui-section-header--menu-id" class\x3d"ui-section-header--menu-icon"\x3e\x3c/label\x3e\n          \x3c!-- MENU --\x3e\n          \x3cnav role\x3d"navigation" class\x3d"ui-section-header--nav ui-layout-flex"\x3e\n            \x3ca href\x3d"#features" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3eFeatures\x3c/a\x3e\n            \x3ca href\x3d"#pricing" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3ePricing\x3c/a\x3e\n            \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3eSign In\x3c/a\x3e\n          \x3c/nav\x3e\n        \x3c/div\x3e\n      \x3c/div\x3e\n    \x3c/header\x3e\n    \x3cmain role\x3d"main"\x3e\n      \x3csection class\x3d"ui-section-hero"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3cdiv class\x3d"ui-section-hero__layout ui-layout-grid ui-layout-grid-2"\x3e\n            \x3c!-- COPYWRITING --\x3e\n            \x3cdiv\x3e\n              \x3ch1\x3eDownload tweet data.\x3c/h1\x3e\n              \x3cp class\x3d"ui-text-intro"\x3eDownload bulk tweets as CSV or JSON data. Sentiment analysis included. No API key required.\x3c/p\x3e\n              \x3c!-- CTA --\x3e\n              \x3cdiv class\x3d"ui-component-cta ui-layout-flex"\x3e\n                \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-component-button ui-component-button-normal ui-component-button-primary"\x3eSign in with Twitter\x3c/a\x3e\n                \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3e7 day free trial.\x3c/small\x3e\x3c/p\x3e\n              \x3c/div\x3e\n            \x3c/div\x3e\n            \x3c!-- IMAGE --\x3e\n            \x3cimg src\x3d"search.gif" loading\x3d"lazy" alt\x3d"Animated gif of the tweet search process." class\x3d"ui-image-half-right"\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-faq"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3ch2\x3e\x3ca name\x3d"features"\x3e\x3c/a\x3eFeatures\x3c/h2\x3e\n          \x3cdiv class\x3d"ui-section-faq__layout ui-layout-grid ui-layout-grid-2"\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eDownload tweets\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eWith our simple tool you can download tweets for analysis or backup on your own computer. You can download the tweets in JSON or CSV format and use them however you like.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTwitter sentiment analysis\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eIt\'s never been easier to perform sentiment analysis on tweets. Just use our tool to search and then click "download" to get the data. A sentiment analysis column is included so there\'s no need to write code or install libraries.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eExport tweets to Excel\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eExporting tweets to a CSV file has never been easier. Simply type a search to find the tweets you want and then click "Download CSV". The CSV file full of tweets will be downloaded onto your computer or straight into Excel for your analysis.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eExport tweets to JSON\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3ePerfect for testing how your app renders tweet data. You don\'t have to set up API keys or write server code. Just download some tweets as JSON and start testing.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTwitter data science\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eWhether you\'re a data scientist or looking for somebody you will need to get raw tweet data in a format that can be analyzed. Our simple tool is the perfect way to download the twitter data onto your own computer for analysis, or to send to somebody else for analysis.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTweet data from search\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eIf you can search for it on Twitter you can download it as CSV or JSON. You can search for hash tags or topics. You can search for stock ticker symbols a like AAPL or TSLA. Get a spreadsheet full of tweets with sentiment analysis included. Figure out what the sentiment of the market is.\x3c/p\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n          \x3cp class\x3d"ui-section-faq--note"\x3eStill have questions? \x3ca href\x3d"https://twitter.com/mccrmx" role\x3d"link" aria-label\x3d"Contact us"\x3eContact us\x3c/a\x3e.\x3c/p\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-pricing"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3ch2\x3e\x3ca name\x3d"pricing"\x3e\x3c/a\x3ePricing\x3c/h2\x3e\n          \x3cp class\x3d"ui-text-intro"\x3eOur simple pricing is based on volume and features.\x3c/p\x3e\n          \x3c!-- TOGGLE --\x3e\n          \x3cinput type\x3d"radio" name\x3d"toggle" id\x3d"ui-component-toggle__monthly" checked\x3e\n          \x3cinput type\x3d"radio" name\x3d"toggle" id\x3d"ui-component-toggle__yearly"\x3e\n          \x3cdiv class\x3d"ui-component-toggle ui-layout-flex"\x3e\n            \x3clabel for\x3d"ui-component-toggle__monthly" class\x3d"ui-component-toggle--label"\x3eBilled Monthly\x3c/label\x3e\n            \x3clabel for\x3d"ui-component-toggle__yearly" class\x3d"ui-component-toggle--label"\x3eBilled Yearly\x3c/label\x3e\n          \x3c/div\x3e\n          \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3eSave 15% with a yearly plan.\x3c/small\x3e\x3c/p\x3e\n          \x3c!-- PRICING --\x3e\n          \x3cdiv class\x3d"ui-section-pricing__layout ui-layout-grid ui-layout-grid-3"\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eBasic\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-1"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eFor low data requirements.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUp to 50 rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-cross"\x3eNo sentiment analysis.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-cross"\x3eLimited support.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-secondary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eStandard\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-2"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eSetiment analysis and 1k rows.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUp to 10k rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eSentiment analysis.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3ePriority support.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-primary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eSpecial\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-3"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eHigh volume machine learning.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUnlimited rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eMachine learning algos.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3e24hr support response.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-secondary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-close"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3cdiv class\x3d"ui-section-close__layout ui-layout-flex"\x3e\n            \x3cdiv\x3e\n              \x3ch2\x3eReady to start?\x3c/h2\x3e\n              \x3cp class\x3d"ui-text-intro"\x3eSign in with Twitter to start downloading tweet data.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3c!-- CTA --\x3e\n            \x3cdiv class\x3d"ui-component-cta ui-layout-flex"\x3e\n              \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-component-button ui-component-button-normal ui-component-button-primary"\x3eSign in with Twitter\x3c/a\x3e\n              \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3e7 day free trial.\x3c/small\x3e\x3c/p\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n    \x3c/main\x3e\n    \x3cfooter role\x3d"contentinfo" class\x3d"ui-section-footer"\x3e\n      \x3cdiv class\x3d"ui-layout-container"\x3e\n        \x3cdiv class\x3d"ui-section-footer__layout ui-layout-flex"\x3e\n          \x3c!-- COPYRIGHT --\x3e\n          \x3cp class\x3d"ui-section-footer--copyright ui-text-note"\x3e\x3csmall\x3e\x26copy; \x3ca href\x3d"https://mccormickit.com/"\x3eMcCormick IT\x3c/a\x3e 2021. Design by \x3ca href\x3d"https://uisual.com/"\x3eUisual\x3c/a\x3e\x3c/small\x3e\x3c/p\x3e\n          \x3c!-- MENU --\x3e\n          \x3ca href\x3d"https://twitter.com/mccrmx" role\x3d"link" aria-label\x3d"#"\x3e\n            \x3csvg viewBox\x3d"0 0 24 24" height\x3d"16" width\x3d"16" fill\x3d"none" stroke\x3d"#AEAEAE" stroke-linecap\x3d"round" stroke-linejoin\x3d"round" stroke-width\x3d"2" role\x3d"img" aria-label\x3d"#"\x3e\n              \x3cpath d\x3d"M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/\x3e\n            \x3c/svg\x3e\n          \x3c/a\x3e\n        \x3c/div\x3e\n      \x3c/div\x3e\n    \x3c/footer\x3e\n  \x3c/body\x3e\n\x3c/html\x3e\n');
-            $inst_7597_inst_7605_inst_7618_inst_7647$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.$("main");
-            var $inst_7619_inst_7644$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.$("nav"), $inst_7620_inst_7643$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.h("a", {href:"/logout", role:"link", "aria-label":"Sign out", className:"ui-section-header--nav-link"}, "Sign out"), $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$ = [$cljs$cst$keyword$href$$, $cljs$cst$keyword$target$$], 
-            $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$ = [["https://twitter.com/", $cljs$core$str$$.$cljs$core$IFn$_invoke$arity$1$($inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$.username)].join(""), "_BLANK"];
-            $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$ = $cljs$core$PersistentHashMap$fromArrays$$($inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$, $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$);
-            $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$ = $cljs$core$clj__GT_js$$($inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$);
-            $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$ = $cljs$core$PersistentHashMap$fromArrays$$([$cljs$cst$keyword$src$$], [$inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$.profile_image_url]);
-            $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$ = $cljs$core$clj__GT_js$$($inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$);
-            $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.h("img", $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$);
-            $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.h("a", $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$, $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$);
-            var $inst_7634$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.h("div", {className:"user-profile"}, $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$);
-            $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$ = $user$jscomp$2$$.profile = $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$;
-            $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$ = $inst_7597_inst_7605_inst_7618_inst_7647$$.innerHTML = "";
-            var $inst_7637_inst_7638_inst_7639$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.h("div", {className:"spinner spin"});
-            $inst_7637_inst_7638_inst_7639$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.h("div", {id:"loading"}, $inst_7637_inst_7638_inst_7639$$);
-            $inst_7637_inst_7638_inst_7639$$ = $inst_7597_inst_7605_inst_7618_inst_7647$$.appendChild($inst_7637_inst_7638_inst_7639$$);
-            var $inst_7640_inst_7641$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.h("script", {src:"js/main.js"});
-            $inst_7640_inst_7641$$ = $inst_7597_inst_7605_inst_7618_inst_7647$$.after($inst_7640_inst_7641$$);
-            var $inst_7642$$ = $inst_7619_inst_7644$$.innerHTML = "";
-            $inst_7620_inst_7643$$ = $inst_7619_inst_7644$$.appendChild($inst_7620_inst_7643$$);
-            $inst_7619_inst_7644$$ = $inst_7619_inst_7644$$.appendChild($inst_7634$$);
-            $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$ = JSON.stringify($inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$);
-            $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$ = (new Buffer($inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$)).toString("base64");
-            $inst_7597_inst_7605_inst_7618_inst_7647$$ = $inst_7597_inst_7605_inst_7618_inst_7647$$.setAttribute("data-user", $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$);
-            $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$.render();
-            $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $res$jscomp$19$$.send($inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$);
-            $state_7651$$[10] = $inst_7624_inst_7630_inst_7631_inst_7632_inst_7636$$;
-            $state_7651$$[11] = $inst_7620_inst_7643$$;
-            $state_7651$$[12] = $inst_7642$$;
-            $state_7651$$[13] = $inst_7597_inst_7605_inst_7618_inst_7647$$;
-            $state_7651$$[14] = $inst_7640_inst_7641$$;
-            $state_7651$$[15] = $inst_7637_inst_7638_inst_7639$$;
-            $state_7651$$[16] = $inst_7621_inst_7625_inst_7626_inst_7633_inst_7635$$;
-            $state_7651$$[17] = $inst_7619_inst_7644$$;
-            return $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7651$$, $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$);
+          if (4 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$) {
+            $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$ = $state_7788$$[2];
+            $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $shadow$js$shim$module$0motionless$$.dom('\x3c!DOCTYPE html\x3e\n\x3chtml lang\x3d"en"\x3e\n  \x3chead\x3e\n    \x3c!-- META --\x3e\n    \x3cmeta charset\x3d"UTF-8"\x3e\n    \x3cmeta name\x3d"viewport" content\x3d"width\x3ddevice-width, initial-scale\x3d1"\x3e\n    \x3cmeta name\x3d"uisual" content\x3d"Made with Uisual (uisual.com)"\x3e\n    \x3cmeta name\x3d"author" content\x3d"#"\x3e\n    \x3cmeta name\x3d"description" content\x3d"#"\x3e\n    \x3cmeta name\x3d"referrer" content\x3d"unsafe-url"\x3e\n    \x3cmeta name\x3d"robots" content\x3d"index, follow"\x3e\n    \x3c!-- SPEED --\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://res.cloudinary.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://res.cloudinary.com"\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://fonts.googleapis.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://fonts.googleapis.com"\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://fonts.gstatic.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://fonts.gstatic.com"\x3e\n    \x3c!-- LINK --\x3e\n    \x3clink rel\x3d"me" href\x3d"#"\x3e\n    \x3clink rel\x3d"canonical" href\x3d"#"\x3e\n    \x3clink rel\x3d"icon" type\x3d"image/png" href\x3d"#" sizes\x3d"48x48"\x3e\n    \x3c!-- PERFORMANCE --\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"https://fonts.googleapis.com/css2?family\x3dInter:wght@400;700\x26display\x3dswap"\x3e\n    \x3clink rel\x3d"preload" as\x3d"style" href\x3d"curve-style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"curve-style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"minimal-inputs.css"\x3e\n    \x3c!-- TITLE --\x3e\n    \x3ctitle\x3eDownload Twitter data as CSV including sentiment analysis with TweetFeast\x3c/title\x3e\n  \x3c/head\x3e\n  \x3cbody\x3e\n    \x3cheader role\x3d"banner" class\x3d"ui-section-header"\x3e\n      \x3cdiv class\x3d"ui-layout-container"\x3e\n        \x3cdiv class\x3d"ui-section-header__layout ui-layout-flex"\x3e\n          \x3c!-- LOGO --\x3e\n          \x3ca href\x3d"#" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--logo"\x3e\n            \x3cimg src\x3d"logo.svg"/\x3e\n          \x3c/a\x3e\n          \x3c!-- HAMBURGER --\x3e\n          \x3cinput type\x3d"checkbox" id\x3d"ui-section-header--menu-id"\x3e\n          \x3clabel for\x3d"ui-section-header--menu-id" class\x3d"ui-section-header--menu-icon"\x3e\x3c/label\x3e\n          \x3c!-- MENU --\x3e\n          \x3cnav role\x3d"navigation" class\x3d"ui-section-header--nav ui-layout-flex"\x3e\n            \x3ca href\x3d"#features" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3eFeatures\x3c/a\x3e\n            \x3ca href\x3d"#pricing" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3ePricing\x3c/a\x3e\n            \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3eSign In\x3c/a\x3e\n          \x3c/nav\x3e\n        \x3c/div\x3e\n      \x3c/div\x3e\n    \x3c/header\x3e\n    \x3cmain role\x3d"main"\x3e\n      \x3csection class\x3d"ui-section-hero"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3cdiv class\x3d"ui-section-hero__layout ui-layout-grid ui-layout-grid-2"\x3e\n            \x3c!-- COPYWRITING --\x3e\n            \x3cdiv\x3e\n              \x3ch1\x3eDownload tweet data.\x3c/h1\x3e\n              \x3cp class\x3d"ui-text-intro"\x3eDownload bulk tweets as CSV or JSON data. Sentiment analysis included. No API key required.\x3c/p\x3e\n              \x3c!-- CTA --\x3e\n              \x3cdiv class\x3d"ui-component-cta ui-layout-flex"\x3e\n                \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-component-button ui-component-button-normal ui-component-button-primary"\x3eSign in with Twitter\x3c/a\x3e\n                \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3e7 day free trial.\x3c/small\x3e\x3c/p\x3e\n              \x3c/div\x3e\n            \x3c/div\x3e\n            \x3c!-- IMAGE --\x3e\n            \x3cimg src\x3d"search.gif" loading\x3d"lazy" alt\x3d"Animated gif of the tweet search process." class\x3d"ui-image-half-right"\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-faq"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3ch2\x3e\x3ca name\x3d"features"\x3e\x3c/a\x3eFeatures\x3c/h2\x3e\n          \x3cdiv class\x3d"ui-section-faq__layout ui-layout-grid ui-layout-grid-2"\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eDownload tweets\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eWith our simple tool you can download tweets for analysis or backup on your own computer. You can download the tweets in JSON or CSV format and use them however you like.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTwitter sentiment analysis\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eIt\'s never been easier to perform sentiment analysis on tweets. Just use our tool to search and then click "download" to get the data. A sentiment analysis column is included so there\'s no need to write code or install libraries.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eExport tweets to Excel\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eExporting tweets to a CSV file has never been easier. Simply type a search to find the tweets you want and then click "Download CSV". The CSV file full of tweets will be downloaded onto your computer or straight into Excel for your analysis.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eExport tweets to JSON\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3ePerfect for testing how your app renders tweet data. You don\'t have to set up API keys or write server code. Just download some tweets as JSON and start testing.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTwitter data science\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eWhether you\'re a data scientist or looking for somebody you will need to get raw tweet data in a format that can be analyzed. Our simple tool is the perfect way to download the twitter data onto your own computer for analysis, or to send to somebody else for analysis.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTweet data from search\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eIf you can search for it on Twitter you can download it as CSV or JSON. You can search for hash tags or topics. You can search for stock ticker symbols a like AAPL or TSLA. Get a spreadsheet full of tweets with sentiment analysis included. Figure out what the sentiment of the market is.\x3c/p\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n          \x3cp class\x3d"ui-section-faq--note"\x3eStill have questions? \x3ca href\x3d"https://twitter.com/mccrmx" role\x3d"link" aria-label\x3d"Contact us"\x3eContact us\x3c/a\x3e.\x3c/p\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-pricing"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3ch2\x3e\x3ca name\x3d"pricing"\x3e\x3c/a\x3ePricing\x3c/h2\x3e\n          \x3cp class\x3d"ui-text-intro"\x3eOur simple pricing is based on volume and features.\x3c/p\x3e\n          \x3c!-- TOGGLE --\x3e\n          \x3cinput type\x3d"radio" name\x3d"toggle" id\x3d"ui-component-toggle__monthly" checked\x3e\n          \x3cinput type\x3d"radio" name\x3d"toggle" id\x3d"ui-component-toggle__yearly"\x3e\n          \x3cdiv class\x3d"ui-component-toggle ui-layout-flex"\x3e\n            \x3clabel for\x3d"ui-component-toggle__monthly" class\x3d"ui-component-toggle--label"\x3eBilled Monthly\x3c/label\x3e\n            \x3clabel for\x3d"ui-component-toggle__yearly" class\x3d"ui-component-toggle--label"\x3eBilled Yearly\x3c/label\x3e\n          \x3c/div\x3e\n          \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3eSave 15% with a yearly plan.\x3c/small\x3e\x3c/p\x3e\n          \x3c!-- PRICING --\x3e\n          \x3cdiv class\x3d"ui-section-pricing__layout ui-layout-grid ui-layout-grid-3"\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eBasic\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-1"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eFor low data requirements.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUp to 50 rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-cross"\x3eNo sentiment analysis.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-cross"\x3eLimited support.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-secondary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eStandard\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-2"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eSetiment analysis and 1k rows.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUp to 10k rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eSentiment analysis.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3ePriority support.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-primary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eSpecial\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-3"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eHigh volume machine learning.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUnlimited rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eMachine learning algos.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3e24hr support response.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-secondary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-close"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3cdiv class\x3d"ui-section-close__layout ui-layout-flex"\x3e\n            \x3cdiv\x3e\n              \x3ch2\x3eReady to start?\x3c/h2\x3e\n              \x3cp class\x3d"ui-text-intro"\x3eSign in with Twitter to start downloading tweet data.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3c!-- CTA --\x3e\n            \x3cdiv class\x3d"ui-component-cta ui-layout-flex"\x3e\n              \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-component-button ui-component-button-normal ui-component-button-primary"\x3eSign in with Twitter\x3c/a\x3e\n              \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3e7 day free trial.\x3c/small\x3e\x3c/p\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n    \x3c/main\x3e\n    \x3cfooter role\x3d"contentinfo" class\x3d"ui-section-footer"\x3e\n      \x3cdiv class\x3d"ui-layout-container"\x3e\n        \x3cdiv class\x3d"ui-section-footer__layout ui-layout-flex"\x3e\n          \x3c!-- COPYRIGHT --\x3e\n          \x3cp class\x3d"ui-section-footer--copyright ui-text-note"\x3e\x3csmall\x3e\x26copy; \x3ca href\x3d"https://mccormickit.com/"\x3eMcCormick IT\x3c/a\x3e 2021. Design by \x3ca href\x3d"https://uisual.com/"\x3eUisual\x3c/a\x3e\x3c/small\x3e\x3c/p\x3e\n          \x3c!-- MENU --\x3e\n          \x3ca href\x3d"https://twitter.com/mccrmx" role\x3d"link" aria-label\x3d"#"\x3e\n            \x3csvg viewBox\x3d"0 0 24 24" height\x3d"16" width\x3d"16" fill\x3d"none" stroke\x3d"#AEAEAE" stroke-linecap\x3d"round" stroke-linejoin\x3d"round" stroke-width\x3d"2" role\x3d"img" aria-label\x3d"#"\x3e\n              \x3cpath d\x3d"M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/\x3e\n            \x3c/svg\x3e\n          \x3c/a\x3e\n        \x3c/div\x3e\n      \x3c/div\x3e\n    \x3c/footer\x3e\n  \x3c/body\x3e\n\x3c/html\x3e\n');
+            $inst_7732_inst_7740_inst_7753_inst_7784$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.$("main");
+            var $inst_7754_inst_7781$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.$("nav"), $inst_7755_inst_7780$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.h("a", {href:"/logout", role:"link", "aria-label":"Sign out", className:"ui-section-header--nav-link"}, "Sign out"), $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$ = [$cljs$cst$keyword$href$$, $cljs$cst$keyword$target$$], 
+            $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$ = [["https://twitter.com/", $cljs$core$str$$.$cljs$core$IFn$_invoke$arity$1$($inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$.username)].join(""), "_BLANK"];
+            $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$ = $cljs$core$PersistentHashMap$fromArrays$$($inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$, $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$);
+            $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$ = $cljs$core$clj__GT_js$$($inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$);
+            $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$ = $cljs$core$PersistentHashMap$fromArrays$$([$cljs$cst$keyword$src$$], [$inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$.profile_image_url]);
+            $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$ = $cljs$core$clj__GT_js$$($inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$);
+            $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.h("img", $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$);
+            $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.h("a", $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$, $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$);
+            var $inst_7770$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.h("div", {className:"user-profile"}, $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$);
+            $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$ = $user$jscomp$2$$.profile = $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$;
+            $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$ = $inst_7732_inst_7740_inst_7753_inst_7784$$.innerHTML = "";
+            var $inst_7774_inst_7775_inst_7776$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.h("div", {className:"spinner spin"});
+            $inst_7774_inst_7775_inst_7776$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.h("div", {id:"loading"}, $inst_7774_inst_7775_inst_7776$$);
+            $inst_7774_inst_7775_inst_7776$$ = $inst_7732_inst_7740_inst_7753_inst_7784$$.appendChild($inst_7774_inst_7775_inst_7776$$);
+            var $inst_7777_inst_7778$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.h("script", {src:"js/main.js"});
+            $inst_7777_inst_7778$$ = $inst_7732_inst_7740_inst_7753_inst_7784$$.after($inst_7777_inst_7778$$);
+            var $inst_7779$$ = $inst_7754_inst_7781$$.innerHTML = "";
+            $inst_7755_inst_7780$$ = $inst_7754_inst_7781$$.appendChild($inst_7755_inst_7780$$);
+            $inst_7754_inst_7781$$ = $inst_7754_inst_7781$$.appendChild($inst_7770$$);
+            $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$ = JSON.stringify($inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$);
+            $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$ = (new Buffer($inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$)).toString("base64");
+            $inst_7732_inst_7740_inst_7753_inst_7784$$ = $inst_7732_inst_7740_inst_7753_inst_7784$$.setAttribute("data-user", $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$);
+            $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$.render();
+            $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $res$jscomp$19$$.send($inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$);
+            $state_7788$$[10] = $inst_7774_inst_7775_inst_7776$$;
+            $state_7788$$[11] = $inst_7732_inst_7740_inst_7753_inst_7784$$;
+            $state_7788$$[12] = $inst_7755_inst_7780$$;
+            $state_7788$$[13] = $inst_7777_inst_7778$$;
+            $state_7788$$[14] = $inst_7779$$;
+            $state_7788$$[15] = $inst_7756_inst_7761_inst_7762_inst_7769_inst_7772$$;
+            $state_7788$$[16] = $inst_7754_inst_7781$$;
+            $state_7788$$[17] = $inst_7760_inst_7766_inst_7767_inst_7768_inst_7773$$;
+            return $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7788$$, $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$);
           }
-          if (5 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$) {
-            return $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $state_7651$$[2], $inst_7597_inst_7605_inst_7618_inst_7647$$ = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$)), 
-            $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$, $cljs$cst$keyword$promise_DASH_error$$), $state_7651$$[18] = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$, $state_7651$$[1] = $cljs$core$truth_$$($inst_7597_inst_7605_inst_7618_inst_7647$$ && $inst_7598__$1_inst_7607_inst_7608_inst_7616_inst_7645_inst_7646$$) ? 
+          if (5 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$) {
+            return $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $state_7788$$[2], $inst_7732_inst_7740_inst_7753_inst_7784$$ = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$)), 
+            $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$, $cljs$cst$keyword$promise_DASH_error$$), $state_7788$$[18] = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$, $state_7788$$[1] = $cljs$core$truth_$$($inst_7732_inst_7740_inst_7753_inst_7784$$ && $inst_7733__$1_inst_7742_inst_7743_inst_7751_inst_7782_inst_7783$$) ? 
             6 : 7, $cljs$cst$keyword$recur$$;
           }
-          if (6 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$) {
-            throw $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $state_7651$$[18], $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$;
+          if (6 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$) {
+            throw $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $state_7788$$[18], $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$;
           }
-          return 7 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ ? ($inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ = $state_7651$$[18], $state_7651$$[2] = $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$, $state_7651$$[1] = 8, $cljs$cst$keyword$recur$$) : 8 === $inst_7596_inst_7598_inst_7601_inst_7602_inst_7604_inst_7604__$1_inst_7617_inst_7648_inst_7649_state_val_7652$$ ? 
-          ($state_7651$$[2] = $state_7651$$[2], $state_7651$$[1] = 4, $cljs$cst$keyword$recur$$) : null;
+          return 7 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ ? ($inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ = $state_7788$$[18], $state_7788$$[2] = $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$, $state_7788$$[1] = 8, $cljs$cst$keyword$recur$$) : 8 === $inst_7731_inst_7733_inst_7736_inst_7737_inst_7739_inst_7739__$1_inst_7752_inst_7785_inst_7786_state_val_7790$$ ? 
+          ($state_7788$$[2] = $state_7788$$[2], $state_7788$$[1] = 4, $cljs$cst$keyword$recur$$) : null;
         }
         return function() {
-          function $twentiments$server$serve_homepage_$_state_machine__7485__auto____1$$($state_7651$jscomp$1$$) {
+          function $twentiments$server$serve_homepage_$_state_machine__7485__auto____1$$($state_7788$jscomp$1$$) {
             for (;;) {
               a: {
                 try {
                   for (;;) {
-                    var $result__7487__auto__$jscomp$inline_860$$ = $switch__7484__auto__$$($state_7651$jscomp$1$$);
+                    var $result__7487__auto__$jscomp$inline_860$$ = $switch__7484__auto__$jscomp$4$$($state_7788$jscomp$1$$);
                     if (!$cljs$core$keyword_identical_QMARK_$$($result__7487__auto__$jscomp$inline_860$$, $cljs$cst$keyword$recur$$)) {
-                      var $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$$ = $result__7487__auto__$jscomp$inline_860$$;
+                      var $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$jscomp$4$$ = $result__7487__auto__$jscomp$inline_860$$;
                       break a;
                     }
                   }
-                } catch ($e7665$jscomp$inline_862$$) {
-                  $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$$ = $e7665$jscomp$inline_862$$;
-                  $state_7651$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$$;
-                  if ($cljs$core$seq$$($state_7651$jscomp$1$$[4])) {
-                    $state_7651$jscomp$1$$[1] = $cljs$core$first$$($state_7651$jscomp$1$$[4]);
+                } catch ($e7809$jscomp$inline_862$$) {
+                  $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$jscomp$4$$ = $e7809$jscomp$inline_862$$;
+                  $state_7788$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$jscomp$4$$;
+                  if ($cljs$core$seq$$($state_7788$jscomp$1$$[4])) {
+                    $state_7788$jscomp$1$$[1] = $cljs$core$first$$($state_7788$jscomp$1$$[4]);
                   } else {
-                    throw $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$$;
+                    throw $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$jscomp$4$$;
                   }
-                  $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$$ = $cljs$cst$keyword$recur$$;
+                  $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$jscomp$4$$ = $cljs$cst$keyword$recur$$;
                 }
               }
-              if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$$, $cljs$cst$keyword$recur$$)) {
-                return $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$$;
+              if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$jscomp$4$$, $cljs$cst$keyword$recur$$)) {
+                return $ex__7488__auto__$jscomp$inline_861_ret_value__7486__auto__$jscomp$4$$;
               }
             }
           }
           function $twentiments$server$serve_homepage_$_state_machine__7485__auto____0$$() {
-            var $statearr_7664$$ = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
-            $statearr_7664$$[0] = $twentiments$server$serve_homepage_$_state_machine__7485__auto__$$;
-            $statearr_7664$$[1] = 1;
-            return $statearr_7664$$;
+            var $statearr_7807$$ = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];
+            $statearr_7807$$[0] = $twentiments$server$serve_homepage_$_state_machine__7485__auto__$$;
+            $statearr_7807$$[1] = 1;
+            return $statearr_7807$$;
           }
           var $twentiments$server$serve_homepage_$_state_machine__7485__auto__$$ = null;
-          $twentiments$server$serve_homepage_$_state_machine__7485__auto__$$ = function($state_7651$jscomp$2$$) {
+          $twentiments$server$serve_homepage_$_state_machine__7485__auto__$$ = function($state_7788$jscomp$2$$) {
             switch(arguments.length) {
               case 0:
                 return $twentiments$server$serve_homepage_$_state_machine__7485__auto____0$$.call(this);
               case 1:
-                return $twentiments$server$serve_homepage_$_state_machine__7485__auto____1$$.call(this, $state_7651$jscomp$2$$);
+                return $twentiments$server$serve_homepage_$_state_machine__7485__auto____1$$.call(this, $state_7788$jscomp$2$$);
             }
             throw Error("Invalid arity: " + arguments.length);
           };
@@ -7987,21 +7990,21 @@ function $twentiments$server$serve_homepage$$($req$jscomp$5$$, $res$jscomp$19$$)
           $twentiments$server$serve_homepage_$_state_machine__7485__auto__$$.$cljs$core$IFn$_invoke$arity$1$ = $twentiments$server$serve_homepage_$_state_machine__7485__auto____1$$;
           return $twentiments$server$serve_homepage_$_state_machine__7485__auto__$$;
         }();
-      }(), $state__7525__auto__$$ = function() {
-        var $statearr_7668$$ = $f__7524__auto__$$();
-        $statearr_7668$$[6] = $c__7523__auto__$$;
-        return $statearr_7668$$;
+      }(), $state__7525__auto__$jscomp$4$$ = function() {
+        var $statearr_7813$$ = $f__7524__auto__$jscomp$4$$();
+        $statearr_7813$$[6] = $c__7523__auto__$jscomp$4$$;
+        return $statearr_7813$$;
       }();
-      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$$);
+      return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$jscomp$4$$);
     });
-    return $c__7523__auto__$$;
+    return $c__7523__auto__$jscomp$4$$;
   }
   return $res$jscomp$19$$.send('\x3c!DOCTYPE html\x3e\n\x3chtml lang\x3d"en"\x3e\n  \x3chead\x3e\n    \x3c!-- META --\x3e\n    \x3cmeta charset\x3d"UTF-8"\x3e\n    \x3cmeta name\x3d"viewport" content\x3d"width\x3ddevice-width, initial-scale\x3d1"\x3e\n    \x3cmeta name\x3d"uisual" content\x3d"Made with Uisual (uisual.com)"\x3e\n    \x3cmeta name\x3d"author" content\x3d"#"\x3e\n    \x3cmeta name\x3d"description" content\x3d"#"\x3e\n    \x3cmeta name\x3d"referrer" content\x3d"unsafe-url"\x3e\n    \x3cmeta name\x3d"robots" content\x3d"index, follow"\x3e\n    \x3c!-- SPEED --\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://res.cloudinary.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://res.cloudinary.com"\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://fonts.googleapis.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://fonts.googleapis.com"\x3e\n    \x3clink rel\x3d"preconnect" href\x3d"https://fonts.gstatic.com"\x3e\n    \x3clink rel\x3d"dns-prefetch" href\x3d"https://fonts.gstatic.com"\x3e\n    \x3c!-- LINK --\x3e\n    \x3clink rel\x3d"me" href\x3d"#"\x3e\n    \x3clink rel\x3d"canonical" href\x3d"#"\x3e\n    \x3clink rel\x3d"icon" type\x3d"image/png" href\x3d"#" sizes\x3d"48x48"\x3e\n    \x3c!-- PERFORMANCE --\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"https://fonts.googleapis.com/css2?family\x3dInter:wght@400;700\x26display\x3dswap"\x3e\n    \x3clink rel\x3d"preload" as\x3d"style" href\x3d"curve-style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"curve-style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"style.css"\x3e\n    \x3clink rel\x3d"stylesheet" href\x3d"minimal-inputs.css"\x3e\n    \x3c!-- TITLE --\x3e\n    \x3ctitle\x3eDownload Twitter data as CSV including sentiment analysis with TweetFeast\x3c/title\x3e\n  \x3c/head\x3e\n  \x3cbody\x3e\n    \x3cheader role\x3d"banner" class\x3d"ui-section-header"\x3e\n      \x3cdiv class\x3d"ui-layout-container"\x3e\n        \x3cdiv class\x3d"ui-section-header__layout ui-layout-flex"\x3e\n          \x3c!-- LOGO --\x3e\n          \x3ca href\x3d"#" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--logo"\x3e\n            \x3cimg src\x3d"logo.svg"/\x3e\n          \x3c/a\x3e\n          \x3c!-- HAMBURGER --\x3e\n          \x3cinput type\x3d"checkbox" id\x3d"ui-section-header--menu-id"\x3e\n          \x3clabel for\x3d"ui-section-header--menu-id" class\x3d"ui-section-header--menu-icon"\x3e\x3c/label\x3e\n          \x3c!-- MENU --\x3e\n          \x3cnav role\x3d"navigation" class\x3d"ui-section-header--nav ui-layout-flex"\x3e\n            \x3ca href\x3d"#features" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3eFeatures\x3c/a\x3e\n            \x3ca href\x3d"#pricing" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3ePricing\x3c/a\x3e\n            \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-section-header--nav-link"\x3eSign In\x3c/a\x3e\n          \x3c/nav\x3e\n        \x3c/div\x3e\n      \x3c/div\x3e\n    \x3c/header\x3e\n    \x3cmain role\x3d"main"\x3e\n      \x3csection class\x3d"ui-section-hero"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3cdiv class\x3d"ui-section-hero__layout ui-layout-grid ui-layout-grid-2"\x3e\n            \x3c!-- COPYWRITING --\x3e\n            \x3cdiv\x3e\n              \x3ch1\x3eDownload tweet data.\x3c/h1\x3e\n              \x3cp class\x3d"ui-text-intro"\x3eDownload bulk tweets as CSV or JSON data. Sentiment analysis included. No API key required.\x3c/p\x3e\n              \x3c!-- CTA --\x3e\n              \x3cdiv class\x3d"ui-component-cta ui-layout-flex"\x3e\n                \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-component-button ui-component-button-normal ui-component-button-primary"\x3eSign in with Twitter\x3c/a\x3e\n                \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3e7 day free trial.\x3c/small\x3e\x3c/p\x3e\n              \x3c/div\x3e\n            \x3c/div\x3e\n            \x3c!-- IMAGE --\x3e\n            \x3cimg src\x3d"search.gif" loading\x3d"lazy" alt\x3d"Animated gif of the tweet search process." class\x3d"ui-image-half-right"\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-faq"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3ch2\x3e\x3ca name\x3d"features"\x3e\x3c/a\x3eFeatures\x3c/h2\x3e\n          \x3cdiv class\x3d"ui-section-faq__layout ui-layout-grid ui-layout-grid-2"\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eDownload tweets\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eWith our simple tool you can download tweets for analysis or backup on your own computer. You can download the tweets in JSON or CSV format and use them however you like.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTwitter sentiment analysis\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eIt\'s never been easier to perform sentiment analysis on tweets. Just use our tool to search and then click "download" to get the data. A sentiment analysis column is included so there\'s no need to write code or install libraries.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eExport tweets to Excel\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eExporting tweets to a CSV file has never been easier. Simply type a search to find the tweets you want and then click "Download CSV". The CSV file full of tweets will be downloaded onto your computer or straight into Excel for your analysis.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eExport tweets to JSON\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3ePerfect for testing how your app renders tweet data. You don\'t have to set up API keys or write server code. Just download some tweets as JSON and start testing.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTwitter data science\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eWhether you\'re a data scientist or looking for somebody you will need to get raw tweet data in a format that can be analyzed. Our simple tool is the perfect way to download the twitter data onto your own computer for analysis, or to send to somebody else for analysis.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3cdiv\x3e\n              \x3ch4 class\x3d"ui-component-list--item ui-section-faq--question"\x3eTweet data from search\x3c/h4\x3e\n              \x3cp class\x3d"ui-section-faq--answer"\x3eIf you can search for it on Twitter you can download it as CSV or JSON. You can search for hash tags or topics. You can search for stock ticker symbols a like AAPL or TSLA. Get a spreadsheet full of tweets with sentiment analysis included. Figure out what the sentiment of the market is.\x3c/p\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n          \x3cp class\x3d"ui-section-faq--note"\x3eStill have questions? \x3ca href\x3d"https://twitter.com/mccrmx" role\x3d"link" aria-label\x3d"Contact us"\x3eContact us\x3c/a\x3e.\x3c/p\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-pricing"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3ch2\x3e\x3ca name\x3d"pricing"\x3e\x3c/a\x3ePricing\x3c/h2\x3e\n          \x3cp class\x3d"ui-text-intro"\x3eOur simple pricing is based on volume and features.\x3c/p\x3e\n          \x3c!-- TOGGLE --\x3e\n          \x3cinput type\x3d"radio" name\x3d"toggle" id\x3d"ui-component-toggle__monthly" checked\x3e\n          \x3cinput type\x3d"radio" name\x3d"toggle" id\x3d"ui-component-toggle__yearly"\x3e\n          \x3cdiv class\x3d"ui-component-toggle ui-layout-flex"\x3e\n            \x3clabel for\x3d"ui-component-toggle__monthly" class\x3d"ui-component-toggle--label"\x3eBilled Monthly\x3c/label\x3e\n            \x3clabel for\x3d"ui-component-toggle__yearly" class\x3d"ui-component-toggle--label"\x3eBilled Yearly\x3c/label\x3e\n          \x3c/div\x3e\n          \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3eSave 15% with a yearly plan.\x3c/small\x3e\x3c/p\x3e\n          \x3c!-- PRICING --\x3e\n          \x3cdiv class\x3d"ui-section-pricing__layout ui-layout-grid ui-layout-grid-3"\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eBasic\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-1"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eFor low data requirements.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUp to 50 rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-cross"\x3eNo sentiment analysis.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-cross"\x3eLimited support.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-secondary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eStandard\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-2"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eSetiment analysis and 1k rows.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUp to 10k rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eSentiment analysis.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3ePriority support.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-primary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n            \x3cdiv class\x3d"ui-component-card ui-component-card--pricing"\x3e\n              \x3cspan\x3e\x3cstrong\x3eSpecial\x3c/strong\x3e\x3c/span\x3e\n              \x3c!-- AMOUNT --\x3e\n              \x3cdiv class\x3d"ui-component-card--pricing-price"\x3e\n                \x3cspan class\x3d"ui-component-card--pricing-amount ui-component-card--pricing-amount-3"\x3e\x3c/span\x3e\n                \x3cspan\x3e/\x3c/span\x3e\n                \x3cspan\x3emonth\x3c/span\x3e\n              \x3c/div\x3e\n              \x3cspan\x3e\x3csmall\x3eHigh volume machine learning.\x3c/small\x3e\x3c/span\x3e\n              \x3c!-- LIST --\x3e\n              \x3cul class\x3d"ui-component-list ui-component-list--pricing ui-layout-grid"\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to CSV.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eExport to JSON.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eUnlimited rows of data.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3eMachine learning algos.\x3c/li\x3e\n                \x3cli class\x3d"ui-component-list--item ui-component-list--item-check"\x3e24hr support response.\x3c/li\x3e\n              \x3c/ul\x3e\n              \x3c!-- CTA --\x3e\n              \x3ca href\x3d"/login" class\x3d"ui-component-button ui-component-button-big ui-component-button-secondary" role\x3d"link" aria-label\x3d"#"\x3eSign in with Twitter\x3c/a\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n      \x3csection class\x3d"ui-section-close"\x3e\n        \x3cdiv class\x3d"ui-layout-container"\x3e\n          \x3cdiv class\x3d"ui-section-close__layout ui-layout-flex"\x3e\n            \x3cdiv\x3e\n              \x3ch2\x3eReady to start?\x3c/h2\x3e\n              \x3cp class\x3d"ui-text-intro"\x3eSign in with Twitter to start downloading tweet data.\x3c/p\x3e\n            \x3c/div\x3e\n            \x3c!-- CTA --\x3e\n            \x3cdiv class\x3d"ui-component-cta ui-layout-flex"\x3e\n              \x3ca href\x3d"/login" role\x3d"link" aria-label\x3d"#" class\x3d"ui-component-button ui-component-button-normal ui-component-button-primary"\x3eSign in with Twitter\x3c/a\x3e\n              \x3cp class\x3d"ui-text-note"\x3e\x3csmall\x3e7 day free trial.\x3c/small\x3e\x3c/p\x3e\n            \x3c/div\x3e\n          \x3c/div\x3e\n        \x3c/div\x3e\n      \x3c/section\x3e\n    \x3c/main\x3e\n    \x3cfooter role\x3d"contentinfo" class\x3d"ui-section-footer"\x3e\n      \x3cdiv class\x3d"ui-layout-container"\x3e\n        \x3cdiv class\x3d"ui-section-footer__layout ui-layout-flex"\x3e\n          \x3c!-- COPYRIGHT --\x3e\n          \x3cp class\x3d"ui-section-footer--copyright ui-text-note"\x3e\x3csmall\x3e\x26copy; \x3ca href\x3d"https://mccormickit.com/"\x3eMcCormick IT\x3c/a\x3e 2021. Design by \x3ca href\x3d"https://uisual.com/"\x3eUisual\x3c/a\x3e\x3c/small\x3e\x3c/p\x3e\n          \x3c!-- MENU --\x3e\n          \x3ca href\x3d"https://twitter.com/mccrmx" role\x3d"link" aria-label\x3d"#"\x3e\n            \x3csvg viewBox\x3d"0 0 24 24" height\x3d"16" width\x3d"16" fill\x3d"none" stroke\x3d"#AEAEAE" stroke-linecap\x3d"round" stroke-linejoin\x3d"round" stroke-width\x3d"2" role\x3d"img" aria-label\x3d"#"\x3e\n              \x3cpath d\x3d"M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/\x3e\n            \x3c/svg\x3e\n          \x3c/a\x3e\n        \x3c/div\x3e\n      \x3c/div\x3e\n    \x3c/footer\x3e\n  \x3c/body\x3e\n\x3c/html\x3e\n');
 }
 function $twentiments$server$search_old$$($req$jscomp$7$$, $res$jscomp$21$$) {
   return $twentiments$server$twitter$$($req$jscomp$7$$.$session$.user).v1.get("tweets/search/fullarchive/devfullarchive.json", {query:$req$jscomp$7$$.body.q, maxResults:100}).then(function($data$jscomp$87$$) {
-    var $tweets_7720$$ = $data$jscomp$87$$.results;
-    $cljs$core$truth_$$($tweets_7720$$) && $tweets_7720$$.map(function($d$jscomp$160$$) {
+    var $tweets_7885$$ = $data$jscomp$87$$.results;
+    $cljs$core$truth_$$($tweets_7885$$) && $tweets_7885$$.map(function($d$jscomp$160$$) {
       return $d$jscomp$160$$.sentiment = $shadow$js$shim$module$0wink_sentiment$$($d$jscomp$160$$.text).score;
     });
     return $res$jscomp$21$$.json($data$jscomp$87$$);
@@ -8022,90 +8025,90 @@ function $twentiments$server$setup_routes$$($app$jscomp$5$$) {
   return $app$jscomp$5$$.post.call($app$jscomp$5$$, "/search", $twentiments$server$search_old$$);
 }
 ;$cljs$core$apply$cljs$0core$0IFn$0_invoke$0arity$02$$(function() {
-  var $c__7523__auto__$jscomp$1$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
+  var $c__7523__auto__$jscomp$5$$ = $cljs$core$async$chan$cljs$0core$0IFn$0_invoke$0arity$03$$(1);
   $cljs$core$async$impl$dispatch$run$$(function() {
-    var $f__7524__auto__$jscomp$1$$ = function() {
-      function $switch__7484__auto__$jscomp$1$$($state_7695$$) {
-        var $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ = $state_7695$$[1];
-        if (1 === $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$) {
-          var $inst_7672_inst_7679_inst_7680_inst_7692$$ = $state_7695$$[7];
-          $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ = $clast$web$create$$();
-          var $inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$ = $clast$web$serve$$($inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$);
-          $inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$ = $cljs$core$async$interop$p__GT_c$$($inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$);
-          $state_7695$$[7] = $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$;
-          return $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7695$$, 2, $inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$);
+    var $f__7524__auto__$jscomp$5$$ = function() {
+      function $switch__7484__auto__$jscomp$5$$($state_7851$$) {
+        var $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ = $state_7851$$[1];
+        if (1 === $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$) {
+          var $inst_7826_inst_7835_inst_7836_inst_7848$$ = $state_7851$$[7];
+          $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ = $clast$web$create$$();
+          var $inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$ = $clast$web$serve$$($inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$);
+          $inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$ = $cljs$core$async$interop$p__GT_c$$($inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$);
+          $state_7851$$[7] = $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$;
+          return $cljs$core$async$impl$ioc_helpers$take_BANG_$$($state_7851$$, 2, $inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$);
         }
-        if (2 === $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$) {
-          return $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ = $state_7695$$[8], $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ = $state_7695$$[2], $inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$ = $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7672_inst_7679_inst_7680_inst_7692$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$)), 
-          $inst_7672_inst_7679_inst_7680_inst_7692$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7672_inst_7679_inst_7680_inst_7692$$, $cljs$cst$keyword$promise_DASH_error$$), $state_7695$$[8] = $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$, $state_7695$$[1] = $cljs$core$truth_$$($inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$ && $inst_7672_inst_7679_inst_7680_inst_7692$$) ? 3 : 4, $cljs$cst$keyword$recur$$;
+        if (2 === $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$) {
+          return $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ = $state_7851$$[8], $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ = $state_7851$$[2], $inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$ = $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ instanceof $cljs$core$ExceptionInfo$$, $inst_7826_inst_7835_inst_7836_inst_7848$$ = $cljs$cst$keyword$error$$.$cljs$core$IFn$_invoke$arity$1$($cljs$core$ex_data$$($inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$)), 
+          $inst_7826_inst_7835_inst_7836_inst_7848$$ = $cljs$core$_EQ_$$.$cljs$core$IFn$_invoke$arity$2$($inst_7826_inst_7835_inst_7836_inst_7848$$, $cljs$cst$keyword$promise_DASH_error$$), $state_7851$$[8] = $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$, $state_7851$$[1] = $cljs$core$truth_$$($inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$ && $inst_7826_inst_7835_inst_7836_inst_7848$$) ? 3 : 4, $cljs$cst$keyword$recur$$;
         }
-        if (3 === $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$) {
-          throw $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ = $state_7695$$[8], $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$;
+        if (3 === $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$) {
+          throw $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ = $state_7851$$[8], $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$;
         }
-        if (4 === $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$) {
-          return $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ = $state_7695$$[8], $state_7695$$[2] = $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$, $state_7695$$[1] = 5, $cljs$cst$keyword$recur$$;
+        if (4 === $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$) {
+          return $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ = $state_7851$$[8], $state_7851$$[2] = $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$, $state_7851$$[1] = 5, $cljs$cst$keyword$recur$$;
         }
-        if (5 === $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$) {
-          $inst_7672_inst_7679_inst_7680_inst_7692$$ = $state_7695$$[7];
-          $inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$ = $state_7695$$[2];
-          $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$ = $cljs$core$nth$cljs$0core$0IFn$0_invoke$0arity$03$$($inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$, 0, null);
-          $inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$ = $cljs$core$nth$cljs$0core$0IFn$0_invoke$0arity$03$$($inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$, 1, null);
-          var $inst_7689_inst_7691$$ = new $cljs$core$Var$$(function() {
+        if (5 === $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$) {
+          $inst_7826_inst_7835_inst_7836_inst_7848$$ = $state_7851$$[7];
+          $inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$ = $state_7851$$[2];
+          $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$ = $cljs$core$nth$cljs$0core$0IFn$0_invoke$0arity$03$$($inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$, 0, null);
+          $inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$ = $cljs$core$nth$cljs$0core$0IFn$0_invoke$0arity$03$$($inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$, 1, null);
+          var $inst_7845_inst_7847$$ = new $cljs$core$Var$$(function() {
             return $twentiments$server$setup_routes$$;
           }, $cljs$cst$symbol$twentiments_DOT_server_SLASH_setup_DASH_routes$$, $cljs$core$PersistentHashMap$fromArrays$$([$cljs$cst$keyword$ns$$, $cljs$cst$keyword$name$$, $cljs$cst$keyword$file$$, $cljs$cst$keyword$end_DASH_column$$, $cljs$cst$keyword$column$$, $cljs$cst$keyword$line$$, $cljs$cst$keyword$end_DASH_line$$, $cljs$cst$keyword$arglists$$, $cljs$cst$keyword$doc$$, $cljs$cst$keyword$test$$], [$cljs$cst$symbol$twentiments_DOT_server$$, $cljs$cst$symbol$setup_DASH_routes$$, "twentiments/server.cljs", 
           19, 1, 156, 156, $cljs$core$list$$(new $cljs$core$PersistentVector$$(null, 1, 5, $cljs$core$PersistentVector$EMPTY_NODE$$, [$cljs$cst$symbol$app$$], null)), null, $cljs$core$truth_$$($twentiments$server$setup_routes$$) ? $twentiments$server$setup_routes$$.$cljs$lang$test$ : null]));
-          $inst_7689_inst_7691$$ = $clast$util$reloader$$($cljs$core$partial$cljs$0core$0IFn$0_invoke$0arity$02$$($inst_7689_inst_7691$$, $inst_7672_inst_7679_inst_7680_inst_7692$$));
-          $inst_7672_inst_7679_inst_7680_inst_7692$$ = $twentiments$server$setup_routes$$($inst_7672_inst_7679_inst_7680_inst_7692$$);
-          var $inst_7693$$ = $cljs$core$println$cljs$0core$0IFn$0_invoke$0arity$0variadic$$();
-          $state_7695$$[9] = $inst_7689_inst_7691$$;
-          $state_7695$$[10] = $inst_7673_inst_7674_inst_7677_inst_7686_inst_7688$$;
-          $state_7695$$[11] = $inst_7672__$1_inst_7676_inst_7676__$1_inst_7687_state_val_7696$$;
-          $state_7695$$[12] = $inst_7672_inst_7679_inst_7680_inst_7692$$;
-          return $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7695$$, $inst_7693$$);
+          $inst_7845_inst_7847$$ = $clast$util$reloader$$($cljs$core$partial$cljs$0core$0IFn$0_invoke$0arity$02$$($inst_7845_inst_7847$$, $inst_7826_inst_7835_inst_7836_inst_7848$$));
+          $inst_7826_inst_7835_inst_7836_inst_7848$$ = $twentiments$server$setup_routes$$($inst_7826_inst_7835_inst_7836_inst_7848$$);
+          var $inst_7849$$ = $cljs$core$println$cljs$0core$0IFn$0_invoke$0arity$0variadic$$();
+          $state_7851$$[9] = $inst_7826_inst_7835_inst_7836_inst_7848$$;
+          $state_7851$$[10] = $inst_7845_inst_7847$$;
+          $state_7851$$[11] = $inst_7826__$1_inst_7831_inst_7831__$1_inst_7843_state_val_7852$$;
+          $state_7851$$[12] = $inst_7828_inst_7829_inst_7833_inst_7842_inst_7844$$;
+          return $cljs$core$async$impl$ioc_helpers$return_chan$$($state_7851$$, $inst_7849$$);
         }
         return null;
       }
       return function() {
-        function $twentiments$server$main_BANG__$_state_machine__7485__auto____1$$($state_7695$jscomp$1$$) {
+        function $twentiments$server$main_BANG__$_state_machine__7485__auto____1$$($state_7851$jscomp$1$$) {
           for (;;) {
             a: {
               try {
                 for (;;) {
-                  var $result__7487__auto__$jscomp$inline_874$$ = $switch__7484__auto__$jscomp$1$$($state_7695$jscomp$1$$);
+                  var $result__7487__auto__$jscomp$inline_874$$ = $switch__7484__auto__$jscomp$5$$($state_7851$jscomp$1$$);
                   if (!$cljs$core$keyword_identical_QMARK_$$($result__7487__auto__$jscomp$inline_874$$, $cljs$cst$keyword$recur$$)) {
-                    var $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$1$$ = $result__7487__auto__$jscomp$inline_874$$;
+                    var $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$5$$ = $result__7487__auto__$jscomp$inline_874$$;
                     break a;
                   }
                 }
-              } catch ($e7705$jscomp$inline_876$$) {
-                $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$1$$ = $e7705$jscomp$inline_876$$;
-                $state_7695$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$1$$;
-                if ($cljs$core$seq$$($state_7695$jscomp$1$$[4])) {
-                  $state_7695$jscomp$1$$[1] = $cljs$core$first$$($state_7695$jscomp$1$$[4]);
+              } catch ($e7870$jscomp$inline_876$$) {
+                $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$5$$ = $e7870$jscomp$inline_876$$;
+                $state_7851$jscomp$1$$[2] = $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$5$$;
+                if ($cljs$core$seq$$($state_7851$jscomp$1$$[4])) {
+                  $state_7851$jscomp$1$$[1] = $cljs$core$first$$($state_7851$jscomp$1$$[4]);
                 } else {
-                  throw $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$1$$;
+                  throw $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$5$$;
                 }
-                $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$1$$ = $cljs$cst$keyword$recur$$;
+                $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$5$$ = $cljs$cst$keyword$recur$$;
               }
             }
-            if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$1$$, $cljs$cst$keyword$recur$$)) {
-              return $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$1$$;
+            if (!$cljs$core$keyword_identical_QMARK_$$($ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$5$$, $cljs$cst$keyword$recur$$)) {
+              return $ex__7488__auto__$jscomp$inline_875_ret_value__7486__auto__$jscomp$5$$;
             }
           }
         }
         function $twentiments$server$main_BANG__$_state_machine__7485__auto____0$$() {
-          var $statearr_7704$$ = [null, null, null, null, null, null, null, null, null, null, null, null, null];
-          $statearr_7704$$[0] = $twentiments$server$main_BANG__$_state_machine__7485__auto__$$;
-          $statearr_7704$$[1] = 1;
-          return $statearr_7704$$;
+          var $statearr_7869$$ = [null, null, null, null, null, null, null, null, null, null, null, null, null];
+          $statearr_7869$$[0] = $twentiments$server$main_BANG__$_state_machine__7485__auto__$$;
+          $statearr_7869$$[1] = 1;
+          return $statearr_7869$$;
         }
         var $twentiments$server$main_BANG__$_state_machine__7485__auto__$$ = null;
-        $twentiments$server$main_BANG__$_state_machine__7485__auto__$$ = function($state_7695$jscomp$2$$) {
+        $twentiments$server$main_BANG__$_state_machine__7485__auto__$$ = function($state_7851$jscomp$2$$) {
           switch(arguments.length) {
             case 0:
               return $twentiments$server$main_BANG__$_state_machine__7485__auto____0$$.call(this);
             case 1:
-              return $twentiments$server$main_BANG__$_state_machine__7485__auto____1$$.call(this, $state_7695$jscomp$2$$);
+              return $twentiments$server$main_BANG__$_state_machine__7485__auto____1$$.call(this, $state_7851$jscomp$2$$);
           }
           throw Error("Invalid arity: " + arguments.length);
         };
@@ -8113,14 +8116,14 @@ function $twentiments$server$setup_routes$$($app$jscomp$5$$) {
         $twentiments$server$main_BANG__$_state_machine__7485__auto__$$.$cljs$core$IFn$_invoke$arity$1$ = $twentiments$server$main_BANG__$_state_machine__7485__auto____1$$;
         return $twentiments$server$main_BANG__$_state_machine__7485__auto__$$;
       }();
-    }(), $state__7525__auto__$jscomp$1$$ = function() {
-      var $statearr_7708$$ = $f__7524__auto__$jscomp$1$$();
-      $statearr_7708$$[6] = $c__7523__auto__$jscomp$1$$;
-      return $statearr_7708$$;
+    }(), $state__7525__auto__$jscomp$5$$ = function() {
+      var $statearr_7873$$ = $f__7524__auto__$jscomp$5$$();
+      $statearr_7873$$[6] = $c__7523__auto__$jscomp$5$$;
+      return $statearr_7873$$;
     }();
-    return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$jscomp$1$$);
+    return $cljs$core$async$impl$ioc_helpers$run_state_machine_wrapped$$($state__7525__auto__$jscomp$5$$);
   });
-  return $c__7523__auto__$jscomp$1$$;
+  return $c__7523__auto__$jscomp$5$$;
 }, process.argv.slice(2));
 
 })();
