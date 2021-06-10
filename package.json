@@ -5,6 +5,7 @@
     "@keyv/postgres": "1.0.16",
     "@keyv/redis": "2.1.2",
     "@keyv/sqlite": "2.0.2",
+    "body-parser": "^1.19.0",
     "caller-id": "0.1.0",
     "chokidar": "3.5.1",
     "cookie-parser": "1.4.5",
