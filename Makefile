@@ -3,7 +3,7 @@ STATIC=public/*.html public/*.png public/*.css public/*.svg public/*.gif
 all: server.js build
 
 server.js: src/**/*.cljs shadow-cljs.edn
-	npx shadow-cljs release server
+	npx shadow-cljs release server --debug
 
 test.js: src/**/*.cljs shadow-cljs.edn
 	npx shadow-cljs release tests
@@ -11,7 +11,7 @@ test.js: src/**/*.cljs shadow-cljs.edn
 build: src/**/* $(STATIC)
 	mkdir -p build
 	cp -L $(STATIC) build
-	npx shadow-cljs release --debug app
+	npx shadow-cljs release app
 	touch build
 
 test: test.js
