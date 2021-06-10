@@ -154,7 +154,7 @@
 (defn setup-routes [app]
   (web/reset-routes app)
   (.get app "/" serve-homepage)
-  (web/static-folder app "/" "public")
+  (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
