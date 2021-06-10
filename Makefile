@@ -1,8 +1,18 @@
+STATIC=public/*.html public/*.png public/*.css public/*.svg public/*.gif
+
+all: server.js build
+
 server.js: src/**/*.cljs shadow-cljs.edn
 	npx shadow-cljs release server
 
 test.js: src/**/*.cljs shadow-cljs.edn
 	npx shadow-cljs release tests
+
+build: src/**/* $(STATIC)
+	mkdir -p build
+	cp -L $(STATIC) build
+	npx shadow-cljs release app
+	touch build
 
 test: test.js
 	node test.js
