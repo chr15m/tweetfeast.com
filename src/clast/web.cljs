@@ -16,6 +16,8 @@
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
+(def database-url (env "DATABASE" "sqlite://./database.sqlite"))
+
 (defn create-store [kv]
   (let [e (session/Store.)]
     (aset e "destroy" (fn [sid callback]
@@ -37,7 +39,7 @@
   ; set up logging
   (let [logs (str js/__dirname "/logs")
         access-log (.createStream rfs "access.log" #js {:interval "7d" :path logs})
-        kv-session (Keyv. (env "DATABASE" "sqlite://./rsstonews.sqlite") #js {:namespace "session"})
+        kv-session (Keyv. database-url #js {:namespace "session"})
         store (create-store kv-session)]
     (.use app (morgan "combined" #js {:stream access-log}))
     ; set up sessions table
@@ -68,7 +70,7 @@
     (add-default-middleware app)))
 
 (defn create []
-  (let [kv (Keyv. (env "DATABASE" "sqlite://./rsstonews.sqlite"))]
+  (let [kv (Keyv. database-url)]
     (-> (express)
         (j/assoc! :kv kv)
         (j/assoc! :db (aget kv "opts" "store"))
