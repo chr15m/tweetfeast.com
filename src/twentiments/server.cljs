@@ -153,11 +153,19 @@
             (js/console.error err)
             (.json res (util/error-to-json (aget err "data"))))))))
 
+(defn soon [req res]
+  (let [template (rc/inline "index.html")
+        dom (motionless/dom template)
+        app (.$ dom "main")]
+    (aset app "innerHTML" "")
+    (.appendChild app (.h dom "section" #js {:className "ui-section-pricing"} (.h dom "div" #js {:className "ui-layout-container"} (.h dom "h2" "Soon."))))
+    (.send res (.render dom))))
+
 (defn setup-routes [app]
   (web/reset-routes app)
   (.get app "/" serve-homepage)
   (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
-  (.get app "/login" twitter-login)
+  (.get app "/login" soon)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
   (j/call app :post "/search" search-old)
