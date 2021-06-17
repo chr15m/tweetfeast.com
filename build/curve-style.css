@@ -569,6 +569,7 @@ div label[for=ui-component-toggle__yearly] {
 
 /* AMOUNT */
 
+/*
 .ui-component-card--pricing-amount-1::before { content: "$5"; }
 
 #ui-component-toggle__yearly:checked ~ div
@@ -583,6 +584,7 @@ div label[for=ui-component-toggle__yearly] {
 
 #ui-component-toggle__yearly:checked ~ div
 .ui-component-card--pricing-amount-3::before { content: "$23"; }
+*/
 
 /* LIST */
 

@@ -86,30 +86,6 @@ section.options {
   align-items: start;
 }
 
-.ui-component-card--pricing-amount-1::before {
-  content: "$7"
-}
-
-#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-1::before {
-  content: "$6";
-}
-
-.ui-component-card--pricing-amount-2::before {
-  content: "$19";
-}
-
-#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-2::before {
-  content: "$16";
-}
-
-.ui-component-card--pricing-amount-3::before {
-  content: "$250";
-}
-
-#ui-component-toggle__yearly:checked ~ div .ui-component-card--pricing-amount-3::before {
-  content: "$212";
-}
-
 /*** styling table ***/
 
 table {
