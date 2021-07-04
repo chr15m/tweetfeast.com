@@ -13,6 +13,9 @@
 
 (def twitter-key (or (util/env "TWITTER_API_KEY") (util/bail "TWITTER_API_KEY not set.")))
 (def twitter-secret (or (util/env "TWITTER_API_SECRET") (util/bail "TWITTER_API_SECRET not set.")))
+(def twitter-environment (or (util/env "TWITTER_ENVIRONMENT_NAME")
+                             (util/bail "TWITTER_ENVIRONMENT_NAME (full archive) not set.
+                                        <https://developer.twitter.com/en/account/environments>")))
 
 (defn twitter-sign-in [req]
   (login-with-twitter.
@@ -136,7 +139,7 @@
   (let [user (j/get-in req [:session :user])
         tw (twitter user)]
     ; https://developer.twitter.com/en/docs/twitter-api/premium/search-api/overview
-    (-> (.get (aget tw "v1") "tweets/search/fullarchive/devfullarchive.json"
+    (-> (.get (aget tw "v1") (str "tweets/search/fullarchive/" twitter-environment ".json")
               #js {:query (aget req.body "q")
                    :maxResults 100})
         (.then
@@ -165,7 +168,8 @@
   (web/reset-routes app)
   (.get app "/" serve-homepage)
   (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
-  (.get app "/login" soon)
+  ;(.get app "/login" soon)
+  (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
   (j/call app :post "/search" search-old)
