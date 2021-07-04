@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mkdir -p build/analytics
+goaccess logs/*access.log --log-format=COMBINED --time-format="%H:%M:%S" --ignore-crawlers > ./build/analytics/index.html; sleep 10800
