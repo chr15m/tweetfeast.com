@@ -1,4 +1,5 @@
 #!/bin/sh
 
 mkdir -p build/analytics
-goaccess -f logs/*access.log --log-format='%h %^[%d:%t %^] "%r" %s %b "%R" "%u"' --time-format="%H:%M:%S" --date-format="%d/%b/%Y" --ignore-crawlers > ./build/analytics/index.html; sleep 10800
+logs=`for x in logs/*; do echo -n "-f $x "; done`
+goaccess $logs --log-format='%h %^[%d:%t %^] "%r" %s %b "%R" "%u"' --time-format="%H:%M:%S" --date-format="%d/%b/%Y" --ignore-crawlers > ./build/analytics/index.html; sleep 10800
