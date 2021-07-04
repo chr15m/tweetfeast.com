@@ -159,13 +159,16 @@
 
 (defn component-search [state user]
   [:fieldset.horizontal
-    [:input.fit {:placeholder "Search for tweets..."
-                 :value (@state :q)
-                 :on-change #(swap! state assoc :q (-> % .-target .-value))
-                 :on-key-down #(when (= (aget % "keyCode") 13) (initiate-search state))}]
-    [:button
-     {:on-click (partial initiate-search state)}
-     "search"]])
+   [:input.fit {:auto-focus true
+                :placeholder "Search for tweets..."
+                :value (@state :q)
+                :on-change #(swap! state assoc :q (-> % .-target .-value))
+                :on-key-down #(when (= (aget % "keyCode") 13) (initiate-search state))}]
+   (when (@state :results)
+     [:button {:on-click #(swap! state dissoc :results :q)} "clear"])
+   [:button
+    {:on-click (partial initiate-search state)}
+    "search"]])
 
 (defn component-tweet [tweet]
   [:div.twitter-tweet {:key (aget tweet "id")
@@ -338,15 +341,13 @@
         results (@state :results)]
     [:main#app
      [component-search state]
-     [:section.options
+     #_ [:section.options
       [:input {:name "search-state-check"
                :id "search-state-check"
                :type "checkbox"
                :checked (@state :results-view-table)
                :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
-      [:label {:for "search-state-check"} "table view"]
-      (when results
-        [:button {:on-click #(swap! state dissoc :results :q)} "clear"])]
+      [:label {:for "search-state-check"} "table view"]]
      (if searching
        [:div.spinner.spin]
        (if results
