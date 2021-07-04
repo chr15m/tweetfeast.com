@@ -1,5 +1,8 @@
 #!/bin/sh
 
 mkdir -p build/analytics
-logs=`for x in logs/*; do echo -n "-f $x "; done`
-goaccess $logs --log-format='%h %^[%d:%t %^] "%r" %s %b "%R" "%u"' --time-format="%H:%M:%S" --date-format="%d/%b/%Y" --ignore-crawlers > ./build/analytics/index.html; sleep 10800
+#logs=`for x in logs/*; do echo -n "-f $x "; done`
+cat logs/* > logs/megalog
+goaccess -f logs/megalog --log-format='%h %^[%d:%t %^] "%r" %s %b "%R" "%u"' --time-format="%H:%M:%S" --date-format="%d/%b/%Y" --ignore-crawlers > ./build/analytics/index.html
+rm logs/megalog
+sleep 10800
