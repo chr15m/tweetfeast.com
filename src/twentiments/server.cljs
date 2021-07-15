@@ -86,6 +86,17 @@
               (js/console.error err)
               (util/error-to-json err)))))
 
+(defn make-simple-page [content]
+  (let [template (rc/inline "index.html")
+        dom (motionless/dom template)
+        app (.$ dom "main")]
+    (aset app "innerHTML" "")
+    (.appendChild app
+                  (.h dom "section" #js {:className "ui-section-pricing"}
+                      (.h dom "div" #js {:className "ui-layout-container"}
+                          (.h dom "h2" content))))
+    (.render dom)))
+
 (defn strip-slash [req res n]
   (let [path (aget req "path")
         url (aget req "url")]
@@ -94,6 +105,7 @@
           (> (aget path "length") 1))
       (.redirect res 301 (str (.slice path 0 -1) (.slice url (aget path "length"))))
       (n))))
+
 
 (defn serve-homepage [req res]
   (let [template (rc/inline "index.html")
@@ -171,13 +183,9 @@
             (.json res data)))
         (.catch
           (fn [err] (return-json-error res (aget err "data") 403))))))
+
 (defn soon [req res]
-  (let [template (rc/inline "index.html")
-        dom (motionless/dom template)
-        app (.$ dom "main")]
-    (aset app "innerHTML" "")
-    (.appendChild app (.h dom "section" #js {:className "ui-section-pricing"} (.h dom "div" #js {:className "ui-layout-container"} (.h dom "h2" "Soon."))))
-    (.send res (.render dom))))
+  (.send res (make-simple-page "Soon.")))
 
 (defn setup-routes [app]
   (web/reset-routes app)
