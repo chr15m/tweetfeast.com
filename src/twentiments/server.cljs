@@ -20,6 +20,13 @@
                              (util/bail "TWITTER_ENVIRONMENT_NAME (full archive) not set.
                                         <https://developer.twitter.com/en/account/environments>")))
 
+(defn return-json-error [res err code]
+  (do
+    (js/console.error err)
+    (-> res
+        (.status code)
+        (.json res (util/error-to-json err)))))
+
 (defn twitter-sign-in [req]
   (login-with-twitter.
     #js {:consumerKey twitter-key
@@ -45,9 +52,7 @@
                (j/get-in req [:session :tokenSecret])
                (fn [err user]
                  (if err
-                   (do
-                     (js/console.error err)
-                     (.json res (util/error-to-json err)))
+                   (return-json-error res err 404)
                    (do
                      (when-let [session (j/get req "session")]
                        (js-delete session "tokenSecret"))
@@ -63,9 +68,7 @@
       (.login tw
               (fn [err token-secret url]
                 (if err
-                  (do
-                    (js/console.error err)
-                    (.json res (util/error-to-json err)))
+                  (return-json-error res err 404)
                   (do
                     (j/assoc-in! req [:session :tokenSecret] token-secret)
                     (.redirect res url))))))))
@@ -138,9 +141,8 @@
                       (aset d "sentiment"
                             (aget (sentiment (aget d "text")) "score")))))
             (.json res data))))
-      (.catch (fn [err]
-                (js/console.error err)
-                (.json res (util/error-to-json (aget err "data"))))))))
+      (.catch 
+        (fn [err] (return-json-error res (aget err "data") 403))))))
 
 (defn search-old [req res]
   (let [user (j/get-in req [:session :user])
@@ -159,10 +161,7 @@
                               (aget (sentiment (aget d "text")) "score"))))))
             (.json res data)))
         (.catch
-          (fn [err]
-            (js/console.error err)
-            (.json res (util/error-to-json (aget err "data"))))))))
-
+          (fn [err] (return-json-error res (aget err "data") 403))))))
 (defn soon [req res]
   (let [template (rc/inline "index.html")
         dom (motionless/dom template)
