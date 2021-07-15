@@ -8,7 +8,7 @@
 (defn kv [kv-ns]
   (Keyv. database-url #js {:namespace kv-ns}))
 
-(defn db []
+(defn client []
   (->
     (Keyv. database-url)
     (aget "opts" "store")))
