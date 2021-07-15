@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [reagent.dom :as rd]
             [applied-science.js-interop :as j]
+            [clast.ui :refer [simple-date-time slug]]
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
             ["twitter-text" :as twitter-text]
@@ -56,9 +57,6 @@
                         (assoc :results-q (@state :q))
                         (update-in [:progress] dissoc :search))))))
 
-(defn split-date-time [dt]
-  (-> dt (.split "T") (.join " ") (.split ".") first))
-
 (defn get-users [results]
   (aget results "includes" "users"))
 
@@ -71,14 +69,6 @@
                (clj->js {:content-type content-type
                          :name filename}))]
     (js/URL.createObjectURL file)))
-
-(def slug-regex (js/RegExp. "\\W+" "g"))
-
-(defn slug [text]
-  (-> text
-      .toString
-      .toLowerCase
-      (.replace slug-regex "-")))
 
 (defn make-full-json-string [results]
   (let [results (js/JSON.parse (js/JSON.stringify results))
@@ -97,7 +87,7 @@
             (let [user (get-user users (aget tweet "author_id"))
                   m (aget tweet "public_metrics")
                   values [:id (aget tweet "id_str")
-                          :date-time (split-date-time (aget tweet "created_at"))
+                          :date-time (simple-date-time (aget tweet "created_at"))
 
                           :metric-likes (aget m "like_count")
                           :metric-replies (aget m "reply_count")
@@ -126,7 +116,7 @@
           (fn [tweet i]
             (let [extended (aget tweet "extended_tweet")
                   values [:id (str "id:" (aget tweet "id_str"))
-                          :date-time (-> (aget tweet "created_at") js/Date. .toISOString split-date-time)
+                          :date-time (-> (aget tweet "created_at") js/Date. .toISOString simple-date-time)
 
                           :metric-likes (aget tweet "favorite_count")
                           :metric-replies (aget tweet "reply_count")
