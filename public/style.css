@@ -16,6 +16,20 @@ body {
   min-height: 50vh;
 }
 
+#trial {
+  background-color: rgba(250, 181, 181, 0.5);
+  border-bottom: 2px solid #FAB5B5;
+  /*border-top: 2px solid #FAB5B5;*/
+  position: fixed;
+  margin: 0px;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  padding: 0.25em;
+  text-align: center;
+  font-size: 0.8em;
+}
+
 fieldset {
   border: 0px;
 }

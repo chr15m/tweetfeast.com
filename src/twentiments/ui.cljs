@@ -330,6 +330,7 @@
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     [:main#app
+     [:div#trial "Free trial"]
      [component-search state]
      #_ [:section.options
       [:input {:name "search-state-check"
