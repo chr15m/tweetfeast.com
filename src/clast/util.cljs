@@ -1,7 +1,23 @@
 (ns clast.util
   (:require
+    ["util" :as util]
     ["caller-id" :as caller-id]
-    ["chokidar" :as file-watcher]))
+    ["chokidar" :as file-watcher]
+    ["rotating-file-stream" :as rfs]))
+
+(defn bind-console-log-to-file []
+  (let [logs (str js/__dirname "/logs")
+        error-log (.createStream rfs "error.log" #js {:interval "7d" :path logs})
+        stdout (aget js/process "stdout")
+        log-fn (fn [& args]
+                 (let [date (.toISOString (js/Date.))
+                       [d t] (.split date "T")
+                       [t _] (.split t ".")
+                       out (str d " " t " " (apply util/format (clj->js args)) "\n")]
+                   (.write error-log out)
+                   (.write stdout out)))]
+    (aset js/console "log" log-fn)
+    (aset js/console "error" log-fn)))
 
 (defn bail [msg]
   (js/console.error msg)
