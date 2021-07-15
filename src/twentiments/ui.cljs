@@ -365,12 +365,11 @@
 
 ; *** startup *** ;
 
-(defn reload! []
+(defn ^:dev/after-load reload! []
   (js/console.log "reload!")
   (rd/render [component-main state] (js/document.querySelector "main")))
 
 (defn main! []
-  (go
-      (reload!))
-  (js/console.log "main!"))
+  (js/console.log "main!")
+  (reload!))
 

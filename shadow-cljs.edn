@@ -9,8 +9,11 @@
           :app {:target :browser
                 :output-dir "public/js"
                 :asset-path "js"
-                :modules {:main {:init-fn twentiments.ui/main!}}
-                :devtools {:after-load twentiments.ui/reload!
-                           :watch-dir "public"}
+                :modules {:common {:entries []}
+                          :main {:init-fn twentiments.ui/main!
+                                 :depends-on #{:common}}
+                          :admin {:init-fn twentiments.admin/main!
+                                  :depends-on #{:common}}}
+                :devtools {:watch-dir "public"}
                 :release {:output-dir "build/js"}}}}
 

@@ -97,7 +97,19 @@
                           (.h dom "h2" content))))
     (.render dom)))
 
-(defn serve-homepage [req res]
+(defn authenticate-admin [req res n]
+  (let [user (j/get-in req [:session :user])
+        tw (twitter user)]
+    (if (and user
+             (= (aget user "userName") "tweetfeastapp"))
+      (n)
+      (if req.xhr
+        (return-json-error res {:message "Unauthorized."}  403)
+        (-> res
+            (.status 403)
+            (.send (make-simple-page "Unauthorized.")))))))
+
+(defn serve-homepage [mainfile req res]
   (let [template (rc/inline "index.html")
         user (j/get-in req [:session :user])]
     (if user
@@ -121,7 +133,8 @@
           (aset user "profile" user-profile)
           (aset app "innerHTML" "")
           (.appendChild app (.h dom "div" #js {:id "loading"} (.h dom "div" #js {:className "spinner spin"})))
-          (.after app (.h dom "script" #js {:src "js/main.js"}))
+          (.after app (.h dom "script" #js {:src mainfile}))
+          (.after app (.h dom "script" #js {:src "js/common.js"}))
           (aset nav "innerHTML" "")
           (.appendChild nav signout-link)
           (.appendChild nav profile-image)
@@ -177,9 +190,16 @@
 (defn soon [req res]
   (.send res (make-simple-page "Soon.")))
 
+(defn admin-data [req res]
+  (let [db (db/client)]
+    (->
+      (.query db "select * from keyv where key like 'login/last:%'")
+      (.then #(.json res (.map % (fn [row] (aget (js/JSON.parse (aget row "value")) "value")))))
+      (.catch (fn [err] (return-json-error res err 404))))))
+
 (defn setup-routes [app]
   (web/reset-routes app)
-  (.get app "/" serve-homepage)
+  (.get app "/" (fn [req res] (serve-homepage "js/main.js" req res)))
   (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
   (.use app util/strip-slash-redirect)
   ;(.get app "/login" soon)
@@ -187,6 +207,9 @@
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
   (j/call app :post "/search" search-old)
+  (.use app authenticate-admin)
+  (.get app "/admin" (fn [req res] (serve-homepage "js/admin.js" req res)))
+  (.get app "/admin/data" admin-data)
   ;(.use app authenticate)
   ;(.get app "/data" get-data)
   ;(.post app "/save" set-data)
