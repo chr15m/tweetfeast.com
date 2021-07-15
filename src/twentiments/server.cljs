@@ -86,6 +86,15 @@
               (js/console.error err)
               (util/error-to-json err)))))
 
+(defn strip-slash [req res n]
+  (let [path (aget req "path")
+        url (aget req "url")]
+    (if (and
+          (= (last path) "/")
+          (> (aget path "length") 1))
+      (.redirect res 301 (str (.slice path 0 -1) (.slice url (aget path "length"))))
+      (n))))
+
 (defn serve-homepage [req res]
   (let [template (rc/inline "index.html")
         user (j/get-in req [:session :user])]
@@ -174,6 +183,7 @@
   (web/reset-routes app)
   (.get app "/" serve-homepage)
   (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
+  (.use app strip-slash)
   ;(.get app "/login" soon)
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
