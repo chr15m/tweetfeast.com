@@ -2,6 +2,7 @@
   (:require
     [clast.web :as web]
     [clast.util :as util]
+    [clast.db :as db]
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-api-v2/dist" :refer [TwitterApi]]
     ["motionless" :as motionless]
@@ -35,7 +36,9 @@
       "readOnly")))
 
 (defn twitter-login-done [req res]
-  (let [tw (twitter-sign-in req)]
+  (let [tw (twitter-sign-in req)
+        kv (db/kv "login/last")
+        now (.toISOString (js/Date.))]
     (.callback tw 
                #js {:oauth_token (aget req "query" "oauth_token")
                     :oauth_verifier (aget req "query" "oauth_verifier")}
@@ -48,8 +51,10 @@
                    (do
                      (when-let [session (j/get req "session")]
                        (js-delete session "tokenSecret"))
-                     (j/assoc-in! req [:session :user] user) 
-                     (.redirect res "/")))))))
+                     (go
+                       (j/assoc-in! req [:session :user] user)
+                       (<p! (.set kv (aget user "userId") (clj->js {:id (aget user "userId") :username (aget user "userName") :t now})))
+                       (.redirect res "/"))))))))
 
 (defn twitter-login [req res]
   (if (j/get-in req [:session :user])
