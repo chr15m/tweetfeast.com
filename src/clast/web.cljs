@@ -1,9 +1,9 @@
 (ns clast.web
   (:require
     [clast.util :refer [env]]
+    [clast.db :as db]
     [applied-science.js-interop :as j]
     ["path" :as path]
-    ["keyv" :as Keyv]
     ["process" :as process]
     ["express" :as express]
     ["events" :as EventEmitter]
@@ -15,8 +15,6 @@
     ["rotating-file-stream" :as rfs]
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
-
-(def database-url (env "DATABASE" "sqlite://./database.sqlite"))
 
 (defn create-store [kv]
   (let [e (session/Store.)]
@@ -42,7 +40,7 @@
   ; set up logging
   (let [logs (str js/__dirname "/logs")
         access-log (.createStream rfs "access.log" #js {:interval "7d" :path logs})
-        kv-session (Keyv. database-url #js {:namespace "session"})
+        kv-session (db/kv "session")
         store (create-store kv-session)]
     ; set up sessions table
     (.use app (session #js {:secret (env "SECRET" "DEVMODE")
@@ -74,11 +72,8 @@
     (add-default-middleware app)))
 
 (defn create []
-  (let [kv (Keyv. database-url)]
-    (-> (express)
-        (j/assoc! :kv kv)
-        (j/assoc! :db (aget kv "opts" "store"))
-        (add-default-middleware))))
+  (-> (express)
+      (add-default-middleware)))
 
 (defn serve [app]
   (let [host (env "BIND_ADDRESS" "127.0.0.1")
