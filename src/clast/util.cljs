@@ -54,3 +54,12 @@
          (if (not= hostname "localhost") hostname host)
          (if (not= (aget path 0) "/") "/")
          path)))
+
+(defn strip-slash-redirect [req res n]
+  (let [path (aget req "path")
+        url (aget req "url")]
+    (if (and
+          (= (last path) "/")
+          (> (aget path "length") 1))
+      (.redirect res 301 (str (.slice path 0 -1) (.slice url (aget path "length"))))
+      (n))))
