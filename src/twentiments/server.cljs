@@ -11,6 +11,8 @@
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
+(util/bind-console-log-to-file)
+
 (def twitter-key (or (util/env "TWITTER_API_KEY") (util/bail "TWITTER_API_KEY not set.")))
 (def twitter-secret (or (util/env "TWITTER_API_SECRET") (util/bail "TWITTER_API_SECRET not set.")))
 (def twitter-environment (or (util/env "TWITTER_ENVIRONMENT_NAME")
