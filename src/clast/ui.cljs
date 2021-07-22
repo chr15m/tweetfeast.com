@@ -1,5 +1,7 @@
 (ns clast.ui)
 
+(defn log [& args] (apply js/console.log (clj->js args)) (first args))
+
 (defn check-time-interval [seconds [divisor interval-name]]
   (let [interval (js/Math.floor (/ seconds divisor))]
     (when (> interval 1)
@@ -26,5 +28,3 @@
       .toString
       .toLowerCase
       (.replace slug-regex "-")))
-
-
