@@ -126,6 +126,7 @@
   (let [template (rc/inline "index.html")
         dom (motionless/dom template)
         app (.$ dom "main")
+        body (.$ dom "body")
         [title description content] (get article-list (aget req "params" "article"))]
     (aset app "innerHTML"
           (r [:section {:class "ui-section-articles"}
@@ -139,6 +140,15 @@
                      [:li {:key f}
                       [:h3 [:a {:href (str "/articles/" f)} title]]
                       [:p description]])]])]]))
+    (.appendChild body
+                  (.h dom "link"
+                      #js {:rel "stylesheet"
+                           :href "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/styles/default.min.css"}))
+    (.appendChild body
+                  (.h dom "script"
+                      #js {:src "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"}))
+    (.appendChild body
+                  (.h dom "script" "hljs.highlightAll();"))
     (.send res (.render dom))))
 
 (defn authenticate-admin [req res n]
