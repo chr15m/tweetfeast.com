@@ -10,6 +10,7 @@
     ["twitter-api-v2/dist" :refer [TwitterApi]]
     ["motionless" :as motionless]
     ["wink-sentiment" :as sentiment]
+    ["marked" :as marked]
     [shadow.resource :as rc]
     [applied-science.js-interop :as j]
     [cljs.core.async :refer (go <!) :as async]
@@ -24,6 +25,25 @@
 (def twitter-environment (or (util/env "TWITTER_ENVIRONMENT_NAME")
                              (util/bail "TWITTER_ENVIRONMENT_NAME (full archive) not set.
                                         <https://developer.twitter.com/en/account/environments>")))
+
+(def article-list
+  (into {}
+        (-> (fs/readdirSync "src/content")
+            (.filter #(.endsWith % ".md"))
+            (.map (fn [f]
+                    (let [f (.replace f ".md" "")
+                          content (-> (str "src/content/" f ".md")
+                                      (fs/readFileSync)
+                                      (.toString))
+                          description (-> content
+                                          (.split "\n")
+                                          (.filter (fn [l] (not (or (.startsWith l "# ") (= l "")))))
+                                          first)
+                          title (-> f
+                                    (.replace (js/RegExp. "-" "g") " ")
+                                    (.replace (js/RegExp. "\\b\\w" "g") #(.toUpperCase %)))]
+                      {f [title description content]})))
+            vec)))
 
 (defn return-json-error [res err code]
   (do
@@ -102,35 +122,23 @@
                           (.h dom "h2" content))))
     (.render dom)))
 
-(def article-list
-  (into {}
-        (-> (fs/readdirSync "src/content")
-            (.filter #(.endsWith % ".md"))
-            (.map (fn [f]
-                    (let [f (.replace f ".md" "")
-                          content (-> (str "src/content/" f ".md")
-                                      (fs/readFileSync)
-                                      (.toString)
-                                      (.split "\n")
-                                      (.filter (fn [l] (not (or (.startsWith l "# ") (= l "")))))
-                                      first)
-                          title (-> f (.replace (js/RegExp. "-" "g") " ") (.replace (js/RegExp. "\\b\\w" "g") #(.toUpperCase %)))]
-                      {f [title content]})))
-            vec)))
-
 (defn articles [req res]
   (let [template (rc/inline "index.html")
         dom (motionless/dom template)
-        app (.$ dom "main")]
+        app (.$ dom "main")
+        [title description content] (get article-list (aget req "params" "article"))]
     (aset app "innerHTML"
           (r [:section {:class "ui-section-articles"}
               [:div {:class "ui-layout-container"}
-               [:h2 "Articles"]
-               [:ul
-                (for [[f [title description]] article-list]
-                  [:li {:key f}
-                   [:h3 [:a {:href (str "/articles/" f)} title]]
-                   [:p description]])]]]))
+               (if title
+                 [:div {:dangerouslySetInnerHTML {:__html (marked content)}}]
+                 [:div
+                  [:h2 "Articles"]
+                  [:ul
+                   (for [[f [title description]] article-list]
+                     [:li {:key f}
+                      [:h3 [:a {:href (str "/articles/" f)} title]]
+                      [:p description]])]])]]))
     (.send res (.render dom))))
 
 (defn authenticate-admin [req res n]
@@ -239,6 +247,7 @@
   (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
   (.use app util/strip-slash-redirect)
   (.get app "/articles" articles)
+  (.get app "/articles/:article" articles)
   ;(.get app "/login" soon)
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
