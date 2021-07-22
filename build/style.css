@@ -86,9 +86,24 @@ section.options {
 
 /*** design mods ***/
 
+
+.ui-section-header--logo {
+  display: flex;
+  text-decoration: none;
+}
+
+.ui-section-header--logo img {
+  margin-right: 1em;
+}
+
+.ui-section-header--logo span {
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
 .ui-section-hero__layout img {
-  border: .0625rem solid var(--ui-color-border);
   border-radius: var(--ui-radius-card);
+  box-shadow: 0px 0px 20px #ccc;
 }
 
 .ui-section-faq h2 {
@@ -98,6 +113,16 @@ section.options {
 
 .ui-section-faq__layout.ui-layout-grid {
   align-items: start;
+}
+
+.ui-section-articles {
+  padding-bottom: 5rem;
+  padding-top: 5rem;
+}
+
+.ui-section-articles li {
+  list-style-type: none;
+  padding: 1em 2em;
 }
 
 /*** styling table ***/

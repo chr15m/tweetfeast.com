@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="uisual" content="Made with Uisual (uisual.com)">
     <meta name="author" content="Chris McCormick">
-    <meta name="description" content="Download twitter dat in CSV or JSON format">
+    <meta name="description" content="Download tweets and export Twitter data like tweets, followers, following, timelines, and search results as CSV, JSON, or Excel, with sentiment analysis included.">
+
     <meta name="referrer" content="unsafe-url">
     <meta name="robots" content="index, follow">
     <!-- SPEED -->
@@ -19,15 +20,29 @@
     <!-- LINK -->
     <link rel="me" href="https://tweetfeast.com/">
     <link rel="canonical" href="https://tweetfeast.com/">
-    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="icon" type="image/png" href="/icon.png">
     <!-- PERFORMANCE -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap">
-    <link rel="preload" as="style" href="curve-style.css">
-    <link rel="stylesheet" href="curve-style.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="minimal-inputs.css">
+    <link rel="preload" as="style" href="/curve-style.css">
+    <link rel="stylesheet" href="/curve-style.css">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/minimal-inputs.css">
+    <!-- twitter social -->
+    <meta content="https://tweetfeast.com/icon.png" name="twitter:image:src">
+    <meta content="@mccrmx" name="twitter:site">
+    <meta content="@mccrmx" name="twitter:creator">
+    <meta content="summary" name="twitter:card">
+    <meta content="TweetFeast" name="twitter:title">
+    <meta content="Download Twitter data without code or API keys." name="twitter:description">
+    <!-- other social -->
+    <meta content="https://tweetfeast.com/icon.png" property="og:image">
+    <meta content="TweetFeast" property="og:site_name">
+    <meta content="website" property="og:type">
+    <meta content="TweetFeast" property="og:title">
+    <meta content="https://tweetfeast.com/" property="og:url">
+    <meta content="Download Twitter data without code or API keys." property="og:description">
     <!-- TITLE -->
-    <title>Download Twitter data as CSV including sentiment analysis with TweetFeast</title>
+    <title>Download tweets and export Twitter followers to CSV, Excel, and JSON - TweetFeast</title>
   </head>
   <body>
     <header role="banner" class="ui-section-header">
@@ -35,7 +50,7 @@
         <div class="ui-section-header__layout ui-layout-flex">
           <!-- LOGO -->
           <a href="/" role="link" aria-label="Home" class="ui-section-header--logo">
-            <img src="logo.svg"/>
+            <img src="/logo.svg"/> <span>TweetFeast</span>
           </a>
           <!-- HAMBURGER -->
           <input type="checkbox" id="ui-section-header--menu-id">
@@ -44,6 +59,7 @@
           <nav role="navigation" class="ui-section-header--nav ui-layout-flex">
             <a href="/#features" role="link" aria-label="#" class="ui-section-header--nav-link">Features</a>
             <a href="/#pricing" role="link" aria-label="#" class="ui-section-header--nav-link">Pricing</a>
+            <a href="/articles" role="link" aria-label="#" class="ui-section-header--nav-link">Articles</a>
             <a href="/login" role="link" aria-label="#" class="ui-section-header--nav-link">Sign In</a>
           </nav>
         </div>
