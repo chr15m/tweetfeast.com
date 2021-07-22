@@ -100,6 +100,16 @@ section.options {
   align-items: start;
 }
 
+.ui-section-articles {
+  padding-bottom: 5rem;
+  padding-top: 5rem;
+}
+
+.ui-section-articles li {
+  list-style-type: none;
+  padding: 1em 2em;
+}
+
 /*** styling table ***/
 
 table {

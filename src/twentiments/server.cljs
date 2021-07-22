@@ -1,8 +1,11 @@
 (ns twentiments.server
   (:require
+    ["fs" :as fs]
     [clast.web :as web]
     [clast.util :as util]
+    [clast.ui :refer [log]]
     [clast.db :as db]
+    [reagent.dom.server :refer [render-to-static-markup]]
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-api-v2/dist" :refer [TwitterApi]]
     ["motionless" :as motionless]
@@ -11,6 +14,8 @@
     [applied-science.js-interop :as j]
     [cljs.core.async :refer (go <!) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
+
+(def r render-to-static-markup)
 
 (util/bind-console-log-to-file)
 
@@ -96,6 +101,37 @@
                       (.h dom "div" #js {:className "ui-layout-container"}
                           (.h dom "h2" content))))
     (.render dom)))
+
+(def article-list
+  (into {}
+        (-> (fs/readdirSync "src/content")
+            (.filter #(.endsWith % ".md"))
+            (.map (fn [f]
+                    (let [f (.replace f ".md" "")
+                          content (-> (str "src/content/" f ".md")
+                                      (fs/readFileSync)
+                                      (.toString)
+                                      (.split "\n")
+                                      (.filter (fn [l] (not (or (.startsWith l "# ") (= l "")))))
+                                      first)
+                          title (-> f (.replace (js/RegExp. "-" "g") " ") (.replace (js/RegExp. "\\b\\w" "g") #(.toUpperCase %)))]
+                      {f [title content]})))
+            vec)))
+
+(defn articles [req res]
+  (let [template (rc/inline "index.html")
+        dom (motionless/dom template)
+        app (.$ dom "main")]
+    (aset app "innerHTML"
+          (r [:section {:class "ui-section-articles"}
+              [:div {:class "ui-layout-container"}
+               [:h2 "Articles"]
+               [:ul
+                (for [[f [title description]] article-list]
+                  [:li {:key f}
+                   [:h3 [:a {:href (str "/articles/" f)} title]]
+                   [:p description]])]]]))
+    (.send res (.render dom))))
 
 (defn authenticate-admin [req res n]
   (let [user (j/get-in req [:session :user])
@@ -202,6 +238,7 @@
   (.get app "/" (fn [req res] (serve-homepage "js/main.js" req res)))
   (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
   (.use app util/strip-slash-redirect)
+  (.get app "/articles" articles)
   ;(.get app "/login" soon)
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
