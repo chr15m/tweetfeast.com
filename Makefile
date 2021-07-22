@@ -1,4 +1,4 @@
-STATIC=public/*.html public/*.png public/*.css public/*.svg public/*.gif
+STATIC=public/*.html public/*.png public/*.css public/*.svg public/*.gif public/content
 
 all: server.js build
 
@@ -10,7 +10,7 @@ test.js: src/**/*.cljs shadow-cljs.edn
 
 build: src/**/* $(STATIC)
 	mkdir -p build
-	cp -L $(STATIC) build
+	cp -LR --preserve=all $(STATIC) build
 	npx shadow-cljs release app
 	touch build
 
