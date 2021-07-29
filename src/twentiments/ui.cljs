@@ -364,6 +364,22 @@
       [component-main-interface state user]
       [:div "Whoops, something went wrong."])))
 
+
+; TODO:
+
+  ; Users
+  ; followers of a user id /2/users/:id/followers
+  ; users a user id is following /2/users/:id/following
+  ; Users who have liked a Tweet /2/tweets/:id/liking_users
+  ; Users who have retweeted a tweet /2/tweets/:id/retweeted_by
+
+  ; Tweets
+  ; user timeline /2/users/:id/tweets
+  ; tweets mentioning a user /2/users/:id/mentions
+  ; tweets liked by a user /2/users/:id/liked_tweets
+  ; list of tweets by pasting URLs?
+
+
 ; *** startup *** ;
 
 (defn ^:dev/after-load reload! []
