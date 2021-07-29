@@ -127,6 +127,7 @@
         dom (motionless/dom template)
         app (.$ dom "main")
         body (.$ dom "body")
+        title-element (.$ dom "title")
         [title description content] (get article-list (aget req "params" "article"))]
     (aset app "innerHTML"
           (r [:section {:class "ui-section-articles"}
@@ -140,6 +141,7 @@
                      [:li {:key f}
                       [:h3 [:a {:href (str "/articles/" f)} title]]
                       [:p description]])]])]]))
+    (when title (aset title-element "textContent" (str title " - TweetFeast")))
     (.appendChild body
                   (.h dom "link"
                       #js {:rel "stylesheet"
