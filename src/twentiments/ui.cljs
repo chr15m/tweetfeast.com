@@ -388,10 +388,37 @@
          [component-help-text]))
      [:div#feedback [:a {:href "mailto:chris@mccormickit.com?subject=TweetFeast+feedback"} "Send feedback"]]]))
 
+(defn component-followers [state user]
+  (let [username (r/atom nil)]
+    (fn []
+      (let [un (or @username (:username user))
+            searching (-> @state :progress :search)
+            results (@state :results)]
+        [:main#app
+         [:h3 "User follow lists"]
+         [:p "Download follower/following user lists."]
+         [:div
+          "Users who "
+          [:select
+           [:option "follow"]
+           [:option "are following"]]
+          [:input {:on-change #(reset! username (-> % .-target .-value))
+                   :placeholder "Twitter username"
+                   :value un}]
+          [:button.primary {:on-click #(initiate-follower-download state un)} "go"]]
+         (if searching
+           [:div.spinner.spin]
+           (if results
+             (cond
+               (aget results "error") [component-errors results]
+               (aget results "data") [:span [:pre (pr-str (js/JSON.stringify results nil 2))]]
+               :else "User not found.")))]))))
+
 (defn component-main [state]
   (let [user (auth)]
     (if user
-      [component-search-interface state user]
+      ; [component-search-interface state user]
+      [component-followers state user]
       [:div "Whoops, something went wrong."])))
 
 
