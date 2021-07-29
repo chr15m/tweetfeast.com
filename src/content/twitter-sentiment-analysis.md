@@ -190,4 +190,8 @@ You can use the npm package [wink-naive-bayes-text-classifier](https://www.npmjs
 
 ## That's all folks
 
-So that's how you do twitter sentiment analysis in Python and JavaScript. Thanks for reading.
+So that's how you do twitter sentiment analysis in Python and JavaScript.
+
+Just a reminder that **if you don't want to write code or fiddle with API keys you can download a CSV file of tweets with sentiment analysis already included**. Just [sign in with Twitter](/login) to get started.
+
+Thanks for reading.
