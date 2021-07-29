@@ -4,7 +4,7 @@ Let's take a quick look at how you can do sentiment analysis on tweets.
 Whether you're doing stock prediction or trying to measure brand sentiment or something else entirely, we've got you covered.
 We're going to look at the steps and the libraries you'll need to do sentiment analysis in Python or Javascript.
 
-**If you don't want to write code or fiddle with API keys we've got you covered**. You can download a CSV file of tweets with sentiment analysis already included. Just [sign in with Twitter](/login) to get started.
+**If you don't want to write code or fiddle with API keys you can download a CSV file of tweets with sentiment analysis already included**. Just [sign in with Twitter](/login) to get started.
 
 ![Twitter Sentiment Analysis](/content/twitter-sentiment-analysis.png)
 
