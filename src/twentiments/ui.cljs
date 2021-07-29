@@ -173,6 +173,13 @@
 
 ; *** components *** ;
 
+(defn component-errors [results]
+  [:div.errors
+   (for [e (js->clj (aget results "error" "errors"))]
+     [:p.error (get e "message")])
+   (let [e (aget results "error" "error")]
+     [:p.error (aget e "message")])])
+
 (defn component-search [state user]
   [:fieldset.horizontal
    [:input.fit {:auto-focus true
@@ -369,11 +376,7 @@
        [:div.spinner.spin]
        (if results
          (cond
-           (aget results "error") [:div.errors
-                                   (for [e (js->clj (aget results "error" "errors"))]
-                                     [:p.error (get e "message")])
-                                   (let [e (aget results "error" "error")]
-                                     [:p.error (aget e "message")])]
+           (aget results "error") [component-errors results]
            (or (aget results "data")
                (aget results "results")) [:span
                                           [component-download-results state]
