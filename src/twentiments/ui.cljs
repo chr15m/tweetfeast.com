@@ -72,6 +72,17 @@
       (.then #(.json %))
       (.catch (fn [err] (clj->js {"error" {"error" err}})))))
 
+(defn initiate-follower-download [state username]
+  (swap! state assoc-in [:progress :search] :loading)
+  (go
+    (let [user (<p! (get-user-by-username username))
+          user-data (aget user "data")
+          followers (when user-data (<p! (get-user-followers (aget user-data "id"))))]
+      (js/console.log user followers)
+      (swap! state #(-> %
+                        (assoc :results (or followers user))
+                        (update-in [:progress] dissoc :search))))))
+
 (defn get-users [results]
   (aget results "includes" "users"))
 
