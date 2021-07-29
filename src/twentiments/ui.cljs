@@ -359,19 +359,20 @@
            (where the Place is fully contained within the defined region). "
        "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]]]])
 
-(defn component-main-interface [state user]
+(defn component-search-interface [state user]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     [:main#app
      [:div#trial "Free trial"]
+     [:p "Search for the tweets you want to export and download."]
      [component-search state]
      #_ [:section.options
-      [:input {:name "search-state-check"
-               :id "search-state-check"
-               :type "checkbox"
-               :checked (@state :results-view-table)
-               :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
-      [:label {:for "search-state-check"} "table view"]]
+         [:input {:name "search-state-check"
+                  :id "search-state-check"
+                  :type "checkbox"
+                  :checked (@state :results-view-table)
+                  :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
+         [:label {:for "search-state-check"} "table view"]]
      (if searching
        [:div.spinner.spin]
        (if results
@@ -390,7 +391,7 @@
 (defn component-main [state]
   (let [user (auth)]
     (if user
-      [component-main-interface state user]
+      [component-search-interface state user]
       [:div "Whoops, something went wrong."])))
 
 
