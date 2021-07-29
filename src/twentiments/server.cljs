@@ -243,6 +243,16 @@
         (.catch
           (fn [err] (return-json-error res (aget err "data") 403))))))
 
+(defn raw-api [req res]
+  (let [user (j/get-in req [:session :user])
+        tw (twitter user)]
+    (-> (.get (aget tw "v2") (.replace (aget req "url") "/api/" ""))
+        (.then
+          (fn [data]
+            (.json res data)))
+        (.catch
+          (fn [err] (return-json-error res (aget err "data") 403))))))
+
 (defn soon [req res]
   (.send res (make-simple-page "Soon.")))
 
@@ -265,6 +275,7 @@
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
   (j/call app :post "/search" search-old)
+  (j/call app :get "/api/*" raw-api)
   (.use app authenticate-admin)
   (.get app "/admin" (fn [req res] (serve-homepage "js/admin.js" req res)))
   (.get app "/admin/data" admin-data)
