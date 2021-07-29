@@ -30,6 +30,8 @@
    :user-full-name
    :user-image-url])
 
+(def user-fields "user.fields=created_at,description,location,profile_image_url,public_metrics,url,verified")
+
 ; *** functions *** ;
 
 (defn auth []
@@ -56,6 +58,19 @@
                         (assoc :results json)
                         (assoc :results-q (@state :q))
                         (update-in [:progress] dissoc :search))))))
+
+(defn get-user-by-username [username]
+  (-> (js/fetch (str "/api/users/by/username/" username
+                     "?" user-fields))
+      (.then #(.json %))
+      (.catch (fn [err]
+                (clj->js {"error" {"error" err}})))))
+
+(defn get-user-followers [user-id]
+  (-> (js/fetch (str "/api/users/" user-id "/followers"
+                     "?" user-fields))
+      (.then #(.json %))
+      (.catch (fn [err] (clj->js {"error" {"error" err}})))))
 
 (defn get-users [results]
   (aget results "includes" "users"))
