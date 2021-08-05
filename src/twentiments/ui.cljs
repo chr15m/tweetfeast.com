@@ -88,23 +88,26 @@
                         (assoc :results-format :v2)
                         (update-in [:progress] dissoc :search))))))
 
-(defn get-user-timeline [user-id]
-  (-> (js/fetch (str "/api/users/" user-id "/tweets"
-                     "?" tweet-fields "&" user-fields
-                     "&" "max_results=100"))
-      (.then #(.json %))
-      (.catch (fn [err] (clj->js {"error" {"error" err}})))))
+(defn get-user-tweets [user-id search-type]
+  (let [search-api (get {"timeline" "tweets"
+                         "likes" "liked_tweets"
+                         "mentions" "mentions"}
+                        search-type)]
+    (-> (js/fetch (str "/api/users/" user-id "/" search-api
+                       "?" tweet-fields "&" user-fields
+                       "&" "max_results=100"))
+        (.then #(.json %))
+        (.catch (fn [err] (clj->js {"error" {"error" err}}))))))
 
-(defn initiate-user-tweet-fetch [state username]
+(defn initiate-user-tweet-fetch [state username search-type]
   (swap! state assoc-in [:progress :search] :loading)
   (go
     (let [user (<p! (get-user-by-username username))
           user-data (aget user "data")
-          results (when user-data (<p! (get-user-timeline (aget user-data "id"))))]
-      (js/console.log "results" results)
+          results (when user-data (<p! (get-user-tweets (aget user-data "id") search-type)))]
       (swap! state #(-> %
                         (assoc :results (or results user))
-                        (assoc :results-q (str username "-timeline"))
+                        (assoc :results-q (str username "-" search-type))
                         (assoc :results-format :v2)
                         (update-in [:progress] dissoc :search))))))
 
@@ -430,7 +433,8 @@
      [:div#feedback [:a {:href "mailto:chris@mccormickit.com?subject=TweetFeast+feedback"} "Send feedback"]]]))
 
 (defn component-user-tweets [state user]
-  (let [username (r/atom nil)]
+  (let [username (r/atom nil)
+        search-type (r/atom "timeline")]
     (fn []
       (let [un (or @username (:username user))
             searching (-> @state :progress :search)
@@ -440,15 +444,16 @@
          [:p "Tweets from a user timeline, liked by a user, or mentioning a user."]
          [:div
           "Tweets "
-          [:select
-           [:option "in the timeline of"]
-           [:option "liked by"]
-           [:option "mentioning"]]
+          [:select {:on-change #(reset! search-type (-> % .-target .-value))
+                    :value @search-type}
+           [:option {:value "timeline"} "in the timeline of"]
+           [:option {:value "likes"} "liked by"]
+           [:option {:value "mentions"} "mentioning"]]
           [:input {:on-change #(reset! username (-> % .-target .-value))
                    :placeholder "Twitter username"
                    :value un
-                   :on-key-down #(when (= (aget % "keyCode") 13) (initiate-user-tweet-fetch state un))}]
-          [:button.primary {:on-click #(initiate-user-tweet-fetch state un)} "go"]]
+                   :on-key-down #(when (= (aget % "keyCode") 13) (initiate-user-tweet-fetch state un @search-type))}]
+          [:button.primary {:on-click #(initiate-user-tweet-fetch state un @search-type)} "go"]]
          [component-tweet-results state]]))))
 
 (defn component-followers [state user]
