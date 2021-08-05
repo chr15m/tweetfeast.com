@@ -404,7 +404,8 @@
            [:option "are following"]]
           [:input {:on-change #(reset! username (-> % .-target .-value))
                    :placeholder "Twitter username"
-                   :value un}]
+                   :value un
+                   :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un))}]
           [:button.primary {:on-click #(initiate-follower-download state un)} "go"]]
          (if searching
            [:div.spinner.spin]
