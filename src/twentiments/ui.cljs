@@ -30,7 +30,9 @@
    :user-full-name
    :user-image-url])
 
-(def user-fields "user.fields=created_at,description,location,profile_image_url,public_metrics,url,verified")
+(def user-fields "user.fields=created_at,username,name,description,location,profile_image_url,public_metrics,url,verified")
+
+(def tweet-fields "expansions=referenced_tweets.id,author_id&tweet.fields=created_at,public_metrics,author_id")
 
 ; *** functions *** ;
 
@@ -57,6 +59,7 @@
       (swap! state #(-> %
                         (assoc :results json)
                         (assoc :results-q (@state :q))
+                        (assoc :results-format :v1)
                         (update-in [:progress] dissoc :search))))))
 
 (defn get-user-by-username [username]
@@ -78,9 +81,30 @@
     (let [user (<p! (get-user-by-username username))
           user-data (aget user "data")
           followers (when user-data (<p! (get-user-followers (aget user-data "id"))))]
-      (js/console.log user followers)
       (swap! state #(-> %
                         (assoc :results (or followers user))
+                        (assoc :results-q (str username "-followers"))
+                        (assoc :results-format :v2)
+                        (update-in [:progress] dissoc :search))))))
+
+(defn get-user-timeline [user-id]
+  (-> (js/fetch (str "/api/users/" user-id "/tweets"
+                     "?" tweet-fields "&" user-fields
+                     "&" "max_results=100"))
+      (.then #(.json %))
+      (.catch (fn [err] (clj->js {"error" {"error" err}})))))
+
+(defn initiate-user-tweet-fetch [state username]
+  (swap! state assoc-in [:progress :search] :loading)
+  (go
+    (let [user (<p! (get-user-by-username username))
+          user-data (aget user "data")
+          results (when user-data (<p! (get-user-timeline (aget user-data "id"))))]
+      (js/console.log "results" results)
+      (swap! state #(-> %
+                        (assoc :results (or results user))
+                        (assoc :results-q (str username "-timeline"))
+                        (assoc :results-format :v2)
                         (update-in [:progress] dissoc :search))))))
 
 (defn get-users [results]
@@ -112,7 +136,8 @@
           (fn [tweet i]
             (let [user (get-user users (aget tweet "author_id"))
                   m (aget tweet "public_metrics")
-                  values [:id (aget tweet "id_str")
+                  id (or (aget tweet "id_str") (aget tweet "id"))
+                  values [:id id
                           :date-time (simple-date-time (aget tweet "created_at"))
 
                           :metric-likes (aget m "like_count")
@@ -126,7 +151,7 @@
                           :user-name (aget user "username")
                           :user-full-name (aget user "name")
                           :user-image-url (aget user "profile_image_url")
-                          :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
+                          :link (str "https://twitter.com/i/web/status/" id)
                           :text (aget tweet "text")]
                   js-struct #js {}]
               ; this is to preserve CSV column order as js
@@ -141,7 +166,8 @@
     (.map tweets
           (fn [tweet i]
             (let [extended (aget tweet "extended_tweet")
-                  values [:id (str "id:" (aget tweet "id_str"))
+                  id (or (aget tweet "id_str") (aget tweet "id"))
+                  values [:id (str "id:" id)
                           :date-time (-> (aget tweet "created_at") js/Date. .toISOString simple-date-time)
 
                           :metric-likes (aget tweet "favorite_count")
@@ -155,7 +181,7 @@
                           :user-name (aget tweet "user" "screen_name")
                           :user-full-name (aget tweet "user" "name")
                           :user-image-url (aget tweet "user" "profile_image_url_https")
-                          :link (str "https://twitter.com/i/web/status/" (aget tweet "id_str"))
+                          :link (str "https://twitter.com/i/web/status/" id)
                           :text (if extended (aget extended "full_text") (aget tweet "text"))]
                   js-struct #js {}]
               ; this is to preserve CSV column order as js
@@ -164,7 +190,8 @@
                 (aset js-struct (name k) v))
               js-struct)))))
 
-(def make-flat-json make-flat-json-v1)
+(def json-format-fns {:v1 make-flat-json-v1
+                      :v2 make-flat-json-v2})
 
 (defn decode-html [html]
   (let [txt (.createElement js/document "textarea")]
@@ -221,14 +248,17 @@
     [:span "retweets: " (aget tweet "metric-retweets")]]
    [:div [:a {:on-click
               (fn [ev]
-                (let [el (-> ev .-target)]
-                  (j/call-in js/twttr [:widgets :createTweet] (aget tweet "id_str") el)))}
+                (let [el (-> ev .-target)
+                      id (or (aget tweet "id_str") (aget tweet "id"))]
+                  (j/call-in js/twttr [:widgets :createTweet] id el)))}
           "see tweet"]]])
 
 (defn component-tweets [state]
-  [:div
-   (for [tweet (make-flat-json (@state :results))]
-     (with-meta [component-tweet tweet] {:key (aget tweet "id")}))])
+  (let [results (:results @state)
+        make-flat-json (json-format-fns (@state :results-format))]
+    [:div
+     (for [tweet (make-flat-json results)]
+       (with-meta [component-tweet tweet] {:key (aget tweet "id")}))]))
 
 (defn component-tweets-table [state]
   (let [tweet-table-keys
@@ -240,7 +270,8 @@
          [:metric-quotes "Quotes"]
          [:metric-replies "Replies"]
          [:ai-sentiment "Sentiment"]
-         [:text "Tweet"]]]
+         [:text "Tweet"]]
+        make-flat-json (json-format-fns (@state :results-format))]
     [:table
      [:thead
       [:tr
@@ -268,7 +299,8 @@
         day (-> (str "0" (.getDate date)) (.slice -2))
         month (-> (str "0" (inc (.getMonth date))) (.slice -2))
         year (.getFullYear date)
-        file-name (str "tweets-" year "-" month "-" day "-" (slug (@state :results-q)))]
+        file-name (str "tweets-" year "-" month "-" day "-" (slug (@state :results-q)))
+        make-flat-json (json-format-fns (@state :results-format))]
     (when tweets
       [:div.downloads
        [:a.button.primary {:href (make-file-url
@@ -359,9 +391,26 @@
            (where the Place is fully contained within the defined region). "
        "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]]]])
 
-(defn component-search-interface [state user]
+(defn component-tweet-results [state empty-component]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
+    (if searching
+      [:div.spinner.spin]
+      (if results
+        (cond
+          (aget results "error") [component-errors results]
+          (or (aget results "data")
+              (aget results "results")) [:span
+                                         [component-download-results state]
+                                         (if (@state :results-view-table)
+                                           [component-tweets-table state]
+                                           [component-tweets state])]
+          :else "No tweets found.")
+        (when empty-component
+          [empty-component])))))
+
+(defn component-search-interface [state user]
+  (let []
     [:main#app
      [:div#trial "Free trial"]
      [:p "Search for the tweets you want to export and download."]
@@ -373,20 +422,30 @@
                   :checked (@state :results-view-table)
                   :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
          [:label {:for "search-state-check"} "table view"]]
-     (if searching
-       [:div.spinner.spin]
-       (if results
-         (cond
-           (aget results "error") [component-errors results]
-           (or (aget results "data")
-               (aget results "results")) [:span
-                                          [component-download-results state]
-                                          (if (@state :results-view-table)
-                                            [component-tweets-table state]
-                                            [component-tweets state])]
-           :else "No tweets found.")
-         [component-help-text]))
+     [component-tweet-results state component-help-text]
      [:div#feedback [:a {:href "mailto:chris@mccormickit.com?subject=TweetFeast+feedback"} "Send feedback"]]]))
+
+(defn component-user-tweets [state user]
+  (let [username (r/atom nil)]
+    (fn []
+      (let [un (or @username (:username user))
+            searching (-> @state :progress :search)
+            results (@state :results)]
+        [:main#app
+         [:h3 "User tweets / likes / mentions"]
+         [:p "Tweets from a user timeline, liked by a user, or mentioning a user."]
+         [:div
+          "Tweets "
+          [:select
+           [:option "in the timeline of"]
+           [:option "liked by"]
+           [:option "mentioning"]]
+          [:input {:on-change #(reset! username (-> % .-target .-value))
+                   :placeholder "Twitter username"
+                   :value un
+                   :on-key-down #(when (= (aget % "keyCode") 13) (initiate-user-tweet-fetch state un))}]
+          [:button.primary {:on-click #(initiate-user-tweet-fetch state un)} "go"]]
+         [component-tweet-results state]]))))
 
 (defn component-followers [state user]
   (let [username (r/atom nil)]
@@ -419,9 +478,9 @@
   (let [user (auth)]
     (if user
       ; [component-search-interface state user]
-      [component-followers state user]
+      ; [component-followers state user]
+      [component-user-tweets state user]
       [:div "Whoops, something went wrong."])))
-
 
 ; TODO:
 
