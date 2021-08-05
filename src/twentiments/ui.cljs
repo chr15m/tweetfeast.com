@@ -560,8 +560,11 @@
        [:section.ui-layout-container
         [:h3 "What kind of Twitter data do you need?"]
         [:ul#data-menu
-         [:li [:a {:class "button" :href "#follow"} "Users who follow or are following a user"]]
-         [:li [:a {:class "button" :href "#user-tweets"} "The tweets, likes, or mentions of a user"]]
+         [:li [:a {:class "button" :href "#follow"} "Users who follow a user"]]
+         [:li [:a {:class "button" :href "#follow"} "Users who are following a user"]]
+         [:li [:a {:class "button" :href "#user-tweets"} "Tweets by a user"]]
+         [:li [:a {:class "button" :href "#user-tweets"} "Tweets liked by a user"]]
+         [:li [:a {:class "button" :href "#user-tweets"} "Tweets a user is mentioned in"]]
          [:li [:a {:class "button" :href "#search-tweets"} "Tweets from a search result"]]]]])))
 
 (defn component-main [state]
