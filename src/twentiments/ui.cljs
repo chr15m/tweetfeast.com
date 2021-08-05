@@ -6,6 +6,7 @@
             [cljs.core.async :refer (go <!) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
             ["twitter-text" :as twitter-text]
+            ["wink-sentiment" :as sentiment]
             ["twemoji" :as twemoji]
             ["json2csv" :as json2csv]))
 
@@ -128,6 +129,9 @@
     (js-delete results "requestParameters")
     (js/JSON.stringify results nil 2)))
 
+(defn tweet-sentiment [tweet]
+  (aget (sentiment (aget tweet "text")) "score"))
+
 ; for the new v2 search API
 (defn make-flat-json-v2 [results]
   (let [users (get-users results)
@@ -145,7 +149,7 @@
                           :metric-quotes (aget m "quote_count")
                           :metric-retweets (aget m "retweet_count")
 
-                          :ai-sentiment (aget tweet "sentiment")
+                          :ai-sentiment (tweet-sentiment tweet)
 
                           :user-id (aget tweet "author_id")
                           :user-name (aget user "username")
@@ -175,7 +179,7 @@
                           :metric-quotes (aget tweet "quote_count")
                           :metric-retweets (aget tweet "retweet_count")
 
-                          :ai-sentiment (aget tweet "sentiment")
+                          :ai-sentiment (tweet-sentiment tweet)
 
                           :user-id (aget tweet "author_id")
                           :user-name (aget tweet "user" "screen_name")
@@ -222,8 +226,8 @@
 
 (defn component-tweet [tweet]
   [:div.twitter-tweet {:key (aget tweet "id")
-                       :class (cond (>= (aget tweet "sentiment") 2) "sentiment-positive"
-                                    (<= (aget tweet "sentiment") -2) "sentiment-negative")}
+                       :class (cond (>= (tweet-sentiment tweet) 2) "sentiment-positive"
+                                    (<= (tweet-sentiment tweet) -2) "sentiment-negative")}
    [:div.profile
     [:img {:src (aget tweet "user-image-url")}]
     [:div
