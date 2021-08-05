@@ -10,7 +10,7 @@ We're going to look at the steps and the libraries you'll need to do sentiment a
 
 <!-- <a href="/login" class="ui-component-button ui-component-button-normal ui-component-button-primary">Sign in with Twitter</a> -->
 
-There are two main steps in doing sentiment analysis on tweets. The first step is to get the data, and the second step is to perform the sentiment analysis. To get the data you will need an developer API key from Twitter. Once you have the data you can perform sentiment analysis using a library for your language. Let's go over the details.
+There are two main steps in doing sentiment analysis on tweets. The first step is to get the data, and the second step is to perform the sentiment analysis. To get the data you will need a developer API key from Twitter. Once you have the data you can perform sentiment analysis using a library for your language. Let's go over the details.
 
 ## Contents
 
