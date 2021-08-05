@@ -57,12 +57,18 @@ nav > * {
   justify-content: space-evenly;
 }
 
-main > *, main > span > * {
+section#app > *, section#app > span > * {
   margin-bottom: 2em;
 }
 
-main#app {
+section#app {
   margin-top: 3em;
+}
+
+ul#data-menu {
+  list-style-type: none;
+  padding-left: 1em;
+  margin-top: 2em;
 }
 
 section.options {
