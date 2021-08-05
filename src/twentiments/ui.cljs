@@ -17,7 +17,7 @@
 (def tweet-data-keys
   [:id
    :text
-   :date-time
+   :date-time-created
 
    :metric-likes
    :metric-replies
@@ -85,7 +85,7 @@
       (swap! state #(-> %
                         (assoc :results (or followers user))
                         (assoc :results-q (str username "-followers"))
-                        (assoc :results-format :v2)
+                        (assoc :results-format :users)
                         (update-in [:progress] dissoc :search))))))
 
 (defn get-user-tweets [user-id search-type]
@@ -135,6 +135,31 @@
 (defn tweet-sentiment [tweet]
   (aget (sentiment (aget tweet "text")) "score"))
 
+(defn make-flat-json-users [results]
+  (let [users (aget results "data")]
+    (.map users
+          (fn [user i]
+            (let [metrics (or (aget user "public_metrics") #js {})
+                  values [:id (aget user "id")
+                          :username (aget user "username")
+                          :name (aget user "name")
+                          :date-time-created (simple-date-time (aget user "created_at"))
+                          :verified (aget user "verified")
+
+                          :metric-followers (aget metrics "followers_count")
+                          :metric-following (aget metrics "following_count")
+                          :metric-tweets (aget metrics "tweet_count")
+                          :metric-listed (aget metrics "listed_count")
+
+                          :location (aget user "location")
+                          :link (str "https://twitter.com/i/web/status/" (aget user "id"))
+                          :description (aget user "description")
+                          :image-url (aget user "profile_image_url")]
+                  js-struct #js {}]
+              (doseq [[k v] (partition 2 values)]
+                (aset js-struct (name k) v))
+              js-struct)))))
+
 ; for the new v2 search API
 (defn make-flat-json-v2 [results]
   (let [users (get-users results)
@@ -144,8 +169,8 @@
             (let [user (get-user users (aget tweet "author_id"))
                   m (aget tweet "public_metrics")
                   id (or (aget tweet "id_str") (aget tweet "id"))
-                  values [:id id
-                          :date-time (simple-date-time (aget tweet "created_at"))
+                  values [:id (str "id:" id)
+                          :date-time-created (simple-date-time (aget tweet "created_at"))
 
                           :metric-likes (aget m "like_count")
                           :metric-replies (aget m "reply_count")
@@ -175,7 +200,7 @@
             (let [extended (aget tweet "extended_tweet")
                   id (or (aget tweet "id_str") (aget tweet "id"))
                   values [:id (str "id:" id)
-                          :date-time (-> (aget tweet "created_at") js/Date. .toISOString simple-date-time)
+                          :date-time-created (-> (aget tweet "created_at") js/Date. .toISOString simple-date-time)
 
                           :metric-likes (aget tweet "favorite_count")
                           :metric-replies (aget tweet "reply_count")
@@ -198,7 +223,8 @@
               js-struct)))))
 
 (def json-format-fns {:v1 make-flat-json-v1
-                      :v2 make-flat-json-v2})
+                      :v2 make-flat-json-v2
+                      :users make-flat-json-users})
 
 (defn decode-html [html]
   (let [txt (.createElement js/document "textarea")]
@@ -247,7 +273,7 @@
               (twemoji/parse el)))}]
    [:div.date
     [:a {:href (aget tweet "link")}
-     (aget tweet "date-time")]]
+     (aget tweet "date-time-created")]]
    [:div
     [:span "likes: " (aget tweet "metric-likes") " "]
     [:span "replies: " (aget tweet "metric-replies") " "]
@@ -271,7 +297,7 @@
   (let [tweet-table-keys
         [[:user-image-url "Pic"]
          [:user-name "Username"]
-         [:date-time "Datetime"]
+         [:date-time-created "Tweeted"]
          [:metric-likes "Likes"]
          [:metric-retweets "RTs"]
          [:metric-quotes "Quotes"]
@@ -298,6 +324,39 @@
                 :text [:a {:href (aget row "link")
                            :target "_blank"}
                        (decode-html (aget row "text"))]
+                (aget row (name k)))])]))]]))
+
+(defn component-users-table [state]
+  (let [user-table-keys
+        [[:image-url "Pic"]
+         [:username "Username"]
+         [:name "Full name"]
+         [:date-time-created "Created"]
+         [:verified "Verified"]
+
+         [:metric-followers "Followers"]
+         [:metric-following "Following"]
+         [:metric-tweets "Tweets"]
+         [:metric-listed "Lists"]
+
+         [:location "Location"]
+         [:description "Description"]]
+        make-flat-json (json-format-fns (@state :results-format))]
+    [:table
+     [:thead
+      [:tr
+       (for [[k n] user-table-keys]
+         [:th {:key k :class (str "column-" (name k))} n])]]
+     [:tbody
+      (let [data (make-flat-json (@state :results))]
+        (for [row data]
+          [:tr {:key (aget row "id")}
+           (for [[k n] user-table-keys]
+             [:td {:key k :class (str "column-" (name k))}
+              (case k
+                :id nil
+                :image-url [:img.user-image {:src (aget row "image-url")}]
+                :description (decode-html (aget row "text"))
                 (aget row (name k)))])]))]]))
 
 (defn component-download-results [state]
@@ -416,6 +475,19 @@
         (when empty-component
           [empty-component])))))
 
+(defn component-user-results [state]
+  (let [searching (-> @state :progress :search)
+        results (@state :results)]
+    (if searching
+      [:div.spinner.spin]
+      (if results
+        (cond
+          (aget results "error") [component-errors results]
+          (aget results "data") [:span
+                                 [component-download-results state]
+                                 [component-users-table state]]
+          :else "Users not found.")))))
+
 (defn component-search-interface [state user]
   (let []
     [:section#app
@@ -460,9 +532,7 @@
 (defn component-followers [state user]
   (let [username (r/atom nil)]
     (fn []
-      (let [un (or @username (:username user))
-            searching (-> @state :progress :search)
-            results (@state :results)]
+      (let [un (or @username (:username user))]
         [:section#app
          [:section.ui-layout-container
           [:h3 "User follow lists"]
@@ -477,13 +547,7 @@
                     :value un
                     :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un))}]
            [:button.primary {:on-click #(initiate-follower-download state un)} "go"]]]
-         (if searching
-           [:div.spinner.spin]
-           (if results
-             (cond
-               (aget results "error") [component-errors results]
-               (aget results "data") [:span [:pre (pr-str (js/JSON.stringify results nil 2))]]
-               :else "User not found.")))]))))
+         [component-user-results state]]))))
 
 (defn component-choose-activity [state user]
   (let [h (aget js/document "location" "hash")
@@ -496,7 +560,7 @@
        [:section.ui-layout-container
         [:h3 "What kind of Twitter data do you need?"]
         [:ul#data-menu
-         ; [:li [:a {:class "button" :href "#follow"} "Users who follow or are following a user"]]
+         [:li [:a {:class "button" :href "#follow"} "Users who follow or are following a user"]]
          [:li [:a {:class "button" :href "#user-tweets"} "The tweets, likes, or mentions of a user"]]
          [:li [:a {:class "button" :href "#search-tweets"} "Tweets from a search result"]]]]])))
 
