@@ -418,7 +418,7 @@
 
 (defn component-search-interface [state user]
   (let []
-    [:main#app
+    [:section#app
      [:div#trial "Free trial"]
      [:p "Search for the tweets you want to export and download."]
      [component-search state]
@@ -439,21 +439,22 @@
       (let [un (or @username (:username user))
             searching (-> @state :progress :search)
             results (@state :results)]
-        [:main#app
-         [:h3 "User tweets / likes / mentions"]
-         [:p "Tweets from a user timeline, liked by a user, or mentioning a user."]
-         [:div
-          "Tweets "
-          [:select {:on-change #(reset! search-type (-> % .-target .-value))
-                    :value @search-type}
-           [:option {:value "timeline"} "in the timeline of"]
-           [:option {:value "likes"} "liked by"]
-           [:option {:value "mentions"} "mentioning"]]
-          [:input {:on-change #(reset! username (-> % .-target .-value))
-                   :placeholder "Twitter username"
-                   :value un
-                   :on-key-down #(when (= (aget % "keyCode") 13) (initiate-user-tweet-fetch state un @search-type))}]
-          [:button.primary {:on-click #(initiate-user-tweet-fetch state un @search-type)} "go"]]
+        [:section#app
+         [:section.ui-layout-container
+          [:h3 "User tweets / likes / mentions"]
+          [:p "Tweets from a user timeline, liked by a user, or mentioning a user."]
+          [:div
+           "Tweets "
+           [:select {:on-change #(reset! search-type (-> % .-target .-value))
+                     :value @search-type}
+            [:option {:value "timeline"} "in the timeline of"]
+            [:option {:value "likes"} "liked by"]
+            [:option {:value "mentions"} "mentioning"]]
+           [:input {:on-change #(reset! username (-> % .-target .-value))
+                    :placeholder "Twitter username"
+                    :value un
+                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-user-tweet-fetch state un @search-type))}]
+           [:button.primary {:on-click #(initiate-user-tweet-fetch state un @search-type)} "go"]]]
          [component-tweet-results state]]))))
 
 (defn component-followers [state user]
@@ -462,19 +463,20 @@
       (let [un (or @username (:username user))
             searching (-> @state :progress :search)
             results (@state :results)]
-        [:main#app
-         [:h3 "User follow lists"]
-         [:p "Download follower/following user lists."]
-         [:div
-          "Users who "
-          [:select
-           [:option "follow"]
-           [:option "are following"]]
-          [:input {:on-change #(reset! username (-> % .-target .-value))
-                   :placeholder "Twitter username"
-                   :value un
-                   :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un))}]
-          [:button.primary {:on-click #(initiate-follower-download state un)} "go"]]
+        [:section#app
+         [:section.ui-layout-container
+          [:h3 "User follow lists"]
+          [:p "Download follower/following user lists."]
+          [:div
+           "Users who "
+           [:select
+            [:option "follow"]
+            [:option "are following"]]
+           [:input {:on-change #(reset! username (-> % .-target .-value))
+                    :placeholder "Twitter username"
+                    :value un
+                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un))}]
+           [:button.primary {:on-click #(initiate-follower-download state un)} "go"]]]
          (if searching
            [:div.spinner.spin]
            (if results
@@ -483,26 +485,40 @@
                (aget results "data") [:span [:pre (pr-str (js/JSON.stringify results nil 2))]]
                :else "User not found.")))]))))
 
+(defn component-choose-activity [state user]
+  (let [h (aget js/document "location" "hash")
+        history (@state :history)]
+    (case h
+      "#follow" [component-followers state user]
+      "#user-tweets" [component-user-tweets state user]
+      "#search-tweets" [component-search-interface state user]
+      [:section#app
+       [:section.ui-layout-container
+        [:h3 "What kind of Twitter data do you need?"]
+        [:ul#data-menu
+         ; [:li [:a {:class "button" :href "#follow"} "Users who follow or are following a user"]]
+         [:li [:a {:class "button" :href "#user-tweets"} "The tweets, likes, or mentions of a user"]]
+         [:li [:a {:class "button" :href "#search-tweets"} "Tweets from a search result"]]]]])))
+
 (defn component-main [state]
   (let [user (auth)]
     (if user
-      ; [component-search-interface state user]
-      ; [component-followers state user]
-      [component-user-tweets state user]
+      [component-choose-activity state user]
       [:div "Whoops, something went wrong."])))
 
 ; TODO:
 
   ; Users
-  ; followers of a user id /2/users/:id/followers
-  ; users a user id is following /2/users/:id/following
-  ; Users who have liked a Tweet /2/tweets/:id/liking_users
-  ; Users who have retweeted a tweet /2/tweets/:id/retweeted_by
+  ; [ ] followers of a user id /2/users/:id/followers
+  ; [ ] users a user id is following /2/users/:id/following
+  ; [ ] Users who have liked a Tweet /2/tweets/:id/liking_users
+  ; [ ] Users who have retweeted a tweet /2/tweets/:id/retweeted_by
 
   ; Tweets
-  ; user timeline /2/users/:id/tweets
-  ; tweets mentioning a user /2/users/:id/mentions
-  ; tweets liked by a user /2/users/:id/liked_tweets
+  ; [x] user timeline /2/users/:id/tweets
+  ; [x] tweets mentioning a user /2/users/:id/mentions
+  ; [x] tweets liked by a user /2/users/:id/liked_tweets
+  ; [x] tweet search
   ; list of tweets by pasting URLs?
 
 
@@ -514,5 +530,11 @@
 
 (defn main! []
   (js/console.log "main!")
+  (.addEventListener js/window "hashchange"
+                     (fn [ev]
+                       (swap! state
+                              #(-> %
+                                  (assoc :history (aget js/document "location" "hash"))
+                                  (dissoc :results :results-q :results-format))))
+                     false)
   (reload!))
-
