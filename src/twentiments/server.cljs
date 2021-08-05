@@ -128,6 +128,8 @@
         app (.$ dom "main")
         body (.$ dom "body")
         title-element (.$ dom "title")
+        social-titles [(.$ dom "[name=\"twitter:title\"]") (.$ dom "[property=\"og:title\"]")]
+        social-descriptions [(.$ dom "[name=\"twitter:description\"]") (.$ dom "[property=\"og:description\"]")]
         [title description content] (get article-list (aget req "params" "article"))]
     (aset app "innerHTML"
           (r [:section {:class "ui-section-articles"}
@@ -142,6 +144,12 @@
                       [:h3 [:a {:href (str "/articles/" f)} title]]
                       [:p description]])]])]]))
     (when title (aset title-element "textContent" (str title " - TweetFeast")))
+    (doseq [t social-titles]
+      (when t
+        (.setAttribute t "content" (str title " by TweetFeast"))))
+    (doseq [d social-descriptions]
+      (when d
+        (.setAttribute d "content" description)))
     (.appendChild body
                   (.h dom "link"
                       #js {:rel "stylesheet"
