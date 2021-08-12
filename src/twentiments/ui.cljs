@@ -505,9 +505,9 @@
      [component-tweet-results state component-help-text]
      [:div#feedback [:a {:href "mailto:chris@mccormickit.com?subject=TweetFeast+feedback"} "Send feedback"]]]))
 
-(defn component-user-tweets [state user]
+(defn component-user-tweets [state user default]
   (let [username (r/atom nil)
-        search-type (r/atom "timeline")]
+        search-type (r/atom default)]
     (fn []
       (let [un (or @username (:username user))
             searching (-> @state :progress :search)
@@ -531,9 +531,9 @@
            [:button.primary {:on-click #(initiate-user-tweet-fetch state un @search-type)} "go"]]]
          [component-tweet-results state]]))))
 
-(defn component-followers [state user]
+(defn component-followers [state user default]
   (let [username (r/atom nil)
-        search-type (r/atom "following")]
+        search-type (r/atom default)]
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
@@ -557,19 +557,22 @@
   (let [h (aget js/document "location" "hash")
         history (@state :history)]
     (case h
-      "#follow" [component-followers state user]
-      "#user-tweets" [component-user-tweets state user]
+      "#following" [component-followers state user "following"]
+      "#followers" [component-followers state user "followers"]
+      "#user-timeline" [component-user-tweets state user "timeline"]
+      "#user-likes" [component-user-tweets state user "likes"]
+      "#user-mentions" [component-user-tweets state user "mentions"]
       "#search-tweets" [component-search-interface state user]
       [:section#app
        [:div#trial "Free trial"]
        [:section.ui-layout-container
         [:h3 "What kind of Twitter data do you need?"]
         [:ul#data-menu
-         [:li [:a {:class "button" :href "#follow"} "Users who follow a user"]]
-         [:li [:a {:class "button" :href "#follow"} "Users who are following a user"]]
-         [:li [:a {:class "button" :href "#user-tweets"} "Tweets by a user"]]
-         [:li [:a {:class "button" :href "#user-tweets"} "Tweets liked by a user"]]
-         [:li [:a {:class "button" :href "#user-tweets"} "Tweets a user is mentioned in"]]
+         [:li [:a {:class "button" :href "#following"} "Users followed by a user"]]
+         [:li [:a {:class "button" :href "#followers"} "Users who are following a user"]]
+         [:li [:a {:class "button" :href "#user-timeline"} "Tweets by a user"]]
+         [:li [:a {:class "button" :href "#user-likes"} "Tweets liked by a user"]]
+         [:li [:a {:class "button" :href "#user-mentions"} "Tweets a user is mentioned in"]]
          [:li [:a {:class "button" :href "#search-tweets"} "Tweets from a search result"]]]]])))
 
 (defn component-main [state]
