@@ -50,7 +50,7 @@
     (js/console.error err)
     (-> res
         (.status code)
-        (.json res (util/error-to-json err)))))
+        (.json (util/error-to-json err)))))
 
 (defn twitter-sign-in [req]
   (login-with-twitter.

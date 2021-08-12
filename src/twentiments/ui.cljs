@@ -235,10 +235,12 @@
 
 (defn component-errors [results]
   [:div.errors
-   (for [e (js->clj (aget results "error" "errors"))]
-     [:p.error (get e "message")])
+   (for [e (aget results "error" "errors")]
+     (when e
+       [:p.error (aget e "message")]))
    (let [e (aget results "error" "error")]
-     [:p.error (aget e "message")])])
+     (when e
+       [:p.error (aget e "message")]))])
 
 (defn component-search [state user]
   [:fieldset.horizontal
@@ -576,8 +578,8 @@
 ; TODO:
 
   ; Users
-  ; [ ] followers of a user id /2/users/:id/followers
-  ; [ ] users a user id is following /2/users/:id/following
+  ; [x] followers of a user id /2/users/:id/followers
+  ; [x] users a user id is following /2/users/:id/following
   ; [ ] Users who have liked a Tweet /2/tweets/:id/liking_users
   ; [ ] Users who have retweeted a tweet /2/tweets/:id/retweeted_by
 
