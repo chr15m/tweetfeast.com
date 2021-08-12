@@ -513,6 +513,7 @@
             searching (-> @state :progress :search)
             results (@state :results)]
         [:section#app
+         [:div#trial "Free trial"]
          [:section.ui-layout-container
           [:h3 "User tweets / likes / mentions"]
           [:p "Tweets from a user timeline, liked by a user, or mentioning a user."]
@@ -536,6 +537,7 @@
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
+         [:div#trial "Free trial"]
          [:section.ui-layout-container
           [:h3 "User follow lists"]
           [:p "Download follower/following user lists."]
@@ -559,6 +561,7 @@
       "#user-tweets" [component-user-tweets state user]
       "#search-tweets" [component-search-interface state user]
       [:section#app
+       [:div#trial "Free trial"]
        [:section.ui-layout-container
         [:h3 "What kind of Twitter data do you need?"]
         [:ul#data-menu
