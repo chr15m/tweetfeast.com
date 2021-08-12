@@ -45,6 +45,17 @@
                       {f [title description content]})))
             vec)))
 
+(defn rnd-id [] (.substr (str (random-uuid)) 0 8))
+
+(defn log-event [event-type id user & [event-data]]
+  (let [kv (db/kv event-type)
+        now (.toISOString (js/Date.))]
+    (.set kv id
+          (clj->js (merge (or event-data {})
+                          {:id (aget user "userId")
+                           :username (aget user "userName")
+                           :t now})))))
+
 (defn return-json-error [res err code]
   (do
     (js/console.error err)
@@ -69,7 +80,6 @@
 
 (defn twitter-login-done [req res]
   (let [tw (twitter-sign-in req)
-        kv (db/kv "login/last")
         now (.toISOString (js/Date.))]
     (.callback tw 
                #js {:oauth_token (aget req "query" "oauth_token")
@@ -81,10 +91,10 @@
                    (do
                      (when-let [session (j/get req "session")]
                        (js-delete session "tokenSecret"))
-                     (go
-                       (j/assoc-in! req [:session :user] user)
-                       (<p! (.set kv (aget user "userId") (clj->js {:id (aget user "userId") :username (aget user "userName") :t now})))
-                       (.redirect res "/"))))))))
+                     (j/assoc-in! req [:session :user] user)
+                     (log-event "last/login" (aget user "userId") user)
+                     (log-event "event/login" (rnd-id) user)
+                     (.redirect res "/")))))))
 
 (defn twitter-login [req res]
   (if (j/get-in req [:session :user])
@@ -228,9 +238,11 @@
                     (fn [d]
                       (aset d "sentiment"
                             (aget (sentiment (aget d "text")) "score")))))
+            (log-event "last/request" (aget user "userId") user)
+            (log-event "event/search-v2" (rnd-id) user {:q (aget req.body "q")})
             (.json res data))))
       (.catch 
-        (fn [err] (return-json-error res (aget err "data") 403))))))
+        (fn [err] (return-json-error res err 403))))))
 
 (defn search-old [req res]
   (let [user (j/get-in req [:session :user])
@@ -247,9 +259,11 @@
                       (fn [d]
                         (aset d "sentiment"
                               (aget (sentiment (aget d "text")) "score"))))))
+            (log-event "last/request" (aget user "userId") user)
+            (log-event "event/search-v1" (rnd-id) user {:q (aget req.body "q")})
             (.json res data)))
         (.catch
-          (fn [err] (return-json-error res (aget err "data") 403))))))
+          (fn [err] (return-json-error res err 403))))))
 
 (defn raw-api [req res]
   (let [user (j/get-in req [:session :user])
@@ -259,7 +273,9 @@
           (fn [data]
             (.json res data)))
         (.catch
-          (fn [err] (return-json-error res (aget err "data") 403))))))
+          (fn [err] (return-json-error res err 403))))
+    (log-event "last/request" (aget user "userId") user)
+    (log-event "event/api" (rnd-id) user {:url (aget req "url")})))
 
 (defn soon [req res]
   (.send res (make-simple-page "Soon.")))
@@ -267,8 +283,12 @@
 (defn admin-data [req res]
   (let [db (db/client)]
     (->
-      (.query db "select * from keyv where key like 'login/last:%'")
-      (.then #(.json res (.map % (fn [row] (aget (js/JSON.parse (aget row "value")) "value")))))
+      (.query db "select * from keyv where key like 'login/last:%' or key like 'last/%'")
+      (.then #(.json res (.map % (fn [row]
+                                   (let [k (aget row "key")
+                                         v (aget (js/JSON.parse (aget row "value")) "value")]
+                                     (aset v "kind" k)
+                                     v)))))
       (.catch (fn [err] (return-json-error res err 404))))))
 
 (defn setup-routes [app]

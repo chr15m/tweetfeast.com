@@ -12,21 +12,6 @@
 
 ; *** functions *** ;
 
-(defn get-logins [state]
-  (swap! state assoc-in [:progress :search] :loading)
-  (go
-    (let [json (<p! (-> (js/fetch "/search" #js {:method "POST"
-                                                 :body (js/JSON.stringify #js {:q (@state :q)})
-                                                 :headers #js {:content-type "application/json"}})
-                        (.then (fn [response] (.json response)))
-                        (.catch (fn [err]
-                                  (clj->js {"error" {"error" err}})))))]
-      (js/console.log "Results:" json)
-      (swap! state #(-> %
-                        (assoc :results json)
-                        (assoc :results-q (@state :q))
-                        (update-in [:progress] dissoc :search))))))
-
 (defn fetch-admin-data []
   (->
     (js/fetch "/admin/data"
@@ -46,6 +31,7 @@
      [:thead
       [:tr
        [:th "user"]
+       [:td "what"]
        [:td "date"]
        [:td "when"]]]
      [:tbody
@@ -54,6 +40,7 @@
          [:td [:a {:href (str "https://twitter.com/" (aget row "username"))
                    :target "_BLANK"}
                (aget row "username")]]
+         [:td (-> (aget row "kind") (.split ":") first)]
          [:td (simple-date-time (aget row "t"))]
          [:td (time-since (aget row "t"))]])]]]])
 
