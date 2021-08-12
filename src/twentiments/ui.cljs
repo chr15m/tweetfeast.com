@@ -70,21 +70,21 @@
       (.catch (fn [err]
                 (clj->js {"error" {"error" err}})))))
 
-(defn get-user-followers [user-id]
-  (-> (js/fetch (str "/api/users/" user-id "/followers"
+(defn get-user-follow [user-id search-type]
+  (-> (js/fetch (str "/api/users/" user-id "/" search-type
                      "?" user-fields))
       (.then #(.json %))
       (.catch (fn [err] (clj->js {"error" {"error" err}})))))
 
-(defn initiate-follower-download [state username]
+(defn initiate-follower-download [state username search-type]
   (swap! state assoc-in [:progress :search] :loading)
   (go
     (let [user (<p! (get-user-by-username username))
           user-data (aget user "data")
-          followers (when user-data (<p! (get-user-followers (aget user-data "id"))))]
+          followers (when user-data (<p! (get-user-follow (aget user-data "id") search-type)))]
       (swap! state #(-> %
                         (assoc :results (or followers user))
-                        (assoc :results-q (str username "-followers"))
+                        (assoc :results-q (str username "-" search-type))
                         (assoc :results-format :users)
                         (update-in [:progress] dissoc :search))))))
 
@@ -341,8 +341,7 @@
          [:metric-tweets "Tweets"]
          [:metric-listed "Lists"]
 
-         [:location "Location"]
-         [:description "Description"]]
+         [:location "Location"]]
         make-flat-json (json-format-fns (@state :results-format))]
     [:table
      [:thead
@@ -358,7 +357,7 @@
               (case k
                 :id nil
                 :image-url [:img.user-image {:src (aget row "image-url")}]
-                :description (decode-html (aget row "text"))
+                ;:description (decode-html (aget row "description"))
                 (aget row (name k)))])]))]]))
 
 (defn component-download-results [state]
@@ -532,7 +531,8 @@
          [component-tweet-results state]]))))
 
 (defn component-followers [state user]
-  (let [username (r/atom nil)]
+  (let [username (r/atom nil)
+        search-type (r/atom "following")]
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
@@ -540,15 +540,15 @@
           [:h3 "User follow lists"]
           [:p "Download follower/following user lists."]
           [:div
-           "Users who "
-           [:select
-            [:option "follow"]
-            [:option "are following"]]
+           [:select {:on-change #(reset! search-type (-> % .-target .-value))
+                     :value @search-type}
+            [:option {:value "following"} "Followed by"]
+            [:option {:value "followers"} "Followers of"]]
            [:input {:on-change #(reset! username (-> % .-target .-value))
                     :placeholder "Twitter username"
                     :value un
-                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un))}]
-           [:button.primary {:on-click #(initiate-follower-download state un)} "go"]]]
+                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un @search-type))}]
+           [:button.primary {:on-click #(initiate-follower-download state un @search-type)} "go"]]]
          [component-user-results state]]))))
 
 (defn component-choose-activity [state user]
