@@ -308,6 +308,7 @@
   (.get app "/twitter-callback" twitter-login-done)
   (j/call app :post "/search" search-old)
   (j/call app :get "/api/*" raw-api)
+  (.get app "/read" (fn [req res] (serve-homepage "js/read.js" req res)))
   (.use app authenticate-admin)
   (.get app "/admin" (fn [req res] (serve-homepage "js/admin.js" req res)))
   (.get app "/admin/data" admin-data)
