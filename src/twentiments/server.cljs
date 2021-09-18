@@ -267,8 +267,12 @@
 
 (defn raw-api [req res]
   (let [user (j/get-in req [:session :user])
-        tw (twitter user)]
-    (-> (.get (aget tw "v2") (.replace (aget req "url") "/api/" ""))
+        tw (twitter user)
+        url (aget req "url")
+        v (if (>= (.indexOf url "v1") 0)
+            "v1"
+            "v2")]
+    (-> (.get (aget tw v) (-> (aget req "url") (.replace "/api/" "") (.replace "v1/" "")))
         (.then
           (fn [data]
             (.json res data)))
