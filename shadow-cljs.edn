@@ -1,4 +1,4 @@
-{:source-paths ["src"]
+{:source-paths ["src" "node_modules/sitefox/src"]
  :dependencies [[reagent "1.0.0-alpha2"]
                 [applied-science/js-interop "0.2.7"]
                 [funcool/promesa "6.0.2"]]
@@ -9,7 +9,7 @@
                    :devtools {:after-load twentiments.server/reload!}}
           :app {:target :browser
                 :output-dir "public/js"
-                :asset-path "js"
+                :asset-path "/js"
                 :modules {:common {:entries []}
                           :main {:init-fn twentiments.ui/main!
                                  :depends-on #{:common}}

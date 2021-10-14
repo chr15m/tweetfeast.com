@@ -8,7 +8,8 @@
             ["twitter-text" :as twitter-text]
             ["wink-sentiment" :as sentiment]
             ["twemoji" :as twemoji]
-            ["json2csv" :as json2csv]))
+            ["json2csv" :as json2csv]
+            [twentiments.common :refer [auth make-tweet-link]]))
 
 (def initial-state {:results-view-table true})
 
@@ -36,16 +37,6 @@
 (def tweet-fields "expansions=referenced_tweets.id,author_id&tweet.fields=created_at,public_metrics,author_id")
 
 ; *** functions *** ;
-
-(defn auth []
-  (let [user-data (->
-                    (js/document.querySelector "main")
-                    (.getAttribute "data-user"))]
-    (when user-data
-      (-> user-data
-          js/atob
-          js/JSON.parse
-          (js->clj :keywordize-keys true)))))
 
 (defn initiate-search [state]
   (swap! state assoc-in [:progress :search] :loading)
@@ -152,7 +143,7 @@
                           :metric-listed (aget metrics "listed_count")
 
                           :location (aget user "location")
-                          :link (str "https://twitter.com/i/web/status/" (aget user "id"))
+                          :link (str "https://twitter.com/" (aget user "username"))
                           :description (aget user "description")
                           :image-url (aget user "profile_image_url")]
                   js-struct #js {}]
@@ -183,7 +174,7 @@
                           :user-name (aget user "username")
                           :user-full-name (aget user "name")
                           :user-image-url (aget user "profile_image_url")
-                          :link (str "https://twitter.com/i/web/status/" id)
+                          :link (make-tweet-link id)
                           :text (aget tweet "text")]
                   js-struct #js {}]
               ; this is to preserve CSV column order as js
@@ -553,12 +544,25 @@
            [:button.primary {:on-click #(initiate-follower-download state un @search-type)} "go"]]]
          [component-user-results state]]))))
 
+
+
+#_ (defn component-likers [state user default]
+  (let [tweet-url (r/atom nil)
+        search-type (r/atom default)]
+    (fn []
+      (let [tweet-id ()])
+      )
+    )
+  )
+
 (defn component-choose-activity [state user]
   (let [h (aget js/document "location" "hash")
         history (@state :history)]
     (case h
       "#following" [component-followers state user "following"]
       "#followers" [component-followers state user "followers"]
+      ;"#tweet-likers" [component-likers state user "liking_users"]
+      ;"#tweet-retweeters" [component-likers state user "retweeted_by"]
       "#user-timeline" [component-user-tweets state user "timeline"]
       "#user-likes" [component-user-tweets state user "likes"]
       "#user-mentions" [component-user-tweets state user "mentions"]
@@ -570,6 +574,8 @@
         [:ul#data-menu
          [:li [:a {:class "button" :href "#following"} "Users followed by a user"]]
          [:li [:a {:class "button" :href "#followers"} "Users who are following a user"]]
+         [:li [:a {:class "button" :href "#tweet-likers"} "Users who liked a tweet"]]
+         [:li [:a {:class "button" :href "#tweet-retweeters"} "Users who retweeted a tweet"]]
          [:li [:a {:class "button" :href "#user-timeline"} "Tweets by a user"]]
          [:li [:a {:class "button" :href "#user-likes"} "Tweets liked by a user"]]
          [:li [:a {:class "button" :href "#user-mentions"} "Tweets a user is mentioned in"]]
