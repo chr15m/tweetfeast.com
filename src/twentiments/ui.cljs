@@ -3,7 +3,7 @@
             [reagent.dom :as rd]
             [applied-science.js-interop :as j]
             [promesa.core :as p]
-            [clast.ui :refer [simple-date-time slug]]
+            [sitefox.ui :refer [simple-date-time slug]]
             [cljs.core.async :refer (go) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
             ["twitter-text" :as twitter-text]

@@ -1,10 +1,9 @@
 (ns twentiments.admin
   (:require [reagent.core :as r]
             [reagent.dom :as rd]
-            [applied-science.js-interop :as j]
-            [cljs.core.async :refer (go <!) :as async]
+            [cljs.core.async :refer (go) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
-            [clast.ui :refer [time-since simple-date-time]]))
+            [sitefox.ui :refer [time-since simple-date-time]]))
 
 (def initial-state {})
 
@@ -22,7 +21,7 @@
 
 ; *** components *** ;
 
-(defn component-main [state data]
+(defn component-main [_state data]
   (js/console.log "Admin data:" data)
   [:main#app
    [:section
