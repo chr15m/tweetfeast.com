@@ -5,6 +5,7 @@
     [clast.util :as util]
     [clast.ui :refer [log]]
     [clast.db :as db]
+    [sitefox.util :refer [error-to-json]]
     [reagent.dom.server :refer [render-to-static-markup]]
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-api-v2/dist" :refer [TwitterApi]]
@@ -61,7 +62,7 @@
     (js/console.error err)
     (-> res
         (.status code)
-        (.json (util/error-to-json err)))))
+        (.json (error-to-json err)))))
 
 (defn twitter-sign-in [req]
   (login-with-twitter.
@@ -119,7 +120,7 @@
     (.then (fn [data] (-> data (aget "data") first)))
     (.catch (fn [err]
               (js/console.error err)
-              (util/error-to-json err)))))
+              (error-to-json err)))))
 
 (defn make-simple-page [content]
   (let [template (rc/inline "index.html")
