@@ -3,7 +3,7 @@
             [reagent.dom :as rd]
             [applied-science.js-interop :as j]
             [clast.ui :refer [simple-date-time slug]]
-            [cljs.core.async :refer (go <!) :as async]
+            [cljs.core.async :refer (go) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
             ["twitter-text" :as twitter-text]
             ["wink-sentiment" :as sentiment]
@@ -129,7 +129,7 @@
 (defn make-flat-json-users [results]
   (let [users (aget results "data")]
     (.map users
-          (fn [user i]
+          (fn [user]
             (let [metrics (or (aget user "public_metrics") #js {})
                   values [:id (aget user "id")
                           :username (aget user "username")
@@ -156,7 +156,7 @@
   (let [users (get-users results)
         tweets (aget results "data")]
     (.map tweets
-          (fn [tweet i]
+          (fn [tweet]
             (let [user (get-user users (aget tweet "author_id"))
                   m (aget tweet "public_metrics")
                   id (or (aget tweet "id_str") (aget tweet "id"))
@@ -187,7 +187,7 @@
 (defn make-flat-json-v1 [results]
   (let [tweets (aget results "results")]
     (.map tweets
-          (fn [tweet i]
+          (fn [tweet]
             (let [extended (aget tweet "extended_tweet")
                   id (or (aget tweet "id_str") (aget tweet "id"))
                   values [:id (str "id:" id)
@@ -233,7 +233,7 @@
      (when e
        [:p.error (aget e "message")]))])
 
-(defn component-search [state user]
+(defn component-search [state _user]
   [:fieldset.horizontal
    [:input.fit {:auto-focus true
                 :placeholder "Search for tweets..."
@@ -307,7 +307,7 @@
       (let [data (make-flat-json (@state :results))]
         (for [row data]
           [:tr {:key (aget row "id")}
-           (for [[k n] tweet-table-keys]
+           (for [[k _n] tweet-table-keys]
              [:td {:key k :class (str "column-" (name k))}
               (case k
                 :id nil
@@ -343,7 +343,7 @@
       (let [data (make-flat-json (@state :results))]
         (for [row data]
           [:tr {:key (aget row "id")}
-           (for [[k n] user-table-keys]
+           (for [[k _n] user-table-keys]
              [:td {:key k :class (str "column-" (name k))}
               (case k
                 :id nil
@@ -472,7 +472,7 @@
         results (@state :results)]
     (if searching
       [:div.spinner.spin]
-      (if results
+      (when results
         (cond
           (aget results "error") [component-errors results]
           (aget results "data") [:span
@@ -500,9 +500,7 @@
   (let [username (r/atom nil)
         search-type (r/atom default)]
     (fn []
-      (let [un (or @username (:username user))
-            searching (-> @state :progress :search)
-            results (@state :results)]
+      (let [un (or @username (:username user))]
         [:section#app
          [:div#trial "Free trial"]
          [:section.ui-layout-container
@@ -612,7 +610,7 @@
 (defn main! []
   (js/console.log "main!")
   (.addEventListener js/window "hashchange"
-                     (fn [ev]
+                     (fn [_ev]
                        (swap! state
                               #(-> %
                                   (assoc :history (aget js/document "location" "hash"))
