@@ -1,10 +1,10 @@
 (ns twentiments.server
   (:require
     ["fs" :as fs]
-    [clast.util :as util]
     [sitefox.db :as db]
     [sitefox.web :as web]
-    [sitefox.util :refer [error-to-json]]
+    [sitefox.util :refer [error-to-json env env-required btoa]]
+    [sitefox.logging :refer [bind-console-to-file]]
     [reagent.dom.server :refer [render-to-static-markup]]
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-api-v2/dist" :refer [TwitterApi]]
@@ -17,15 +17,17 @@
     [cljs.core.async :refer (go) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
+(defonce server (atom nil))
+
 (def r render-to-static-markup)
 
-(util/bind-console-log-to-file)
+(bind-console-to-file)
 
-(def twitter-key (or (util/env "TWITTER_API_KEY") (util/bail "TWITTER_API_KEY not set.")))
-(def twitter-secret (or (util/env "TWITTER_API_SECRET") (util/bail "TWITTER_API_SECRET not set.")))
-(def twitter-environment (or (util/env "TWITTER_ENVIRONMENT_NAME")
-                             (util/bail "TWITTER_ENVIRONMENT_NAME (full archive) not set.
-                                        <https://developer.twitter.com/en/account/environments>")))
+(def twitter-key (env-required "TWITTER_API_KEY"))
+(def twitter-secret (env-required "TWITTER_API_SECRET"))
+(def twitter-environment (env-required "TWITTER_ENVIRONMENT_NAME"
+                                       "TWITTER_ENVIRONMENT_NAME (full archive) not set.
+                                       <https://developer.twitter.com/en/account/environments>"))
 
 (def article-list
   (into {}
@@ -67,7 +69,7 @@
   (login-with-twitter.
     #js {:consumerKey twitter-key
          :consumerSecret twitter-secret
-         :callbackUrl (util/build-absolute-uri req "/twitter-callback")}))
+         :callbackUrl (web/build-absolute-uri req "/twitter-callback")}))
 
 (defn twitter [user]
   (when user
@@ -211,7 +213,7 @@
           (.appendChild nav signout-link)
           (.appendChild nav profile-image)
           ; (test-search tw)
-          (.setAttribute app "data-user" (-> user-profile js/JSON.stringify util/btoa))
+          (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
           (.send res (.render dom))))
       (.send res template))))
 
@@ -296,8 +298,8 @@
 (defn setup-routes [app]
   (web/reset-routes app)
   (.get app "/" (fn [req res] (serve-homepage "/js/main.js" req res)))
-  (web/static-folder app "/" (if (util/env "NGINX_SERVER_NAME") "build" "public"))
-  (.use app util/strip-slash-redirect)
+  (web/static-folder app "/" (if (env "NGINX_SERVER_NAME") "build" "public"))
+  (.use app web/strip-slash-redirect)
   (.get app "/articles" articles)
   (.get app "/articles/:article" articles)
   ;(.get app "/login" soon)
