@@ -13,6 +13,8 @@
 
 (def initial-state {:results-view-table true})
 
+(def feedback-link "mailto:chris@mccormickit.com?subject=TweetFeast+feedback")
+
 (defonce state (r/atom initial-state))
 
 (def tweet-data-keys
@@ -480,27 +482,27 @@
                                  [component-users-table state]]
           :else "Users not found.")))))
 
-(defn component-search-interface [state user]
-  (let []
-    [:section#app
-     [:div#trial "Free trial"]
-     [:p "Search for the tweets you want to export and download."]
-     [component-search state]
-     #_ [:section.options
-         [:input {:name "search-state-check"
-                  :id "search-state-check"
-                  :type "checkbox"
-                  :checked (@state :results-view-table)
-                  :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
-         [:label {:for "search-state-check"} "table view"]]
-     [component-tweet-results state component-help-text]
-     [:div#feedback [:a {:href "mailto:chris@mccormickit.com?subject=TweetFeast+feedback"} "Send feedback"]]]))
+(defn component-search-interface [state _user]
+  [:section#app
+   [:div#trial "Free trial"]
+   [:p "Search for the tweets you want to export and download."]
+   [component-search state]
+   #_ [:section.options
+       [:input {:name "search-state-check"
+                :id "search-state-check"
+                :type "checkbox"
+                :checked (@state :results-view-table)
+                :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
+       [:label {:for "search-state-check"} "table view"]]
+   [component-tweet-results state component-help-text]])
 
 (defn component-user-tweets [state user default]
   (let [username (r/atom nil)
         search-type (r/atom default)]
     (fn []
-      (let [un (or @username (:username user))]
+      (let [un (or @username (:username user))
+            _searching (-> @state :progress :search)
+            _results (@state :results)]
         [:section#app
          [:div#trial "Free trial"]
          [:section.ui-layout-container
@@ -555,29 +557,39 @@
 
 (defn component-choose-activity [state user]
   (let [h (aget js/document "location" "hash")
-        history (@state :history)]
-    (case h
-      "#following" [component-followers state user "following"]
-      "#followers" [component-followers state user "followers"]
-      ;"#tweet-likers" [component-likers state user "liking_users"]
-      ;"#tweet-retweeters" [component-likers state user "retweeted_by"]
-      "#user-timeline" [component-user-tweets state user "timeline"]
-      "#user-likes" [component-user-tweets state user "likes"]
-      "#user-mentions" [component-user-tweets state user "mentions"]
-      "#search-tweets" [component-search-interface state user]
-      [:section#app
-       [:div#trial "Free trial"]
-       [:section.ui-layout-container
-        [:h3 "What kind of Twitter data do you need?"]
-        [:ul#data-menu
-         [:li [:a {:class "button" :href "#following"} "Users followed by a user"]]
-         [:li [:a {:class "button" :href "#followers"} "Users who are following a user"]]
-         [:li [:a {:class "button" :href "#tweet-likers"} "Users who liked a tweet"]]
-         [:li [:a {:class "button" :href "#tweet-retweeters"} "Users who retweeted a tweet"]]
-         [:li [:a {:class "button" :href "#user-timeline"} "Tweets by a user"]]
-         [:li [:a {:class "button" :href "#user-likes"} "Tweets liked by a user"]]
-         [:li [:a {:class "button" :href "#user-mentions"} "Tweets a user is mentioned in"]]
-         [:li [:a {:class "button" :href "#search-tweets"} "Tweets from a search result"]]]]])))
+        _history (@state :history)]
+    [:span
+     (case h
+       "#following" [component-followers state user "following"]
+       "#followers" [component-followers state user "followers"]
+       ;"#tweet-likers" [component-likers state user "liking_users"]
+       ;"#tweet-retweeters" [component-likers state user "retweeted_by"]
+       "#user-timeline" [component-user-tweets state user "timeline"]
+       "#user-likes" [component-user-tweets state user "likes"]
+       "#user-mentions" [component-user-tweets state user "mentions"]
+       "#search-tweets" [component-search-interface state user]
+       [:section#app
+        [:div#trial "Free trial"]
+        [:section.ui-layout-container
+         [:h3 "What kind of Twitter data do you need?"]
+         [:h4 "Tweets"]
+         [:ul.data-menu
+          [:li [:a {:href "#user-timeline"} "Tweets by a user"]]
+          [:li [:a {:href "#user-likes"} "Tweets liked by a user"]]
+          [:li [:a {:href "#user-mentions"} "Tweets a user is mentioned in"]]
+          [:li [:a {:href "#search-tweets"} "Tweets from a search result"]]]
+         [:h4 "Users"]
+         [:ul.data-menu
+          [:li [:a {:href "#following"} "Users followed by a particular user"]]
+          [:li [:a {:href "#followers"} "Users who are following a particular user"]]
+          ;[:li [:a {:href "#tweet-likers"} "Users who liked a particular tweet"]]
+          ;[:li [:a {:href "#tweet-retweeters"} "Users who retweeted a particular tweet"]]
+          ]
+         [:h4 "Something else"]
+         [:p "If you don't see the type of data you're looking for, "
+          [:a {:href feedback-link} "click here to shoot me an email"]
+          " and help me improve this tool."]]])
+     [:div#feedback [:a {:href feedback-link} "Send feedback"]]]))
 
 (defn component-main [state]
   (let [user (auth)]
