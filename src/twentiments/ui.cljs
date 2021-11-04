@@ -2,6 +2,7 @@
   (:require [reagent.core :as r]
             [reagent.dom :as rd]
             [applied-science.js-interop :as j]
+            [promesa.core :as p]
             [clast.ui :refer [simple-date-time slug]]
             [cljs.core.async :refer (go) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
@@ -81,16 +82,52 @@
                         (assoc :results-format :users)
                         (update-in [:progress] dissoc :search))))))
 
-(defn get-user-tweets [user-id search-type]
-  (let [search-api (get {"timeline" "tweets"
-                         "likes" "liked_tweets"
-                         "mentions" "mentions"}
-                        search-type)]
-    (-> (js/fetch (str "/api/users/" user-id "/" search-api
-                       "?" tweet-fields "&" user-fields
-                       "&" "max_results=100"))
-        (.then #(.json %))
-        (.catch (fn [err] (clj->js {"error" {"error" err}}))))))
+(defn get-user-tweets [user-id search-type & [pagination-token]]
+  (->
+    (p/let [search-api (get {"timeline" "tweets"
+                             "likes" "liked_tweets"
+                             "mentions" "mentions"}
+                            search-type)
+            url (str "/api/users/" user-id "/" search-api
+                     "?" tweet-fields "&" user-fields
+                     "&" "max_results=100"
+                     (when pagination-token (str "&pagination_token=" pagination-token)))
+            res (js/fetch url)
+            json (.json res)
+            _ (js/console.log "json" json)
+            data (aget json "data")
+            includes (aget json "includes")
+            users (when includes (aget includes "users"))
+            query-meta (aget json "meta")
+            _ (js/console.log "meta" query-meta)
+            next-token (when query-meta (aget query-meta "next_token"))
+            _ (js/console.log "next-token" next-token)
+            next-json (when next-token (get-user-tweets user-id search-type next-token))
+            next-error (when next-json (aget next-json "error"))
+            next-error-code (when next-error (aget next-error "code"))
+            next-data (when next-json (aget next-json "data"))
+            next-includes (when next-json (aget next-json "includes"))
+            next-users (when next-includes (aget next-includes "users"))]
+      (js/console.log "next" next-json)
+      (js/console.log "next-error" next-error)
+      (js/console.log "next-error-code" next-error-code)
+      (cond
+        ; Twitter can return a 404 on a valid pagination token
+        ; so if that happens just continue
+        (and next-error
+             (or (not pagination-token)
+                 (not= next-error-code 404)))
+        (clj->js {"error" next-json})
+        next-data
+        (do
+          (js/console.log "next-data concat" next-data)
+          (aset includes "users" (.concat users next-users))
+          (aset json "data" (.concat data next-data))
+          json)
+        :else json))
+    (.catch (fn [err]
+              (js/console.error err)
+              (clj->js {"error" {"error" err}})))))
 
 (defn initiate-user-tweet-fetch [state username search-type]
   (swap! state assoc-in [:progress :search] :loading)
@@ -500,9 +537,7 @@
   (let [username (r/atom nil)
         search-type (r/atom default)]
     (fn []
-      (let [un (or @username (:username user))
-            _searching (-> @state :progress :search)
-            _results (@state :results)]
+      (let [un (or @username (:username user))]
         [:section#app
          [:div#trial "Free trial"]
          [:section.ui-layout-container
