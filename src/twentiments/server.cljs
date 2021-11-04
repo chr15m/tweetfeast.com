@@ -1,10 +1,9 @@
 (ns twentiments.server
   (:require
     ["fs" :as fs]
-    [clast.web :as web]
     [clast.util :as util]
-    [clast.ui :refer [log]]
-    [clast.db :as db]
+    [sitefox.db :as db]
+    [sitefox.web :as web]
     [sitefox.util :refer [error-to-json]]
     [reagent.dom.server :refer [render-to-static-markup]]
     ["login-with-twitter" :as login-with-twitter]
@@ -13,8 +12,9 @@
     ["wink-sentiment" :as sentiment]
     ["marked" :as marked]
     [shadow.resource :as rc]
+    [promesa.core :as p]
     [applied-science.js-interop :as j]
-    [cljs.core.async :refer (go <!) :as async]
+    [cljs.core.async :refer (go) :as async]
     [cljs.core.async.interop :refer-macros [<p!]]))
 
 (def r render-to-static-markup)
@@ -58,11 +58,10 @@
                            :t now})))))
 
 (defn return-json-error [res err code]
-  (do
-    (js/console.error err)
-    (-> res
-        (.status code)
-        (.json (error-to-json err)))))
+  (js/console.error err)
+  (-> res
+      (.status code)
+      (.json (error-to-json err))))
 
 (defn twitter-sign-in [req]
   (login-with-twitter.
@@ -80,8 +79,7 @@
       "readOnly")))
 
 (defn twitter-login-done [req res]
-  (let [tw (twitter-sign-in req)
-        now (.toISOString (js/Date.))]
+  (let [tw (twitter-sign-in req)]
     (.callback tw 
                #js {:oauth_token (aget req "query" "oauth_token")
                     :oauth_verifier (aget req "query" "oauth_verifier")}
@@ -173,8 +171,7 @@
     (.send res (.render dom))))
 
 (defn authenticate-admin [req res n]
-  (let [user (j/get-in req [:session :user])
-        tw (twitter user)]
+  (let [user (j/get-in req [:session :user])]
     (if (and user
              (= (aget user "userName") "tweetfeastapp"))
       (n)
@@ -282,10 +279,10 @@
     (log-event "last/request" (aget user "userId") user)
     (log-event "event/api" (rnd-id) user {:url (aget req "url")})))
 
-(defn soon [req res]
+(defn soon [_req res]
   (.send res (make-simple-page "Soon.")))
 
-(defn admin-data [req res]
+(defn admin-data [_req res]
   (let [db (db/client)]
     (->
       (.query db "select * from keyv where key like 'login/last:%' or key like 'last/%'")
@@ -319,9 +316,7 @@
   )
 
 (defn main! []
-  (go
-    (let [app (web/create)
-          [host port] (<p! (web/serve app))]
-      (util/reloader (partial #'setup-routes app))
-      (setup-routes app)
-      (println "main!"))))
+  (p/let [[app host port] (web/start)]
+    (util/reloader (partial #'setup-routes app))
+    (setup-routes app)
+    (println "Serving on " (str "http://" host ":" port))))
