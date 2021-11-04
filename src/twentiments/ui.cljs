@@ -488,6 +488,9 @@
            (where the Place is fully contained within the defined region). "
        "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]]]])
 
+(defn component-tweets-count [results]
+  [:p (count (or (aget results "data") (aget results "results"))) " results found."])
+
 (defn component-tweet-results [state empty-component]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
@@ -499,6 +502,7 @@
           (or (aget results "data")
               (aget results "results")) [:span
                                          [component-download-results state]
+                                         [component-tweets-count results]
                                          (if (@state :results-view-table)
                                            [component-tweets-table state]
                                            [component-tweets state])]
