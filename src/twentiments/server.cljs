@@ -319,6 +319,10 @@
 
 (defn main! []
   (p/let [[app host port] (web/start)]
-    (util/reloader (partial #'setup-routes app))
+    (reset! server app)
     (setup-routes app)
     (println "Serving on " (str "http://" host ":" port))))
+
+(defn ^:dev/after-load reload []
+  (js/console.log "Reloading.")
+  (setup-routes @server))
