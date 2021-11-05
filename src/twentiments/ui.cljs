@@ -82,18 +82,19 @@
                         (assoc :results-format :users)
                         (update-in [:progress] dissoc :search))))))
 
-(defn merge-tweet-json [parent-json json]
+(defn merge-tweet-json [parent-json json limit]
   (let [users (j/get-in json [:includes :users])
         data (j/get json :data)
         error (j/get json :error)
         rate-limit (j/get json :rateLimit)
         parent-json (if users (j/update-in! parent-json [:includes :users] #(.concat (or % #js []) users)) parent-json)
         parent-json (if data (j/update-in! parent-json [:data] #(.concat (or % #js []) data)) parent-json)
+        parent-json (j/update-in! parent-json [:data] #(.slice % 0 limit))
         parent-json (if error (j/assoc! parent-json :error (clj->js {:error error})) parent-json)
         parent-json (j/assoc! parent-json :rateLimit rate-limit)]
     parent-json))
 
-(defn get-user-tweets [user-id search-type progress & [parent-json pagination-token]]
+(defn get-user-tweets [user-id search-type limit progress & [parent-json pagination-token]]
   (p/catch
     (p/let [search-api (get {"timeline" "tweets"
                              "likes" "liked_tweets"
@@ -106,11 +107,12 @@
             res (js/fetch url)
             json (.json res)
             next-token (j/get-in json [:meta :next_token])
-            merged-json (merge-tweet-json (or parent-json #js {}) json)]
-      (log "get-user-tweets" (count (j/get parent-json :data)) next-token (j/get parent-json :rateLimit))
-      (reset! progress (str "downloaded " (count (j/get parent-json :data)) " tweets..."))
-      (if next-token
-        (get-user-tweets user-id search-type progress merged-json next-token)
+            merged-json (merge-tweet-json (or parent-json #js {}) json limit)
+            fetched-count (count (j/get parent-json :data))]
+      (log "get-user-tweets" fetched-count next-token (j/get parent-json :rateLimit))
+      (reset! progress (str "downloaded " fetched-count " tweets..."))
+      (if (and next-token (< fetched-count (or limit 10000)))
+        (get-user-tweets user-id search-type limit progress merged-json next-token)
         (do
           (reset! progress "Done. Generating downloads.")
           merged-json)))
@@ -118,11 +120,11 @@
       (js/console.error err)
       (js/assoc! parent-json :error (clj->js {"error" err})))))
 
-(defn initiate-user-tweet-fetch [state username search-type]
+(defn initiate-user-tweet-fetch [state username search-type limit]
   (swap! state assoc-in [:progress :search] :loading)
   (p/let [user (get-user-by-username username)
           user-data (aget user "data")
-          results (when user-data (get-user-tweets (aget user-data "id") search-type (r/cursor state [:progress :search])))]
+          results (when user-data (get-user-tweets (aget user-data "id") search-type limit (r/cursor state [:progress :search])))]
     (swap! state #(-> %
                       (assoc :results (or results user))
                       (assoc :results-q (str username "-" search-type))
@@ -158,25 +160,23 @@
     (.map users
           (fn [user]
             (let [metrics (or (aget user "public_metrics") #js {})
-                  values [:id (aget user "id")
-                          :username (aget user "username")
-                          :name (aget user "name")
-                          :date-time-created (simple-date-time (aget user "created_at"))
-                          :verified (aget user "verified")
-
-                          :metric-followers (aget metrics "followers_count")
-                          :metric-following (aget metrics "following_count")
-                          :metric-tweets (aget metrics "tweet_count")
-                          :metric-listed (aget metrics "listed_count")
-
-                          :location (aget user "location")
-                          :link (str "https://twitter.com/" (aget user "username"))
-                          :description (aget user "description")
-                          :image-url (aget user "profile_image_url")]
                   js-struct #js {}]
-              (doseq [[k v] (partition 2 values)]
-                (aset js-struct (name k) v))
-              js-struct)))))
+              (j/assoc! js-struct
+                        :id (aget user "id")
+                        :username (aget user "username")
+                        :name (aget user "name")
+                        :date-time-created (simple-date-time (aget user "created_at"))
+                        :verified (aget user "verified")
+
+                        :metric-followers (aget metrics "followers_count")
+                        :metric-following (aget metrics "following_count")
+                        :metric-tweets (aget metrics "tweet_count")
+                        :metric-listed (aget metrics "listed_count")
+
+                        :location (aget user "location")
+                        :link (str "https://twitter.com/" (aget user "username"))
+                        :description (aget user "description")
+                        :image-url (aget user "profile_image_url")))))))
 
 ; for the new v2 search API
 (defn make-flat-json-v2 [results]
@@ -197,7 +197,7 @@
                         :metric-quotes (aget m "quote_count")
                         :metric-retweets (aget m "retweet_count")
 
-                        ;:ai-sentiment (tweet-sentiment tweet)
+                        :ai-sentiment (tweet-sentiment tweet)
 
                         :user-id (aget tweet "author_id")
                         :user-name (aget user "username")
@@ -322,7 +322,7 @@
          [:text "Tweet"]]
         make-flat-json (json-format-fns (@state :results-format))
         flat-data (make-flat-json (@state :results))
-        display-limit 25]
+        display-limit 50]
     [:div.results
      [:table
       [:thead
@@ -538,7 +538,8 @@
 
 (defn component-user-tweets [state user default]
   (let [username (r/atom nil)
-        search-type (r/atom default)]
+        search-type (r/atom default)
+        limit (r/atom 10000)]
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
@@ -556,8 +557,13 @@
            [:input {:on-change #(reset! username (-> % .-target .-value))
                     :placeholder "Twitter username"
                     :value un
-                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-user-tweet-fetch state un @search-type))}]
-           [:button.primary {:on-click #(initiate-user-tweet-fetch state un @search-type)} "go"]]]
+                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-user-tweet-fetch state un @search-type @limit))}]
+           [:button.primary {:on-click #(initiate-user-tweet-fetch state un @search-type @limit)} "go"]]
+          [:div "Max results: "
+           [:input {:on-change #(reset! limit (-> % .-target .-value))
+                    :on-blur #(reset! limit (-> @limit int (js/Math.min 10000) (js/Math.max 10)))
+                    :type "number"
+                    :value @limit}]]]
          [component-tweet-results state]]))))
 
 (defn component-followers [state user default]
