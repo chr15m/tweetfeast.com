@@ -272,10 +272,12 @@
         v (if (>= (.indexOf url "v1") 0)
             "v1"
             "v2")]
-    (-> (.get (aget tw v) (-> (aget req "url") (.replace "/api/" "") (.replace "v1/" "")))
+    (-> (.get (aget tw v) (-> (aget req "url") (.replace "/api/" "") (.replace "v1/" "")) #js {} #js {:fullResponse true})
         (.then
           (fn [data]
-            (.json res data)))
+            (.json res
+                   (-> (j/get-in data [:data])
+                       (j/assoc! :rateLimit (j/get-in data [:rateLimit]))))))
         (.catch
           (fn [err] (return-json-error res err 403))))
     (log-event "last/request" (aget user "userId") user)

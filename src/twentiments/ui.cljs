@@ -84,11 +84,13 @@
 
 (defn merge-tweet-json [parent-json json]
   (let [users (j/get-in json [:includes :users])
-        data (j/get-in json [:data])
-        error (j/get-in json [:error])
+        data (j/get json :data)
+        error (j/get json :error)
+        rate-limit (j/get json :rateLimit)
         parent-json (if users (j/update-in! parent-json [:includes :users] #(.concat (or % #js []) users)) parent-json)
         parent-json (if data (j/update-in! parent-json [:data] #(.concat (or % #js []) data)) parent-json)
-        parent-json (if error (j/assoc! parent-json :error (clj->js {:error error})) parent-json)]
+        parent-json (if error (j/assoc! parent-json :error (clj->js {:error error})) parent-json)
+        parent-json (j/assoc! parent-json :rateLimit rate-limit)]
     parent-json))
 
 (defn get-user-tweets [user-id search-type & [parent-json pagination-token]]
@@ -105,7 +107,7 @@
             json (.json res)
             next-token (j/get-in json [:meta :next_token])
             merged-json (merge-tweet-json (or parent-json #js {}) json)]
-      (log "get-user-tweets" (count (j/get parent-json :data)) next-token)
+      (log "get-user-tweets" (count (j/get parent-json :data)) next-token (j/get parent-json :rateLimit))
       (if next-token
         (get-user-tweets user-id search-type merged-json next-token)
         merged-json))
@@ -474,6 +476,10 @@
 (defn component-tweets-count [results]
   [:p (count (or (aget results "data") (aget results "results"))) " results found."])
 
+(defn component-rate-limit [results]
+  (when (aget results "rateLimit")
+    [:p (j/get-in results [:rateLimit :remaining]) " requests left."]))
+
 (defn component-tweet-results [state empty-component]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
@@ -486,6 +492,7 @@
            (or (aget results "data")
                (aget results "results")) [:span
                                           [component-tweets-count results]
+                                          [component-rate-limit results]
                                           [component-download-results state]
                                           (if (@state :results-view-table)
                                             [component-tweets-table state]
