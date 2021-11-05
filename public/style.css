@@ -28,6 +28,7 @@ body {
   padding: 0.25em;
   text-align: center;
   font-size: 0.8em;
+  z-index: 2;
 }
 
 fieldset {
@@ -188,6 +189,10 @@ table img.user-image {
 table#help td, table#help th {
   text-align: left;
   padding: 0.25em 1em;
+}
+
+.results p {
+  margin-top: 2em;
 }
 
 /*** styling tweets ***/
