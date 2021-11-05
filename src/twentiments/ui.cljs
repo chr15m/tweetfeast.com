@@ -16,6 +16,10 @@
 
 (def feedback-link "mailto:chris@mccormickit.com?subject=TweetFeast+feedback")
 
+(def table-display-limit 50)
+
+(def max-records 10000)
+
 (defonce state (r/atom initial-state))
 
 (def tweet-data-keys
@@ -64,23 +68,48 @@
       (.catch (fn [err]
                 (clj->js {"error" {"error" err}})))))
 
-(defn get-user-follow [user-id search-type]
-  (-> (js/fetch (str "/api/users/" user-id "/" search-type
-                     "?" user-fields))
-      (.then #(.json %))
-      (.catch (fn [err] (clj->js {"error" {"error" err}})))))
+(defn merge-user-json [parent-json json limit]
+  (let [data (j/get json :data)
+        error (j/get json :error)
+        rate-limit (j/get json :rateLimit)
+        parent-json (if data (j/update-in! parent-json [:data] #(.concat (or % #js []) data)) parent-json)
+        parent-json (j/update-in! parent-json [:data] #(when % (.slice % 0 limit)))
+        parent-json (if error (j/assoc! parent-json :error (clj->js {:error error})) parent-json)
+        parent-json (j/assoc! parent-json :rateLimit rate-limit)]
+    parent-json))
 
-(defn initiate-follower-download [state username search-type]
+(defn get-user-follow [user-id search-type limit progress & [parent-json pagination-token]]
+  (p/catch
+    (p/let [url (str "/api/users/" user-id "/" search-type
+                     "?" user-fields
+                     (when pagination-token (str "&pagination_token=" pagination-token)))
+            res (js/fetch url)
+            json (.json res)
+            next-token (j/get-in json [:meta :next_token])
+            merged-json (merge-user-json (or parent-json #js {}) json limit)
+            fetched-count (count (j/get parent-json :data))]
+      (log "get-user-tweets" fetched-count next-token (j/get parent-json :rateLimit))
+      (reset! progress (str "downloaded " fetched-count " users..."))
+      (if (and next-token (< fetched-count (or limit max-records)))
+        (get-user-follow user-id search-type limit progress merged-json next-token)
+        (do
+          (reset! progress "Done. Generating downloads.")
+          merged-json)))
+    (fn [err]
+      (js/console.error err)
+      (js/assoc! parent-json :error (clj->js {:error {:error err}})))))
+
+(defn initiate-follower-download [state username search-type limit]
   (swap! state assoc-in [:progress :search] :loading)
-  (go
-    (let [user (<p! (get-user-by-username username))
+  (p/let [user (get-user-by-username username)
           user-data (aget user "data")
-          followers (when user-data (<p! (get-user-follow (aget user-data "id") search-type)))]
-      (swap! state #(-> %
-                        (assoc :results (or followers user))
-                        (assoc :results-q (str username "-" search-type))
-                        (assoc :results-format :users)
-                        (update-in [:progress] dissoc :search))))))
+          followers (when user-data (get-user-follow (aget user-data "id") search-type limit (r/cursor state [:progress :search])))]
+    (log "followers" followers)
+    (swap! state #(-> %
+                      (assoc :results (or followers user))
+                      (assoc :results-q (str username "-" search-type))
+                      (assoc :results-format :users)
+                      (update-in [:progress] dissoc :search)))))
 
 (defn merge-tweet-json [parent-json json limit]
   (let [users (j/get-in json [:includes :users])
@@ -89,7 +118,7 @@
         rate-limit (j/get json :rateLimit)
         parent-json (if users (j/update-in! parent-json [:includes :users] #(.concat (or % #js []) users)) parent-json)
         parent-json (if data (j/update-in! parent-json [:data] #(.concat (or % #js []) data)) parent-json)
-        parent-json (j/update-in! parent-json [:data] #(.slice % 0 limit))
+        parent-json (j/update-in! parent-json [:data] #(when % (.slice % 0 limit)))
         parent-json (if error (j/assoc! parent-json :error (clj->js {:error error})) parent-json)
         parent-json (j/assoc! parent-json :rateLimit rate-limit)]
     parent-json))
@@ -111,14 +140,14 @@
             fetched-count (count (j/get parent-json :data))]
       (log "get-user-tweets" fetched-count next-token (j/get parent-json :rateLimit))
       (reset! progress (str "downloaded " fetched-count " tweets..."))
-      (if (and next-token (< fetched-count (or limit 10000)))
+      (if (and next-token (< fetched-count (or limit max-records)))
         (get-user-tweets user-id search-type limit progress merged-json next-token)
         (do
           (reset! progress "Done. Generating downloads.")
           merged-json)))
     (fn [err]
       (js/console.error err)
-      (js/assoc! parent-json :error (clj->js {"error" err})))))
+      (js/assoc! parent-json :error (clj->js {:error {:error err}})))))
 
 (defn initiate-user-tweet-fetch [state username search-type limit]
   (swap! state assoc-in [:progress :search] :loading)
@@ -252,9 +281,10 @@
    (for [e (aget results "error" "errors")]
      (when e
        [:p.error (aget e "message")]))
-   (let [e (aget results "error" "error")]
-     (when e
-       [:p.error (aget e "message")]))])
+   (let [message (j/get-in results [:error :error :message])
+         data (j/get-in results [:error :error :data])]
+     (when message
+       [:p.error message " " (when (< (count data) 280) data) ]))])
 
 (defn component-search [state _user]
   [:fieldset.horizontal
@@ -322,7 +352,7 @@
          [:text "Tweet"]]
         make-flat-json (json-format-fns (@state :results-format))
         flat-data (make-flat-json (@state :results))
-        display-limit 50]
+        data (take table-display-limit flat-data)]
     [:div.results
      [:table
       [:thead
@@ -330,22 +360,21 @@
         (for [[k n] tweet-table-keys]
           [:th {:key k :class (str "column-" (name k))} n])]]
       [:tbody
-       (let [data (take display-limit flat-data)]
-         (for [row data]
-           [:tr {:key (aget row "id")}
-            (for [[k _n] tweet-table-keys]
-              [:td {:key k :class (str "column-" (name k))}
-               (case k
-                 :id nil
-                 :user-id nil
-                 :ai-sentiment (aget row "ai-sentiment")
-                 :user-image-url [:img.user-image {:src (aget row "user-image-url")}]
-                 :text [:a {:href (aget row "link")
-                            :target "_blank"}
-                        (decode-html (aget row "text"))]
-                 (aget row (name k)))])]))]]
-     (when (> (count flat-data) display-limit)
-       [:p [:strong "And " (- (count flat-data) display-limit) " more results..."]])]))
+       (for [row data]
+         [:tr {:key (aget row "id")}
+          (for [[k _n] tweet-table-keys]
+            [:td {:key k :class (str "column-" (name k))}
+             (case k
+               :id nil
+               :user-id nil
+               :ai-sentiment (aget row "ai-sentiment")
+               :user-image-url [:img.user-image {:src (aget row "user-image-url")}]
+               :text [:a {:href (aget row "link")
+                          :target "_blank"}
+                      (decode-html (aget row "text"))]
+               (aget row (name k)))])])]]
+     (when (> (count flat-data) table-display-limit)
+       [:p [:strong "And " (- (count flat-data) table-display-limit) " more results..."]])]))
 
 (defn component-users-table [state]
   (let [user-table-keys
@@ -361,23 +390,30 @@
          [:metric-listed "Lists"]
 
          [:location "Location"]]
-        make-flat-json (json-format-fns (@state :results-format))]
-    [:table
-     [:thead
-      [:tr
-       (for [[k n] user-table-keys]
-         [:th {:key k :class (str "column-" (name k))} n])]]
-     [:tbody
-      (let [data (make-flat-json (@state :results))]
-        (for [row data]
-          [:tr {:key (aget row "id")}
-           (for [[k _n] user-table-keys]
-             [:td {:key k :class (str "column-" (name k))}
-              (case k
-                :id nil
-                :image-url [:img.user-image {:src (aget row "image-url")}]
-                ;:description (decode-html (aget row "description"))
-                (aget row (name k)))])]))]]))
+        make-flat-json (json-format-fns (@state :results-format))
+        flat-data (make-flat-json (@state :results))
+        data (take table-display-limit flat-data)]
+    [:div.results
+     [:table
+      [:thead
+       [:tr
+        (for [[k n] user-table-keys]
+          [:th {:key k :class (str "column-" (name k))} n])]]
+      [:tbody
+       (for [row data]
+         [:tr {:key (aget row "id")}
+          (for [[k _n] user-table-keys]
+            [:td {:key k :class (str "column-" (name k))}
+             (case k
+               :id nil
+               :image-url [:a {:href (str "https://twitter.com/" (aget row "username")) :target "_BLANK"}
+                           [:img.user-image {:src (aget row "image-url")}]]
+               :username [:a {:href (str "https://twitter.com/" (aget row "username")) :target "_BLANK"}
+                          (aget row "username")]
+               ;:description (decode-html (aget row "description"))
+               (aget row (name k)))])])]]
+     (when (> (count flat-data) table-display-limit)
+       [:p [:strong "And " (- (count flat-data) table-display-limit) " more results..."]])]))
 
 (defn component-download-results [state]
   (let [tweets (@state :results)
@@ -477,29 +513,32 @@
            (where the Place is fully contained within the defined region). "
        "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]]]])
 
-(defn component-tweets-count [results errors]
+(defn component-data-count [results kind errors]
   [:p
-   [:strong (count (or (aget results "data") (aget results "results"))) " tweets found."]
-   (when errors [:span [:br] "Some tweets may be missing due to Twitter API errors."])])
+   [:strong (count (or (aget results "data") (aget results "results"))) " " kind " found."]
+   (when errors [:span [:br] "Some " kind " may be missing due to Twitter API errors."])])
 
 (defn component-rate-limit [results]
   (when (aget results "rateLimit")
     [:p (j/get-in results [:rateLimit :remaining]) " requests left."]))
 
+(defn component-progress [searching]
+  [:div.progress
+   [:div.spinner.spin]
+   [:p searching]])
+
 (defn component-tweet-results [state empty-component]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     (if searching
-      [:div.progress
-       [:div.spinner.spin]
-       [:p searching]]
+      [component-progress searching]
       (if results
         [:div
          (when (aget results "error") [component-errors results])
          (cond
            (or (aget results "data")
                (aget results "results")) [:span
-                                          [component-tweets-count results (aget results "error")]
+                                          [component-data-count results "tweets" (aget results "error")]
                                           ; [component-rate-limit results]
                                           [component-download-results state]
                                           (if (@state :results-view-table)
@@ -513,14 +552,16 @@
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     (if searching
-      [:div.spinner.spin]
+      [component-progress searching]
       (when results
-        (cond
-          (aget results "error") [component-errors results]
-          (aget results "data") [:span
-                                 [component-download-results state]
-                                 [component-users-table state]]
-          :else "Users not found.")))))
+        [:div
+         (when (aget results "error") [component-errors results])
+         (cond
+           (aget results "data") [:span
+                                  [component-data-count results "users" (aget results "error")]
+                                  [component-download-results state]
+                                  [component-users-table state]]
+           :else "Users not found.")]))))
 
 (defn component-search-interface [state _user]
   [:section#app
@@ -539,7 +580,7 @@
 (defn component-user-tweets [state user default]
   (let [username (r/atom nil)
         search-type (r/atom default)
-        limit (r/atom 10000)]
+        limit (r/atom max-records)]
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
@@ -551,7 +592,7 @@
            "Tweets "
            [:select {:on-change #(reset! search-type (-> % .-target .-value))
                      :value @search-type}
-            [:option {:value "timeline"} "in the timeline of"]
+            [:option {:value "timeline"} "by"]
             [:option {:value "likes"} "liked by"]
             [:option {:value "mentions"} "mentioning"]]
            [:input {:on-change #(reset! username (-> % .-target .-value))
@@ -561,14 +602,15 @@
            [:button.primary {:on-click #(initiate-user-tweet-fetch state un @search-type @limit)} "go"]]
           [:div "Max results: "
            [:input {:on-change #(reset! limit (-> % .-target .-value))
-                    :on-blur #(reset! limit (-> @limit int (js/Math.min 10000) (js/Math.max 10)))
+                    :on-blur #(reset! limit (-> @limit int (js/Math.min max-records) (js/Math.max 10)))
                     :type "number"
                     :value @limit}]]]
          [component-tweet-results state]]))))
 
 (defn component-followers [state user default]
   (let [username (r/atom nil)
-        search-type (r/atom default)]
+        search-type (r/atom default)
+        limit (r/atom max-records)]
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
@@ -584,11 +626,14 @@
            [:input {:on-change #(reset! username (-> % .-target .-value))
                     :placeholder "Twitter username"
                     :value un
-                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un @search-type))}]
-           [:button.primary {:on-click #(initiate-follower-download state un @search-type)} "go"]]]
+                    :on-key-down #(when (= (aget % "keyCode") 13) (initiate-follower-download state un @search-type @limit))}]
+           [:button.primary {:on-click #(initiate-follower-download state un @search-type @limit)} "go"]]
+          [:div "Max results: "
+           [:input {:on-change #(reset! limit (-> % .-target .-value))
+                    :on-blur #(reset! limit (-> @limit int (js/Math.min max-records) (js/Math.max 10)))
+                    :type "number"
+                    :value @limit}]]]
          [component-user-results state]]))))
-
-
 
 #_ (defn component-likers [state user default]
   (let [tweet-url (r/atom nil)
