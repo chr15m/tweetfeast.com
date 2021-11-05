@@ -111,7 +111,9 @@
       (reset! progress (str "downloaded " (count (j/get parent-json :data)) " tweets..."))
       (if next-token
         (get-user-tweets user-id search-type progress merged-json next-token)
-        merged-json))
+        (do
+          (reset! progress "Done. Generating downloads.")
+          merged-json)))
     (fn [err]
       (js/console.error err)
       (js/assoc! parent-json :error (clj->js {"error" err})))))
@@ -179,34 +181,30 @@
 ; for the new v2 search API
 (defn make-flat-json-v2 [results]
   (let [users (get-users results)
-        tweets (aget results "data")]
+        tweets (aget results "data")
+        get-user-mem (memoize get-user)]
     (.map tweets
           (fn [tweet]
-            (let [user (get-user users (aget tweet "author_id"))
+            (let [user (get-user-mem users (aget tweet "author_id"))
                   m (aget tweet "public_metrics")
                   id (or (aget tweet "id_str") (aget tweet "id"))
-                  values [:id (str "id:" id)
-                          :date-time-created (simple-date-time (aget tweet "created_at"))
-
-                          :metric-likes (aget m "like_count")
-                          :metric-replies (aget m "reply_count")
-                          :metric-quotes (aget m "quote_count")
-                          :metric-retweets (aget m "retweet_count")
-
-                          :ai-sentiment (tweet-sentiment tweet)
-
-                          :user-id (aget tweet "author_id")
-                          :user-name (aget user "username")
-                          :user-full-name (aget user "name")
-                          :user-image-url (aget user "profile_image_url")
-                          :link (make-tweet-link id)
-                          :text (aget tweet "text")]
                   js-struct #js {}]
-              ; this is to preserve CSV column order as js
-              ; key order is stable in practice
-              (doseq [[k v] (partition 2 values)]
-                (aset js-struct (name k) v))
-              js-struct)))))
+              (j/assoc! js-struct :id (str "id:" id)
+                        :date-time-created (simple-date-time (aget tweet "created_at"))
+
+                        :metric-likes (aget m "like_count")
+                        :metric-replies (aget m "reply_count")
+                        :metric-quotes (aget m "quote_count")
+                        :metric-retweets (aget m "retweet_count")
+
+                        ;:ai-sentiment (tweet-sentiment tweet)
+
+                        :user-id (aget tweet "author_id")
+                        :user-name (aget user "username")
+                        :user-full-name (aget user "name")
+                        :user-image-url (aget user "profile_image_url")
+                        :link (make-tweet-link id)
+                        :text (aget tweet "text")))))))
 
 ; for the old v1.1 search API
 (defn make-flat-json-v1 [results]
@@ -238,9 +236,9 @@
                 (aset js-struct (name k) v))
               js-struct)))))
 
-(def json-format-fns {:v1 make-flat-json-v1
-                      :v2 make-flat-json-v2
-                      :users make-flat-json-users})
+(def json-format-fns {:v1 (memoize make-flat-json-v1)
+                      :v2 (memoize make-flat-json-v2)
+                      :users (memoize make-flat-json-users)})
 
 (defn decode-html [html]
   (let [txt (.createElement js/document "textarea")]
@@ -322,27 +320,32 @@
          [:metric-replies "Replies"]
          [:ai-sentiment "Sentiment"]
          [:text "Tweet"]]
-        make-flat-json (json-format-fns (@state :results-format))]
-    [:table
-     [:thead
-      [:tr
-       (for [[k n] tweet-table-keys]
-         [:th {:key k :class (str "column-" (name k))} n])]]
-     [:tbody
-      (let [data (make-flat-json (@state :results))]
-        (for [row data]
-          [:tr {:key (aget row "id")}
-           (for [[k _n] tweet-table-keys]
-             [:td {:key k :class (str "column-" (name k))}
-              (case k
-                :id nil
-                :user-id nil
-                :ai-sentiment (aget row "ai-sentiment")
-                :user-image-url [:img.user-image {:src (aget row "user-image-url")}]
-                :text [:a {:href (aget row "link")
-                           :target "_blank"}
-                       (decode-html (aget row "text"))]
-                (aget row (name k)))])]))]]))
+        make-flat-json (json-format-fns (@state :results-format))
+        flat-data (make-flat-json (@state :results))
+        display-limit 25]
+    [:div.results
+     [:table
+      [:thead
+       [:tr
+        (for [[k n] tweet-table-keys]
+          [:th {:key k :class (str "column-" (name k))} n])]]
+      [:tbody
+       (let [data (take display-limit flat-data)]
+         (for [row data]
+           [:tr {:key (aget row "id")}
+            (for [[k _n] tweet-table-keys]
+              [:td {:key k :class (str "column-" (name k))}
+               (case k
+                 :id nil
+                 :user-id nil
+                 :ai-sentiment (aget row "ai-sentiment")
+                 :user-image-url [:img.user-image {:src (aget row "user-image-url")}]
+                 :text [:a {:href (aget row "link")
+                            :target "_blank"}
+                        (decode-html (aget row "text"))]
+                 (aget row (name k)))])]))]]
+     (when (> (count flat-data) display-limit)
+       [:p [:strong "And " (- (count flat-data) display-limit) " more results..."]])]))
 
 (defn component-users-table [state]
   (let [user-table-keys
@@ -497,7 +500,7 @@
            (or (aget results "data")
                (aget results "results")) [:span
                                           [component-tweets-count results (aget results "error")]
-                                          [component-rate-limit results]
+                                          ; [component-rate-limit results]
                                           [component-download-results state]
                                           (if (@state :results-view-table)
                                             [component-tweets-table state]
