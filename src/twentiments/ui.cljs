@@ -93,7 +93,7 @@
         parent-json (j/assoc! parent-json :rateLimit rate-limit)]
     parent-json))
 
-(defn get-user-tweets [user-id search-type & [parent-json pagination-token]]
+(defn get-user-tweets [user-id search-type progress & [parent-json pagination-token]]
   (p/catch
     (p/let [search-api (get {"timeline" "tweets"
                              "likes" "liked_tweets"
@@ -108,8 +108,9 @@
             next-token (j/get-in json [:meta :next_token])
             merged-json (merge-tweet-json (or parent-json #js {}) json)]
       (log "get-user-tweets" (count (j/get parent-json :data)) next-token (j/get parent-json :rateLimit))
+      (reset! progress (str "downloaded " (count (j/get parent-json :data)) " tweets..."))
       (if next-token
-        (get-user-tweets user-id search-type merged-json next-token)
+        (get-user-tweets user-id search-type progress merged-json next-token)
         merged-json))
     (fn [err]
       (js/console.error err)
@@ -119,7 +120,7 @@
   (swap! state assoc-in [:progress :search] :loading)
   (p/let [user (get-user-by-username username)
           user-data (aget user "data")
-          results (when user-data (get-user-tweets (aget user-data "id") search-type))]
+          results (when user-data (get-user-tweets (aget user-data "id") search-type (r/cursor state [:progress :search])))]
     (swap! state #(-> %
                       (assoc :results (or results user))
                       (assoc :results-q (str username "-" search-type))
@@ -473,8 +474,10 @@
            (where the Place is fully contained within the defined region). "
        "See " [:a {:href "https://t.co/operators"} "t.co/operators"] " for details."]]]]])
 
-(defn component-tweets-count [results]
-  [:p (count (or (aget results "data") (aget results "results"))) " results found."])
+(defn component-tweets-count [results errors]
+  [:p
+   [:strong (count (or (aget results "data") (aget results "results"))) " tweets found."]
+   (when errors [:span [:br] "Some tweets may be missing due to Twitter API errors."])])
 
 (defn component-rate-limit [results]
   (when (aget results "rateLimit")
@@ -484,14 +487,16 @@
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     (if searching
-      [:div.spinner.spin]
+      [:div.progress
+       [:div.spinner.spin]
+       [:p searching]]
       (if results
         [:div
          (when (aget results "error") [component-errors results])
          (cond
            (or (aget results "data")
                (aget results "results")) [:span
-                                          [component-tweets-count results]
+                                          [component-tweets-count results (aget results "error")]
                                           [component-rate-limit results]
                                           [component-download-results state]
                                           (if (@state :results-view-table)

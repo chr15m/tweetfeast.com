@@ -52,11 +52,6 @@ nav > * {
   margin: 0px 0.5em;
 }
 
-.downloads {
-  display: flex;
-  justify-content: space-evenly;
-}
-
 section#app > *, section#app > span > * {
   margin-bottom: 2em;
 }
@@ -131,6 +126,23 @@ section.options {
   padding: 1em 2em;
 }
 
+/*** styling info & ui ***/
+
+.errors {
+  color: #F56A6A;
+}
+
+.progress p {
+  margin-top: 1em;
+  text-align: center;
+}
+
+.downloads {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 2em 0px;
+}
+
 /*** styling table ***/
 
 table {
@@ -171,10 +183,6 @@ td.column-text {
 
 table img.user-image {
   border-radius: 64px;
-}
-
-.errors {
-  color: #F56A6A;
 }
 
 table#help td, table#help th {
