@@ -3,7 +3,7 @@
             [reagent.dom :as rd]
             [applied-science.js-interop :as j]
             [promesa.core :as p]
-            [sitefox.ui :refer [simple-date-time slug]]
+            [sitefox.ui :refer [simple-date-time slug log]]
             [cljs.core.async :refer (go) :as async]
             [cljs.core.async.interop :refer-macros [<p!]]
             ["twitter-text" :as twitter-text]
@@ -50,7 +50,7 @@
                         (.then (fn [response] (.json response)))
                         (.catch (fn [err]
                                   (clj->js {"error" {"error" err}})))))]
-      (js/console.log "Results:" json)
+      (log "Results:" json)
       (swap! state #(-> %
                         (assoc :results json)
                         (assoc :results-q (@state :q))
@@ -82,8 +82,17 @@
                         (assoc :results-format :users)
                         (update-in [:progress] dissoc :search))))))
 
-(defn get-user-tweets [user-id search-type & [pagination-token]]
-  (->
+(defn merge-tweet-json [parent-json json]
+  (let [users (j/get-in json [:includes :users])
+        data (j/get-in json [:data])
+        error (j/get-in json [:error])
+        parent-json (if users (j/update-in! parent-json [:includes :users] #(.concat (or % #js []) users)) parent-json)
+        parent-json (if data (j/update-in! parent-json [:data] #(.concat (or % #js []) data)) parent-json)
+        parent-json (if error (j/assoc! parent-json :error (clj->js {:error error})) parent-json)]
+    parent-json))
+
+(defn get-user-tweets [user-id search-type & [parent-json pagination-token]]
+  (p/catch
     (p/let [search-api (get {"timeline" "tweets"
                              "likes" "liked_tweets"
                              "mentions" "mentions"}
@@ -94,52 +103,26 @@
                      (when pagination-token (str "&pagination_token=" pagination-token)))
             res (js/fetch url)
             json (.json res)
-            _ (js/console.log "json" json)
-            data (aget json "data")
-            includes (aget json "includes")
-            users (when includes (aget includes "users"))
-            query-meta (aget json "meta")
-            _ (js/console.log "meta" query-meta)
-            next-token (when query-meta (aget query-meta "next_token"))
-            _ (js/console.log "next-token" next-token)
-            next-json (when next-token (get-user-tweets user-id search-type next-token))
-            next-error (when next-json (aget next-json "error"))
-            next-error-code (when next-error (aget next-error "code"))
-            next-data (when next-json (aget next-json "data"))
-            next-includes (when next-json (aget next-json "includes"))
-            next-users (when next-includes (aget next-includes "users"))]
-      (js/console.log "next" next-json)
-      (js/console.log "next-error" next-error)
-      (js/console.log "next-error-code" next-error-code)
-      (cond
-        ; Twitter can return a 404 on a valid pagination token
-        ; so if that happens just continue
-        (and next-error
-             (or (not pagination-token)
-                 (not= next-error-code 404)))
-        (clj->js {"error" next-json})
-        next-data
-        (do
-          (js/console.log "next-data concat" next-data)
-          (aset includes "users" (.concat users next-users))
-          (aset json "data" (.concat data next-data))
-          json)
-        :else json))
-    (.catch (fn [err]
-              (js/console.error err)
-              (clj->js {"error" {"error" err}})))))
+            next-token (j/get-in json [:meta :next_token])
+            merged-json (merge-tweet-json (or parent-json #js {}) json)]
+      (log "get-user-tweets" (count (j/get parent-json :data)) next-token)
+      (if next-token
+        (get-user-tweets user-id search-type merged-json next-token)
+        merged-json))
+    (fn [err]
+      (js/console.error err)
+      (js/assoc! parent-json :error (clj->js {"error" err})))))
 
 (defn initiate-user-tweet-fetch [state username search-type]
   (swap! state assoc-in [:progress :search] :loading)
-  (go
-    (let [user (<p! (get-user-by-username username))
+  (p/let [user (get-user-by-username username)
           user-data (aget user "data")
-          results (when user-data (<p! (get-user-tweets (aget user-data "id") search-type)))]
-      (swap! state #(-> %
-                        (assoc :results (or results user))
-                        (assoc :results-q (str username "-" search-type))
-                        (assoc :results-format :v2)
-                        (update-in [:progress] dissoc :search))))))
+          results (when user-data (get-user-tweets (aget user-data "id") search-type))]
+    (swap! state #(-> %
+                      (assoc :results (or results user))
+                      (assoc :results-q (str username "-" search-type))
+                      (assoc :results-format :v2)
+                      (update-in [:progress] dissoc :search)))))
 
 (defn get-users [results]
   (aget results "includes" "users"))
@@ -497,16 +480,17 @@
     (if searching
       [:div.spinner.spin]
       (if results
-        (cond
-          (aget results "error") [component-errors results]
-          (or (aget results "data")
-              (aget results "results")) [:span
-                                         [component-download-results state]
-                                         [component-tweets-count results]
-                                         (if (@state :results-view-table)
-                                           [component-tweets-table state]
-                                           [component-tweets state])]
-          :else "No tweets found.")
+        [:div
+         (when (aget results "error") [component-errors results])
+         (cond
+           (or (aget results "data")
+               (aget results "results")) [:span
+                                          [component-tweets-count results]
+                                          [component-download-results state]
+                                          (if (@state :results-view-table)
+                                            [component-tweets-table state]
+                                            [component-tweets state])]
+           :else "No tweets found.")]
         (when empty-component
           [empty-component])))))
 
