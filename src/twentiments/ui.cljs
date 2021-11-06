@@ -93,7 +93,7 @@
       (if (j/get json :error)
         ; if twtter token has expired log out
         (if (not= (.indexOf (j/get-in json [:error :message]) "token") -1)
-          (j/assoc-in! js/document [:location :href] "/logout")
+          (j/assoc-in! js/document [:location :href] "/logout?next=/login")
           #js {:error json})
         json))
     (fn [err]
