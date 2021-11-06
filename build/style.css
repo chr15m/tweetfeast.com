@@ -28,6 +28,7 @@ body {
   padding: 0.25em;
   text-align: center;
   font-size: 0.8em;
+  z-index: 2;
 }
 
 fieldset {
@@ -50,11 +51,6 @@ nav {
 
 nav > * {
   margin: 0px 0.5em;
-}
-
-.downloads {
-  display: flex;
-  justify-content: space-evenly;
 }
 
 section#app > *, section#app > span > * {
@@ -131,6 +127,23 @@ section.options {
   padding: 1em 2em;
 }
 
+/*** styling info & ui ***/
+
+.errors {
+  color: #F56A6A;
+}
+
+.progress p {
+  margin-top: 1em;
+  text-align: center;
+}
+
+.downloads {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 2em 0px;
+}
+
 /*** styling table ***/
 
 table {
@@ -173,13 +186,13 @@ table img.user-image {
   border-radius: 64px;
 }
 
-.errors {
-  color: #F56A6A;
-}
-
 table#help td, table#help th {
   text-align: left;
   padding: 0.25em 1em;
+}
+
+.results p {
+  margin-top: 2em;
 }
 
 /*** styling tweets ***/
