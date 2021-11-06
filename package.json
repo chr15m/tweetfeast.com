@@ -35,5 +35,9 @@
     "twitter-api-v2": "^1.1.0",
     "twitter-text": "^3.1.0",
     "wink-sentiment": "^5.0.2"
+  },
+  "scripts": {
+    "event-log": "nbb --classpath src bin/event-log.cljs",
+    "count-events": "npm run event-log --silent | jq -r .kind | cut -d':' -f1 | sort | uniq -c"
   }
 }
