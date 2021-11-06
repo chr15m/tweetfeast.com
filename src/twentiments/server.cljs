@@ -219,12 +219,13 @@
 
 (defn search [req res]
   (let [user (j/get-in req [:session :user])
-        tw (twitter user)]
+        tw (twitter user)
+        query (aget req "query" "q")]
     (js/console.log (aget req.body "q"))
     ; https://developer.twitter.com/en/docs/twitter-api/tweets/search/quick-start/recent-search
     (->
       (.get (aget tw "v2") "tweets/search/recent"
-            (clj->js {:query (aget req.body "q") ; (str "\"" (aget req.body "q") "\"")
+            (clj->js {:query query ; (str "\"" (aget req.body "q") "\"")
                       :max_results 100
                       :expansions "referenced_tweets.id,author_id"
                       :tweet.fields "created_at,public_metrics,author_id"
@@ -239,17 +240,18 @@
                       (aset d "sentiment"
                             (aget (sentiment (aget d "text")) "score")))))
             (log-event "last/request" (aget user "userId") user)
-            (log-event "event/search-v2" (rnd-id) user {:q (aget req.body "q")})
+            (log-event "event/search-v2" (rnd-id) user {:q query})
             (.json res data))))
       (.catch 
         (fn [err] (return-json-error res err 403))))))
 
 (defn search-old [req res]
   (let [user (j/get-in req [:session :user])
-        tw (twitter user)]
+        tw (twitter user)
+        query (aget req "query" "q")]
     ; https://developer.twitter.com/en/docs/twitter-api/premium/search-api/overview
     (-> (.get (aget tw "v1") (str "tweets/search/fullarchive/" twitter-environment ".json")
-              #js {:query (aget req.body "q")
+              #js {:query query
                    :maxResults 100})
         (.then
           (fn [data]
@@ -260,7 +262,7 @@
                         (aset d "sentiment"
                               (aget (sentiment (aget d "text")) "score"))))))
             (log-event "last/request" (aget user "userId") user)
-            (log-event "event/search-v1" (rnd-id) user {:q (aget req.body "q")})
+            (log-event "event/search-v1" (rnd-id) user {:q query})
             (.json res data)))
         (.catch
           (fn [err] (return-json-error res err 403))))))
@@ -308,7 +310,7 @@
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
-  (j/call app :post "/search" search-old)
+  (j/call app :get "/search" search-old)
   (j/call app :get "/api/*" raw-api)
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
   (.use app authenticate-admin)

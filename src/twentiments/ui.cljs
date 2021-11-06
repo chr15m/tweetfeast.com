@@ -48,9 +48,8 @@
 (defn initiate-search [state]
   (swap! state assoc-in [:progress :search] :loading)
   (go
-    (let [json (<p! (-> (js/fetch "/search" #js {:method "POST"
-                                                 :body (js/JSON.stringify #js {:q (@state :q)})
-                                                 :headers #js {:content-type "application/json"}})
+    (let [json (<p! (-> (js/fetch (str "/search"
+                                       "?q=" (@state :q)))
                         (.then (fn [response] (.json response)))
                         (.catch (fn [err]
                                   (clj->js {"error" {"error" err}})))))]
