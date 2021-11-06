@@ -85,11 +85,19 @@
                       (update-in [:progress] dissoc :search)))))
 
 (defn get-user-by-username [username]
-  (-> (js/fetch (str "/api/users/by/username/" username
-                     "?" user-fields))
-      (.then #(.json %))
-      (.catch (fn [err]
-                (clj->js {"error" {"error" err}})))))
+  (p/catch
+    (p/let [req (js/fetch (str "/api/users/by/username/" username
+                               "?" user-fields))
+            json (.json req)]
+      (log "user" json)
+      (if (j/get json :error)
+        ; if twtter token has expired log out
+        (if (not= (.indexOf (j/get-in json [:error :message]) "token") -1)
+          (j/assoc-in! js/document [:location :href] "/logout")
+          #js {:error json})
+        json))
+    (fn [err]
+      (clj->js {"error" {"error" err}}))))
 
 (defn merge-user-json [parent-json json limit]
   (let [data (j/get json :data)
