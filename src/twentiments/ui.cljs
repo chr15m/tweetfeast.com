@@ -4,8 +4,6 @@
             [applied-science.js-interop :as j]
             [promesa.core :as p]
             [sitefox.ui :refer [simple-date-time slug log]]
-            [cljs.core.async :refer (go) :as async]
-            [cljs.core.async.interop :refer-macros [<p!]]
             ["twitter-text" :as twitter-text]
             ["wink-sentiment" :as sentiment]
             ["twemoji" :as twemoji]
@@ -45,20 +43,46 @@
 
 ; *** functions *** ;
 
+(defn merge-search-json [parent-json json]
+  (log "merge-search-json" parent-json json)
+  (let [results (j/get json :results)
+        error (j/get json :error)
+        rate-limit (j/get json :rateLimit)
+        parent-json (if results (j/update-in! parent-json [:results] #(.concat (or % #js []) results)) parent-json)
+        parent-json (if error (j/assoc! parent-json :error (clj->js {:error error})) parent-json)
+        parent-json (j/assoc! parent-json :rateLimit rate-limit)]
+    parent-json))
+
+(defn get-search [query progress & [parent-json pagination-token]]
+  (p/catch
+    (p/let [res (js/fetch (str "/search"
+                               "?query=" (js/encodeURIComponent query)
+                               "&maxResults=100"
+                               (when pagination-token (str "&next=" pagination-token))))
+            json (.json res)
+            next-token (j/get json :next)
+            merged-json (merge-search-json (or parent-json #js {}) json)
+            fetched-count (count (j/get parent-json :results))]
+      (log "get-search-tweets" fetched-count next-token (j/get parent-json :rateLimit))
+      (reset! progress (str "downloaded " fetched-count " tweets..."))
+      (if next-token
+        (get-search query progress merged-json next-token)
+        (do
+          (reset! progress "Done. Generating downloads.")
+          merged-json)))
+    (fn [err]
+      (js/console.error "throw" err)
+      (j/assoc! parent-json :error (clj->js {:error {:error err}})))))
+
 (defn initiate-search [state]
   (swap! state assoc-in [:progress :search] :loading)
-  (go
-    (let [json (<p! (-> (js/fetch (str "/search"
-                                       "?q=" (@state :q)))
-                        (.then (fn [response] (.json response)))
-                        (.catch (fn [err]
-                                  (clj->js {"error" {"error" err}})))))]
-      (log "Results:" json)
-      (swap! state #(-> %
-                        (assoc :results json)
-                        (assoc :results-q (@state :q))
-                        (assoc :results-format :v1)
-                        (update-in [:progress] dissoc :search))))))
+  (p/let [search-results (get-search (@state :q) (r/cursor state [:progress :search]))]
+    (log "search-results:" search-results)
+    (swap! state #(-> %
+                      (assoc :results search-results)
+                      (assoc :results-q (@state :q))
+                      (assoc :results-format :v1)
+                      (update-in [:progress] dissoc :search)))))
 
 (defn get-user-by-username [username]
   (-> (js/fetch (str "/api/users/by/username/" username
@@ -96,7 +120,7 @@
           merged-json)))
     (fn [err]
       (js/console.error err)
-      (js/assoc! parent-json :error (clj->js {:error {:error err}})))))
+      (j/assoc! parent-json :error (clj->js {:error {:error err}})))))
 
 (defn initiate-follower-download [state username search-type limit]
   (swap! state assoc-in [:progress :search] :loading)
@@ -146,7 +170,7 @@
           merged-json)))
     (fn [err]
       (js/console.error err)
-      (js/assoc! parent-json :error (clj->js {:error {:error err}})))))
+      (j/assoc! parent-json :error (clj->js {:error {:error err}})))))
 
 (defn initiate-user-tweet-fetch [state username search-type limit]
   (swap! state assoc-in [:progress :search] :loading)
@@ -281,9 +305,13 @@
      (when e
        [:p.error (aget e "message")]))
    (let [message (j/get-in results [:error :error :message])
-         data (j/get-in results [:error :error :data])]
+         data (j/get-in results [:error :error :data])
+         data-string? (= (type data) js/String)
+         message-v1 (when (not data-string?) (j/get-in data [:error :message]))]
      (when message
-       [:p.error message " " (when (< (count data) 280) data) ]))])
+       [:p.error message " "
+        (when (and data-string? (< (count data) 280)) [:span [:br] data]) " "
+        (when message-v1 (< (count message-v1) 280) [:span [:br] message-v1])]))])
 
 (defn component-search [state _user]
   [:fieldset.horizontal

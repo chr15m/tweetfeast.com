@@ -221,7 +221,6 @@
   (let [user (j/get-in req [:session :user])
         tw (twitter user)
         query (aget req "query" "q")]
-    (js/console.log (aget req.body "q"))
     ; https://developer.twitter.com/en/docs/twitter-api/tweets/search/quick-start/recent-search
     (->
       (.get (aget tw "v2") "tweets/search/recent"
@@ -232,7 +231,6 @@
                       :user.fields "username,name,profile_image_url,url,public_metrics"}))
       (.then
         (fn [data]
-          (js/console.log "data" data)
           (let [tweets (aget data "data")]
             (when tweets
               (.map tweets
@@ -245,25 +243,27 @@
       (.catch 
         (fn [err] (return-json-error res err 403))))))
 
-(defn search-old [req res]
+(defn search-v1 [req res]
   (let [user (j/get-in req [:session :user])
         tw (twitter user)
-        query (aget req "query" "q")]
+        query (aget req "query")]
     ; https://developer.twitter.com/en/docs/twitter-api/premium/search-api/overview
     (-> (.get (aget tw "v1") (str "tweets/search/fullarchive/" twitter-environment ".json")
-              #js {:query query
-                   :maxResults 100})
+              query
+              #js {:fullResponse true})
         (.then
           (fn [data]
-            (let [tweets (aget data "results")]
+            (let [tweets (j/get-in data [:data :results])]
               (when tweets
                 (.map tweets
                       (fn [d]
                         (aset d "sentiment"
                               (aget (sentiment (aget d "text")) "score"))))))
-            (log-event "last/request" (aget user "userId") user)
-            (log-event "event/search-v1" (rnd-id) user {:q query})
-            (.json res data)))
+            (when (not (aget query "next"))
+              (log-event "last/request" (aget user "userId") user)
+              (log-event "event/search-v1" (rnd-id) user (js->clj query)))
+            (.json res (-> (j/get-in data [:data])
+                           (j/assoc! :rateLimit (j/get-in data [:rateLimit]))))))
         (.catch
           (fn [err] (return-json-error res err 403))))))
 
@@ -310,7 +310,7 @@
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
-  (j/call app :get "/search" search-old)
+  (j/call app :get "/search" search-v1)
   (j/call app :get "/api/*" raw-api)
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
   (.use app authenticate-admin)
