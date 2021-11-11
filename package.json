@@ -38,7 +38,9 @@
     "wink-sentiment": "^5.0.2"
   },
   "scripts": {
-    "event-log": "nbb --classpath ${VIRTUAL_ENV:=.}/node_modules/sitefox/src/ bin/event-log.cljs",
-    "count-events": "npm run event-log --silent | jq -r .kind | cut -d':' -f1 | sort | uniq -c"
+    "nbb": "nbb --classpath ${VIRTUAL_ENV:=.}/node_modules/sitefox/src/",
+    "event-log": "npm run nbb --silent bin/event-log.cljs",
+    "count-events": "npm run event-log --silent | jq -r .kind | cut -d':' -f1 | sort | uniq -c",
+    "count-call-types": "npm run nbb --silent bin/call-type.cljs | cut -f2 -d\" \" | sort | uniq -c"
   }
 }
