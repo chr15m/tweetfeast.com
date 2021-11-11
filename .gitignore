@@ -1,5 +1,6 @@
 .*.swp
 .shadow-cljs
+.clj-kondo/.cache
 devserver.js
 node_modules
 package-lock.json
