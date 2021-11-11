@@ -121,30 +121,66 @@
       (p/let [user-id (aget user "userId")
               tw (twitter user)
               user-profile (aget user "profile")
-              user-profile (if user-profile user-profile (<p! (get-user-profile tw user-id)))
+              user-profile (if user-profile user-profile (get-user-profile tw user-id))
               dom (motionless/dom template)
-              app (.$ dom "main")
-              nav (.$ dom "nav")
-              signout-link (.h dom "a" #js {:href "/logout"
+              el (j/call-in dom [:h :bind] nil)
+              app (j/call dom :$ "main")
+              nav (j/call dom :$ "nav")
+              signout-link (el "a" #js {:href "/logout"
+                                        :role "link"
+                                        :aria-label "Sign out"
+                                        :className "ui-section-header--nav-link"}
+                               "Sign out")
+              profile-image (el "div" #js {:className "user-profile"}
+                                (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
+                                                  :target "_BLANK"})
+                                    (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
+        (aset user "profile" user-profile)
+        (aset app "innerHTML" "")
+        (.appendChild app (el "div" #js {:id "loading"} (el "div" #js {:className "spinner spin"})))
+        (.after app (el "script" #js {:src mainfile}))
+        (.after app (el "script" #js {:src "/js/common.js"}))
+        (aset nav "innerHTML" "")
+        ;(.remove ($ "#sign-in-link"))
+        (.appendChild nav signout-link)
+        (.appendChild nav profile-image)
+        (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
+        (.send res (j/call dom :render)))
+      (.send res template))))
+
+(defn subscribe [req res]
+  (let [template (rc/inline "index.html")
+        user (j/get-in req [:session :user])]
+    (if user
+      (p/let [user-id (aget user "userId")
+              tw (twitter user)
+              user-profile (aget user "profile")
+              user-profile (if user-profile user-profile (get-user-profile tw user-id))
+              dom (motionless/dom template)
+              el (j/call-in dom [:h :bind] nil)
+              $ (j/call-in dom [:$ :bind] nil)
+              app ($ "main")
+              nav ($ "nav")
+              pricing ($ ".ui-section-pricing")
+              signout-link (el "a" #js {:href "/logout"
                                             :role "link"
                                             :aria-label "Sign out"
                                             :className "ui-section-header--nav-link"}
                                "Sign out")
-              profile-image (.h dom "div" #js {:className "user-profile"}
-                                (.h dom "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
+              profile-image (el "div" #js {:className "user-profile"}
+                                (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
                                                       :target "_BLANK"})
-                                    (.h dom "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
+                                    (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
         (aset user "profile" user-profile)
         (aset app "innerHTML" "")
-        (.appendChild app (.h dom "div" #js {:id "loading"} (.h dom "div" #js {:className "spinner spin"})))
-        (.after app (.h dom "script" #js {:src mainfile}))
-        (.after app (.h dom "script" #js {:src "/js/common.js"}))
+        (.appendChild app pricing)
+        (aset ($ "h2") "textContent" "Plans & pricing")
+        (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
         (aset nav "innerHTML" "")
+        ;(.remove ($ "#sign-in-link"))
         (.appendChild nav signout-link)
         (.appendChild nav profile-image)
-        ; (test-search tw)
-        (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
-        (.send res (.render dom)))
+        (.send res (j/call dom :render)))
       (.send res template))))
 
 (defn soon [_req res]
@@ -244,6 +280,7 @@
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (.get app "/twitter-callback" twitter-login-done)
+  (.get app "/account/subscribe" subscribe)
   (j/call app :get "/search" search-v1)
   (j/call app :get "/api/*" raw-api)
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
