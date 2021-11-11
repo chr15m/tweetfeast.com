@@ -3,19 +3,18 @@
     ["fs" :as fs]
     [sitefox.db :as db]
     [sitefox.web :as web]
-    [sitefox.util :refer [error-to-json env env-required btoa]]
+    [sitefox.util :refer [error-to-json env btoa]]
     [sitefox.logging :refer [bind-console-to-file]]
     [reagent.dom.server :refer [render-to-static-markup]]
-    ["login-with-twitter" :as login-with-twitter]
-    ["twitter-api-v2/dist" :refer [TwitterApi]]
     ["motionless" :as motionless]
     ["wink-sentiment" :as sentiment]
     ["marked" :as marked]
     [shadow.resource :as rc]
     [promesa.core :as p]
     [applied-science.js-interop :as j]
-    [cljs.core.async :refer (go) :as async]
-    [cljs.core.async.interop :refer-macros [<p!]]))
+    [cljs.core.async.interop :refer-macros [<p!]]
+    [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
+                             twitter-login twitter-logout twitter-login-done]]))
 
 (defonce server (atom nil))
 
@@ -23,11 +22,7 @@
 
 (bind-console-to-file)
 
-(def twitter-key (env-required "TWITTER_API_KEY"))
-(def twitter-secret (env-required "TWITTER_API_SECRET"))
-(def twitter-environment (env-required "TWITTER_ENVIRONMENT_NAME"
-                                       "TWITTER_ENVIRONMENT_NAME (full archive) not set.
-                                       <https://developer.twitter.com/en/account/environments>"))
+; *** function calls *** ;
 
 (def article-list
   (into {}
@@ -48,72 +43,6 @@
                       {f [title description content]})))
             vec)))
 
-(defn rnd-id [] (.substr (str (random-uuid)) 0 8))
-
-(defn log-event [event-type id user & [event-data]]
-  (let [kv (db/kv event-type)
-        now (.toISOString (js/Date.))]
-    (.set kv id
-          (clj->js (merge (or event-data {})
-                          {:id (aget user "userId")
-                           :username (aget user "userName")
-                           :t now})))))
-
-(defn return-json-error [res err code]
-  (js/console.error err)
-  (-> res
-      (.status code)
-      (.json (error-to-json err))))
-
-(defn twitter-sign-in [req]
-  (login-with-twitter.
-    #js {:consumerKey twitter-key
-         :consumerSecret twitter-secret
-         :callbackUrl (web/build-absolute-uri req "/twitter-callback")}))
-
-(defn twitter [user]
-  (when user
-    (aget
-      (TwitterApi. #js {:appKey twitter-key
-                        :appSecret twitter-secret
-                        :accessToken (aget user "userToken")
-                        :accessSecret (aget user "userTokenSecret")})
-      "readOnly")))
-
-(defn twitter-login-done [req res]
-  (let [tw (twitter-sign-in req)]
-    (.callback tw 
-               #js {:oauth_token (aget req "query" "oauth_token")
-                    :oauth_verifier (aget req "query" "oauth_verifier")}
-               (j/get-in req [:session :tokenSecret])
-               (fn [err user]
-                 (if err
-                   (return-json-error res err 404)
-                   (do
-                     (when-let [session (j/get req "session")]
-                       (js-delete session "tokenSecret"))
-                     (j/assoc-in! req [:session :user] user)
-                     (log-event "last/login" (aget user "userId") user)
-                     (log-event "event/login" (rnd-id) user)
-                     (.redirect res "/")))))))
-
-(defn twitter-login [req res]
-  (if (j/get-in req [:session :user])
-    (.redirect res "/")
-    (let [tw (twitter-sign-in req)]
-      (.login tw
-              (fn [err token-secret url]
-                (if err
-                  (return-json-error res err 404)
-                  (do
-                    (j/assoc-in! req [:session :tokenSecret] token-secret)
-                    (.redirect res url))))))))
-
-(defn twitter-logout [req res]
-  (when-let [session (j/get req "session")]
-    (js-delete session "user"))
-  (.redirect res "/"))
-
 (defn get-user-profile [tw user-id]
   (->
     (.get (aget tw "v2") "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
@@ -132,6 +61,19 @@
                       (.h dom "div" #js {:className "ui-layout-container"}
                           (.h dom "h2" content))))
     (.render dom)))
+
+(defn authenticate-admin [req res n]
+  (let [user (j/get-in req [:session :user])]
+    (if (and user
+             (= (aget user "userName") "tweetfeastapp"))
+      (n)
+      (if req.xhr
+        (return-json-error res {:message "Unauthorized."}  403)
+        (-> res
+            (.status 403)
+            (.send (make-simple-page "Unauthorized.")))))))
+
+; *** pages *** ;
 
 (defn articles [req res]
   (let [template (rc/inline "index.html")
@@ -172,23 +114,11 @@
                   (.h dom "script" "hljs.highlightAll();"))
     (.send res (.render dom))))
 
-(defn authenticate-admin [req res n]
-  (let [user (j/get-in req [:session :user])]
-    (if (and user
-             (= (aget user "userName") "tweetfeastapp"))
-      (n)
-      (if req.xhr
-        (return-json-error res {:message "Unauthorized."}  403)
-        (-> res
-            (.status 403)
-            (.send (make-simple-page "Unauthorized.")))))))
-
 (defn serve-homepage [mainfile req res]
   (let [template (rc/inline "index.html")
         user (j/get-in req [:session :user])]
     (if user
-      (go
-        (let [user-id (aget user "userId")
+      (p/let [user-id (aget user "userId")
               tw (twitter user)
               user-profile (aget user "profile")
               user-profile (if user-profile user-profile (<p! (get-user-profile tw user-id)))
@@ -204,18 +134,23 @@
                                 (.h dom "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
                                                       :target "_BLANK"})
                                     (.h dom "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
-          (aset user "profile" user-profile)
-          (aset app "innerHTML" "")
-          (.appendChild app (.h dom "div" #js {:id "loading"} (.h dom "div" #js {:className "spinner spin"})))
-          (.after app (.h dom "script" #js {:src mainfile}))
-          (.after app (.h dom "script" #js {:src "/js/common.js"}))
-          (aset nav "innerHTML" "")
-          (.appendChild nav signout-link)
-          (.appendChild nav profile-image)
-          ; (test-search tw)
-          (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
-          (.send res (.render dom))))
+        (aset user "profile" user-profile)
+        (aset app "innerHTML" "")
+        (.appendChild app (.h dom "div" #js {:id "loading"} (.h dom "div" #js {:className "spinner spin"})))
+        (.after app (.h dom "script" #js {:src mainfile}))
+        (.after app (.h dom "script" #js {:src "/js/common.js"}))
+        (aset nav "innerHTML" "")
+        (.appendChild nav signout-link)
+        (.appendChild nav profile-image)
+        ; (test-search tw)
+        (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
+        (.send res (.render dom)))
       (.send res template))))
+
+(defn soon [_req res]
+  (.send res (make-simple-page "Soon.")))
+
+; *** API *** ;
 
 (defn search [req res]
   (let [user (j/get-in req [:session :user])
@@ -285,9 +220,6 @@
     (log-event "last/request" (aget user "userId") user)
     (log-event "event/api" (rnd-id) user {:url (aget req "url")})))
 
-(defn soon [_req res]
-  (.send res (make-simple-page "Soon.")))
-
 (defn admin-data [_req res]
   (let [db (db/client)]
     (->
@@ -298,6 +230,8 @@
                                      (aset v "kind" k)
                                      v)))))
       (.catch (fn [err] (return-json-error res err 404))))))
+
+; *** routes *** ;
 
 (defn setup-routes [app]
   (web/reset-routes app)
