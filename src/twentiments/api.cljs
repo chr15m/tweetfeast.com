@@ -64,11 +64,11 @@
                      (j/assoc-in! req [:session :user] user)
                      (log-event "last/login" (aget user "userId") user)
                      (log-event "event/login" (rnd-id) user)
-                     (.redirect res "/")))))))
+                     (.redirect res "/app")))))))
 
 (defn twitter-login [req res]
   (if (j/get-in req [:session :user])
-    (.redirect res "/")
+    (.redirect res "/app")
     (let [tw (twitter-sign-in req)]
       (.login tw
               (fn [err token-secret url]

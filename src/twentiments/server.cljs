@@ -269,9 +269,10 @@
 
 (defn setup-routes [app]
   (web/reset-routes app)
-  (.get app "/" (fn [req res] (serve-homepage "/js/main.js" req res)))
   (web/static-folder app "/" (if (env "NGINX_SERVER_NAME") "build" "public"))
   (.use app web/strip-slash-redirect)
+  (.get app "/app" (fn [req res] (serve-homepage "/js/main.js" req res)))
+  (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
   (.get app "/articles" articles)
   (.get app "/articles/:article" articles)
   ;(.get app "/login" soon)
@@ -281,7 +282,6 @@
   (.get app "/account/subscribe" subscribe)
   (j/call app :get "/search" search-v1)
   (j/call app :get "/api/*" raw-api)
-  (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
   (.use app authenticate-admin)
   (.get app "/admin" (fn [req res] (serve-homepage "/js/admin.js" req res)))
   (.get app "/admin/data" admin-data)
