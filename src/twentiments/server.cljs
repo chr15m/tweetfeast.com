@@ -125,6 +125,11 @@
               el (j/call-in dom [:h :bind] nil)
               app (j/call dom :$ "main")
               nav (j/call dom :$ "nav")
+              articles-link (el "a" #js {:href "/articles"
+                                         :role "link"
+                                         :aria-label "Articles"
+                                         :className "ui-section-header--nav-link"}
+                                "Articles")
               signout-link (el "a" #js {:href "/logout"
                                         :role "link"
                                         :aria-label "Sign out"
@@ -141,6 +146,7 @@
         (.after app (el "script" #js {:src "/js/common.js"}))
         (aset nav "innerHTML" "")
         ;(.remove ($ "#sign-in-link"))
+        (.appendChild nav articles-link)
         (.appendChild nav signout-link)
         (.appendChild nav profile-image)
         (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
