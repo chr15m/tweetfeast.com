@@ -50,8 +50,34 @@
               (js/console.error err)
               (error-to-json err)))))
 
-(defn make-simple-page [content]
-  (let [template (rc/inline "index.html")
+(defn update-nav [dom user]
+  (when user
+    (let [el (j/call-in dom [:h :bind] nil)
+          user-profile (aget user "profile")
+          nav (j/call dom :$ "nav")
+          articles-link (el "a" #js {:href "/articles"
+                                     :role "link"
+                                     :aria-label "Articles"
+                                     :className "ui-section-header--nav-link"}
+                            "Articles")
+          signout-link (el "a" #js {:href "/logout"
+                                    :role "link"
+                                    :aria-label "Sign out"
+                                    :className "ui-section-header--nav-link"}
+                           "Sign out")
+          profile-image (el "div" #js {:className "user-profile"}
+                            (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
+                                              :target "_BLANK"})
+                                (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
+      (aset nav "innerHTML" "")
+      ;(.remove ($ "#sign-in-link"))
+      (.appendChild nav articles-link)
+      (.appendChild nav signout-link)
+      (.appendChild nav profile-image))))
+
+(defn make-simple-page [req content]
+  (let [user (j/get-in req [:session :user])
+        template (rc/inline "index.html")
         dom (motionless/dom template)
         app (.$ dom "main")]
     (aset app "innerHTML" "")
@@ -59,6 +85,7 @@
                   (.h dom "section" #js {:className "ui-section-pricing"}
                       (.h dom "div" #js {:className "ui-layout-container"}
                           (.h dom "h2" content))))
+    (update-nav dom user)
     (.render dom)))
 
 (defn authenticate-admin [req res n]
@@ -70,12 +97,13 @@
         (return-json-error res {:message "Unauthorized."} 403)
         (-> res
             (.status 403)
-            (.send (make-simple-page "Unauthorized.")))))))
+            (.send (make-simple-page req "Unauthorized.")))))))
 
 ; *** pages *** ;
 
 (defn articles [req res]
-  (let [template (rc/inline "index.html")
+  (let [user (j/get-in req [:session :user])
+        template (rc/inline "index.html")
         dom (motionless/dom template)
         app (.$ dom "main")
         body (.$ dom "body")
@@ -111,6 +139,7 @@
                       #js {:src "//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.1.0/highlight.min.js"}))
     (.appendChild body
                   (.h dom "script" "hljs.highlightAll();"))
+    (update-nav dom user)
     (.send res (.render dom))))
 
 (defn serve-homepage [mainfile req res]
@@ -123,32 +152,13 @@
               user-profile (if user-profile user-profile (get-user-profile tw user-id))
               dom (motionless/dom template)
               el (j/call-in dom [:h :bind] nil)
-              app (j/call dom :$ "main")
-              nav (j/call dom :$ "nav")
-              articles-link (el "a" #js {:href "/articles"
-                                         :role "link"
-                                         :aria-label "Articles"
-                                         :className "ui-section-header--nav-link"}
-                                "Articles")
-              signout-link (el "a" #js {:href "/logout"
-                                        :role "link"
-                                        :aria-label "Sign out"
-                                        :className "ui-section-header--nav-link"}
-                               "Sign out")
-              profile-image (el "div" #js {:className "user-profile"}
-                                (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
-                                                  :target "_BLANK"})
-                                    (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
+              app (j/call dom :$ "main")]
         (aset user "profile" user-profile)
         (aset app "innerHTML" "")
         (.appendChild app (el "div" #js {:id "loading"} (el "div" #js {:className "spinner spin"})))
         (.after app (el "script" #js {:src mainfile}))
         (.after app (el "script" #js {:src "/js/common.js"}))
-        (aset nav "innerHTML" "")
-        ;(.remove ($ "#sign-in-link"))
-        (.appendChild nav articles-link)
-        (.appendChild nav signout-link)
-        (.appendChild nav profile-image)
+        (update-nav dom user)
         (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
         (.send res (j/call dom :render)))
       (.send res template))))
@@ -178,17 +188,17 @@
                                     (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
         (aset user "profile" user-profile)
         (aset nav "innerHTML" "")
-        ;(.remove ($ "#sign-in-link"))
         (.appendChild nav signout-link)
         (.appendChild nav profile-image)))
     (aset app "innerHTML" "")
     (.appendChild app pricing)
     (aset ($ "h2") "textContent" "Plans & pricing")
     (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
+    (update-nav dom user)
     (.send res (j/call dom :render))))
 
-(defn soon [_req res]
-  (.send res (make-simple-page "Soon.")))
+(defn soon [req res]
+  (.send res (make-simple-page req "Soon.")))
 
 ; *** API *** ;
 
