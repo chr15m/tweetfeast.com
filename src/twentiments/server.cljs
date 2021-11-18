@@ -12,7 +12,6 @@
     [shadow.resource :as rc]
     [promesa.core :as p]
     [applied-science.js-interop :as j]
-    [cljs.core.async.interop :refer-macros [<p!]]
     [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
                              twitter-login twitter-logout twitter-login-done]]))
 
