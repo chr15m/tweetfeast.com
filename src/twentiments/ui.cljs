@@ -3,6 +3,7 @@
             [reagent.dom :as rd]
             [applied-science.js-interop :as j]
             [promesa.core :as p]
+            [shadow.resource :as rc]
             [sitefox.ui :refer [simple-date-time slug log]]
             ["twitter-text" :as twitter-text]
             ["wink-sentiment" :as sentiment]
@@ -598,12 +599,17 @@
                                   [component-users-table state]]
            :else "Users not found.")]))))
 
+(defn component-icon [icon]
+  (let [icon (-> icon (.split "\n") rest)]
+    [:span.icon {:dangerouslySetInnerHTML {:__html icon}}]))
+
 (defn component-back-button [state]
-  [:div [:a {:href "/app"
+  [:div [:a {:href "/exporter"
              :on-click (fn [ev]
-                         (.pushState js/history nil "" "/app")
+                         (.pushState js/history nil "" "/exporter")
                          (swap! state assoc :history "")
                          (.preventDefault ev))}
+         [component-icon (rc/inline "fa/arrow-circle-left.svg")]
          "Go back to the menu"]])
 
 (defn component-search-interface [state _user]
@@ -701,7 +707,6 @@
        "#user-mentions" [component-user-tweets state user "mentions"]
        "#search-tweets" [component-search-interface state user]
        [:section#app
-        [:div#trial "Free trial"]
         [:section.ui-layout-container
          [:h3 "What kind of Twitter data do you need?"]
          [:h4 "Tweets"]
