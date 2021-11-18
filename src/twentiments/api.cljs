@@ -13,6 +13,8 @@
                                        "TWITTER_ENVIRONMENT_NAME (full archive) not set.
                                        <https://developer.twitter.com/en/account/environments>"))
 
+(def default-app-url "/exporter")
+
 ; *** useful functions *** ;
 
 (defn rnd-id [] (.substr (str (random-uuid)) 0 8))
@@ -44,13 +46,16 @@
 ; *** twitter API interaction *** ;
 
 (defn twitter-sign-in [req]
-  (login-with-twitter.
-    #js {:consumerKey twitter-key
-         :consumerSecret twitter-secret
-         :callbackUrl (web/build-absolute-uri req "/twitter-callback")}))
+  (let [next-url (aget req "query" "next")
+        callback-url (web/build-absolute-uri req (str "/twitter-callback" (when next-url (str "?next=" next-url))))]
+    (login-with-twitter.
+      #js {:consumerKey twitter-key
+           :consumerSecret twitter-secret
+           :callbackUrl callback-url})))
 
 (defn twitter-login-done [req res]
-  (let [tw (twitter-sign-in req)]
+  (let [tw (twitter-sign-in req)
+        next-url (j/get-in req [:query :next])]
     (.callback tw 
                #js {:oauth_token (aget req "query" "oauth_token")
                     :oauth_verifier (aget req "query" "oauth_verifier")}
@@ -64,19 +69,20 @@
                      (j/assoc-in! req [:session :user] user)
                      (log-event "last/login" (aget user "userId") user)
                      (log-event "event/login" (rnd-id) user)
-                     (.redirect res "/app")))))))
+                     (.redirect res (or next-url default-app-url))))))))
 
 (defn twitter-login [req res]
-  (if (j/get-in req [:session :user])
-    (.redirect res "/app")
-    (let [tw (twitter-sign-in req)]
-      (.login tw
-              (fn [err token-secret url]
-                (if err
-                  (return-json-error res err 404)
-                  (do
-                    (j/assoc-in! req [:session :tokenSecret] token-secret)
-                    (.redirect res url))))))))
+  (let [next-url (j/get-in req [:query :next])]
+    (if (j/get-in req [:session :user])
+      (.redirect res (or next-url default-app-url))
+      (let [tw (twitter-sign-in req)]
+        (.login tw
+                (fn [err token-secret url]
+                  (if err
+                    (return-json-error res err 404)
+                    (do
+                      (j/assoc-in! req [:session :tokenSecret] token-secret)
+                      (.redirect res url)))))))))
 
 (defn twitter-logout [req res]
   (when-let [session (j/get req "session")]
