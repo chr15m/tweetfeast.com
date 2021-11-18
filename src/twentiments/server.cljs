@@ -149,38 +149,37 @@
 
 (defn subscribe [req res]
   (let [template (rc/inline "index.html")
-        user (j/get-in req [:session :user])]
-    (if user
+        user (j/get-in req [:session :user])
+        dom (motionless/dom template)
+        el (j/call-in dom [:h :bind] nil)
+        $ (j/call-in dom [:$ :bind] nil)
+        app ($ "main")
+        pricing ($ ".ui-section-pricing")]
+    (when user
       (p/let [user-id (aget user "userId")
               tw (twitter user)
               user-profile (aget user "profile")
               user-profile (if user-profile user-profile (get-user-profile tw user-id))
-              dom (motionless/dom template)
-              el (j/call-in dom [:h :bind] nil)
-              $ (j/call-in dom [:$ :bind] nil)
-              app ($ "main")
               nav ($ "nav")
-              pricing ($ ".ui-section-pricing")
               signout-link (el "a" #js {:href "/logout"
-                                            :role "link"
-                                            :aria-label "Sign out"
-                                            :className "ui-section-header--nav-link"}
+                                        :role "link"
+                                        :aria-label "Sign out"
+                                        :className "ui-section-header--nav-link"}
                                "Sign out")
               profile-image (el "div" #js {:className "user-profile"}
                                 (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
-                                                      :target "_BLANK"})
+                                                  :target "_BLANK"})
                                     (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
         (aset user "profile" user-profile)
-        (aset app "innerHTML" "")
-        (.appendChild app pricing)
-        (aset ($ "h2") "textContent" "Plans & pricing")
-        (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
         (aset nav "innerHTML" "")
         ;(.remove ($ "#sign-in-link"))
         (.appendChild nav signout-link)
-        (.appendChild nav profile-image)
-        (.send res (j/call dom :render)))
-      (.send res template))))
+        (.appendChild nav profile-image)))
+    (aset app "innerHTML" "")
+    (.appendChild app pricing)
+    (aset ($ "h2") "textContent" "Plans & pricing")
+    (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
+    (.send res (j/call dom :render))))
 
 (defn soon [_req res]
   (.send res (make-simple-page "Soon.")))
