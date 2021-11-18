@@ -598,9 +598,17 @@
                                   [component-users-table state]]
            :else "Users not found.")]))))
 
+(defn component-back-button [state]
+  [:div [:a {:href "/app"
+             :on-click (fn [ev]
+                         (.pushState js/history nil "" "/app")
+                         (swap! state assoc :history "")
+                         (.preventDefault ev))}
+         "Go back to the menu"]])
+
 (defn component-search-interface [state _user]
   [:section#app
-   [:div#trial "Free trial"]
+   [component-back-button state]
    [:p "Search for the tweets you want to export and download."]
    [component-search state]
    #_ [:section.options
@@ -619,7 +627,7 @@
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
-         [:div#trial "Free trial"]
+         [component-back-button state]
          [:section.ui-layout-container
           [:h3 "User tweets / likes / mentions"]
           [:p "Tweets from a user timeline, liked by a user, or mentioning a user."]
@@ -649,7 +657,7 @@
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
-         [:div#trial "Free trial"]
+         [component-back-button state]
          [:section.ui-layout-container
           [:h3 "User follow lists"]
           [:p "Download follower/following user lists."]
