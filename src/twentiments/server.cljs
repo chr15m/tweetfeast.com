@@ -169,8 +169,10 @@
         dom (motionless/dom template)
         el (j/call-in dom [:h :bind] nil)
         $ (j/call-in dom [:$ :bind] nil)
+        $$ (j/call-in dom [:$$ :bind] nil)
         app ($ "main")
-        pricing ($ ".ui-section-pricing")]
+        pricing ($ ".ui-section-pricing")
+        links ($$ ".ui-section-pricing a[href=\"/login\"]")]
     (when user
       (p/let [user-id (aget user "userId")
               tw (twitter user)
@@ -194,6 +196,8 @@
     (.appendChild app pricing)
     (aset ($ "h2") "textContent" "Plans & pricing")
     (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
+    (doseq [l links]
+      (aset l "textContent" "Choose"))
     (update-nav dom user)
     (.send res (j/call dom :render))))
 
