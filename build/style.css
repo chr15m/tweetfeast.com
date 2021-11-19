@@ -86,8 +86,18 @@ section.options {
   text-decoration: none;
 }
 
-/*** design mods ***/
+.icon > svg {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  margin: -0.5em 0.5em;
+}
 
+.icon svg path {
+  fill: var(--ui-color-typography-note);
+}
+
+/*** design mods ***/
 
 .ui-section-header--logo {
   display: flex;
