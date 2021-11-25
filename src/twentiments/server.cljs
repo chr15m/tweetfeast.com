@@ -15,7 +15,7 @@
     [twentiments.interface :refer [update-nav]]
     [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
                              twitter-login twitter-logout twitter-login-done get-user-profile]]
-    [twentiments.subscriptions :refer [view-subscribe begin-subscription]]))
+    [twentiments.subscriptions :refer [view-subscribe begin-subscription payment-complete]]))
 
 (defonce server (atom nil))
 
@@ -226,8 +226,9 @@
   (.get app "/articles/:article" articles)
   (.get app "/exporter" (fn [req res] (serve-homepage "/js/main.js" req res)))
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
-  (.get app "/account/subscribe" view-subscribe)
+  (.get app "/subscribe" view-subscribe)
   (j/call app :post "/account/begin-subscription" begin-subscription)
+  (j/call app :get "/account/payment-complete" payment-complete)
   ;(.get app "/login" soon)
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
