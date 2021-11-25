@@ -1,0 +1,79 @@
+(ns twentiments.subscriptions
+  (:require
+    ["motionless" :as motionless]
+    [shadow.resource :as rc]
+    [promesa.core :as p]
+    [applied-science.js-interop :as j]
+    [sitefox.util :refer [env-required]]
+    [sitefox.html :refer [render]]
+    [sitefox.web :refer [build-absolute-uri]]
+    [twentiments.interface :refer [update-nav]]
+    [twentiments.api :refer [twitter get-user-profile]]
+    ["stripe" :as Stripe]))
+
+(def price-ids (-> (env-required "PRICE_IDS") (.split ",")))
+(def stripe (Stripe (env-required "STRIPE_SK")))
+
+(defn view-subscribe [req res]
+  (p/let [template (rc/inline "index.html")
+          user (j/get-in req [:session :user])
+          dom (motionless/dom template)
+          el (j/call-in dom [:h :bind] nil)
+          $ (j/call-in dom [:$ :bind] nil)
+          $$ (j/call-in dom [:$$ :bind] nil)
+          app ($ "main")
+          pricing ($ ".ui-section-pricing")
+          links ($$ ".ui-section-pricing a[href=\"/login\"]")]
+    (when user
+      (p/let [user-id (aget user "userId")
+              tw (twitter user)
+              user-profile (aget user "profile")
+              user-profile (if user-profile user-profile (get-user-profile tw user-id))
+              nav ($ "nav")
+              signout-link (el "a" #js {:href "/logout"
+                                        :role "link"
+                                        :aria-label "Sign out"
+                                        :className "ui-section-header--nav-link"}
+                               "Sign out")
+              profile-image (el "div" #js {:className "user-profile"}
+                                (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
+                                                  :target "_BLANK"})
+                                    (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
+        (aset user "profile" user-profile)
+        (aset nav "innerHTML" "")
+        (.appendChild nav signout-link)
+        (.appendChild nav profile-image)
+        (doseq [l (range (count links))]
+          (let [link (aget links l)
+                parent (aget link "parentNode")
+                form (el "form" (clj->js {:action "/account/begin-subscription"
+                                          :method "POST"}))
+                tier (js/parseInt (.getAttribute link "data-tier"))]
+            (.remove link)
+            (aset form "innerHTML" (render [:fieldset
+                                            [:input {:type "hidden"
+                                                     :name "tier"
+                                                     :defaultValue tier}]
+                                            [:input {:name "_csrf" :type "hidden" :default-value (j/call req :csrfToken)}]
+                                            [:button {:type :submit
+                                                      :class (str "ui-component-button ui-component-button-big"
+                                                                  (if (= l 1)
+                                                                    " ui-component-button-primary"
+                                                                    " ui-component-button-secondary"))
+                                                      ; undo minimal-stylesheet modifications
+                                                      :style {:box-shadow :none
+                                                              :text-transform :none
+                                                              :font-size "var(--ui-typography-p)"}}
+                                             "Checkout"]]))
+            (.appendChild parent form))
+          (aset l "textContent" "Choose"))))
+    ; ?next=/account/subscribe
+    (aset app "innerHTML" "")
+    (.appendChild app pricing)
+    (aset ($ "h2") "textContent" "Plans & pricing")
+    (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
+    (update-nav dom user)
+    (doseq [l links]
+      (let [href (.getAttribute l "href")]
+        (.setAttribute l "href" (str href "?next=/account/subscribe"))))
+    (.send res (j/call dom :render))))

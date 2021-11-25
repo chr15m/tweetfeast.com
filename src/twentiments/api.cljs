@@ -89,3 +89,10 @@
     (js-delete session "user"))
   (.redirect res "/"))
 
+(defn get-user-profile [tw user-id]
+  (->
+    (.get (aget tw "v2") "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
+    (.then (fn [data] (-> data (aget "data") first)))
+    (.catch (fn [err]
+              (js/console.error err)
+              (error-to-json err)))))

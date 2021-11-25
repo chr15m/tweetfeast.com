@@ -3,7 +3,7 @@
     ["fs" :as fs]
     [sitefox.db :as db]
     [sitefox.web :as web]
-    [sitefox.util :refer [error-to-json env btoa]]
+    [sitefox.util :refer [env btoa]]
     [sitefox.logging :refer [bind-console-to-file]]
     [reagent.dom.server :refer [render-to-static-markup]]
     ["motionless" :as motionless]
@@ -12,8 +12,10 @@
     [shadow.resource :as rc]
     [promesa.core :as p]
     [applied-science.js-interop :as j]
+    [twentiments.interface :refer [update-nav]]
     [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
-                             twitter-login twitter-logout twitter-login-done]]))
+                             twitter-login twitter-logout twitter-login-done get-user-profile]]
+    [twentiments.subscriptions :refer [view-subscribe]]))
 
 (defonce server (atom nil))
 
@@ -41,39 +43,6 @@
                                     (.replace (js/RegExp. "\\b\\w" "g") #(.toUpperCase %)))]
                       {f [title description content]})))
             vec)))
-
-(defn get-user-profile [tw user-id]
-  (->
-    (.get (aget tw "v2") "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
-    (.then (fn [data] (-> data (aget "data") first)))
-    (.catch (fn [err]
-              (js/console.error err)
-              (error-to-json err)))))
-
-(defn update-nav [dom user]
-  (when user
-    (let [el (j/call-in dom [:h :bind] nil)
-          user-profile (aget user "profile")
-          nav (j/call dom :$ "nav")
-          articles-link (el "a" #js {:href "/articles"
-                                     :role "link"
-                                     :aria-label "Articles"
-                                     :className "ui-section-header--nav-link"}
-                            "Articles")
-          signout-link (el "a" #js {:href "/logout"
-                                    :role "link"
-                                    :aria-label "Sign out"
-                                    :className "ui-section-header--nav-link"}
-                           "Sign out")
-          profile-image (el "div" #js {:className "user-profile"}
-                            (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
-                                              :target "_BLANK"})
-                                (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
-      (aset nav "innerHTML" "")
-      ;(.remove ($ "#sign-in-link"))
-      (.appendChild nav articles-link)
-      (.appendChild nav signout-link)
-      (.appendChild nav profile-image))))
 
 (defn make-simple-page [req content]
   (let [user (j/get-in req [:session :user])
@@ -162,44 +131,6 @@
         (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
         (.send res (j/call dom :render)))
       (.send res template))))
-
-(defn subscribe [req res]
-  (let [template (rc/inline "index.html")
-        user (j/get-in req [:session :user])
-        dom (motionless/dom template)
-        el (j/call-in dom [:h :bind] nil)
-        $ (j/call-in dom [:$ :bind] nil)
-        $$ (j/call-in dom [:$$ :bind] nil)
-        app ($ "main")
-        pricing ($ ".ui-section-pricing")
-        links ($$ ".ui-section-pricing a[href=\"/login\"]")]
-    (when user
-      (p/let [user-id (aget user "userId")
-              tw (twitter user)
-              user-profile (aget user "profile")
-              user-profile (if user-profile user-profile (get-user-profile tw user-id))
-              nav ($ "nav")
-              signout-link (el "a" #js {:href "/logout"
-                                        :role "link"
-                                        :aria-label "Sign out"
-                                        :className "ui-section-header--nav-link"}
-                               "Sign out")
-              profile-image (el "div" #js {:className "user-profile"}
-                                (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
-                                                  :target "_BLANK"})
-                                    (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
-        (aset user "profile" user-profile)
-        (aset nav "innerHTML" "")
-        (.appendChild nav signout-link)
-        (.appendChild nav profile-image)))
-    (aset app "innerHTML" "")
-    (.appendChild app pricing)
-    (aset ($ "h2") "textContent" "Plans & pricing")
-    (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
-    (doseq [l links]
-      (aset l "textContent" "Choose"))
-    (update-nav dom user)
-    (.send res (j/call dom :render))))
 
 (defn soon [req res]
   (.send res (make-simple-page req "Soon.")))
@@ -295,11 +226,11 @@
   (.get app "/articles/:article" articles)
   (.get app "/exporter" (fn [req res] (serve-homepage "/js/main.js" req res)))
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
-  (.get app "/account/subscribe" subscribe)
+  (.get app "/account/subscribe" view-subscribe)
   ;(.get app "/login" soon)
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
-  (.get app "/twitter-callback" twitter-login-done)
+  (j/call app :pos "/twitter-callback" twitter-login-done)
   (j/call app :get "/search" search-v1)
   (j/call app :get "/api/*" raw-api)
   (.use app authenticate-admin)
