@@ -87,7 +87,8 @@
 
 (defn get-user-by-username [username]
   (p/catch
-    (p/let [req (js/fetch (str "/api/users/by/username/" username
+    (p/let [username (.replace username "@" "")
+            req (js/fetch (str "/api/users/by/username/" username
                                "?" user-fields))
             json (.json req)]
       (log "user" json)
