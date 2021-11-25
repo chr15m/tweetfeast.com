@@ -77,3 +77,21 @@
       (let [href (.getAttribute l "href")]
         (.setAttribute l "href" (str href "?next=/account/subscribe"))))
     (.send res (j/call dom :render))))
+
+(defn begin-subscription [req res]
+  (let [user (j/get-in req [:session :user])
+        user-id (when user (aget user "userId"))]
+    (if user-id
+      (p/let [params (aget req "body")
+              tier (aget params "tier")
+              price (aget price-ids tier)
+              session (j/call-in stripe [:checkout :sessions :create]
+                                 (clj->js {:billing_address_collection "auto"
+                                           :payment_method_types ["card"]
+                                           :line_items [{:price price :quantity 1}]
+                                           :metadata {:user-id user-id}
+                                           :mode (if (= tier "0") "payment" "subscription")
+                                           :success_url (build-absolute-uri req "/account/payment-complete")
+                                           :cancel_url (build-absolute-uri req "/account/subscribe")}))]
+        (.redirect res 303 (aget session "url")))
+      (.redirect 303 (build-absolute-uri req "/account/subscribe")))))

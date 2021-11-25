@@ -33,6 +33,7 @@
     "sitefox": "0.0.2",
     "source-map-support": "^0.5.20",
     "sqlite3": "5.0.2",
+    "stripe": "^8.186.1",
     "twemoji": "^13.0.2",
     "twitter-api-v2": "^1.1.0",
     "twitter-text": "^3.1.0",
