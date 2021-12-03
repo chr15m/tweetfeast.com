@@ -232,7 +232,7 @@
   ;(.get app "/login" soon)
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
-  (j/call app :post "/twitter-callback" twitter-login-done)
+  (j/call app :get "/twitter-callback" twitter-login-done)
   (j/call app :get "/search" search-v1)
   (j/call app :get "/api/*" raw-api)
   (.use app authenticate-admin)
