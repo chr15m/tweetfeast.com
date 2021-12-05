@@ -4,6 +4,7 @@
     [shadow.resource :as rc]
     [promesa.core :as p]
     [applied-science.js-interop :as j]
+    [sitefox.db :as db]
     [sitefox.util :refer [env-required]]
     [sitefox.html :refer [render]]
     [sitefox.web :refer [build-absolute-uri]]
@@ -89,26 +90,80 @@
                                  (clj->js {:billing_address_collection "auto"
                                            :payment_method_types ["card"]
                                            :line_items [{:price price :quantity 1}]
-                                           :metadata {:user-id user-id}
+                                           :metadata {:user-id user-id
+                                                      :tier tier
+                                                      :price (aget price-ids tier)}
                                            :mode (if (= tier "0") "payment" "subscription")
                                            :success_url (build-absolute-uri req "/account/payment-complete")
                                            :cancel_url (build-absolute-uri req "/subscribe")}))]
         (.redirect res 303 (aget session "url")))
       (.redirect 303 (build-absolute-uri req "/subscribe")))))
 
+(defn list-one-time-charges []
+  (let [charges (atom [])]
+    (js/Promise.
+      (fn [res _err]
+        (->
+          (j/call-in stripe [:events :list] (clj->js {:created {:gte (-> (js/Date.) (.getTime) (/ 1000) int (- (* 60 60 24 2)))}
+                                                      :type "checkout.session.completed"
+                                                      ;:type "invoice.payment_succeeded"
+                                                      ;:type "payment_intent.succeeded"
+                                                      ;:expand ["payment_intent"]
+                                                      }))
+          (j/call :autoPagingEach (fn [charge]
+                                    (swap! charges conj charge)))
+          (j/call :then (fn [] (res (clj->js @charges)))))))))
+
+(defn is-user-one-time-charge [charge user-id]
+  (let [metadata (j/get-in charge ["data" "object" "metadata"])
+        mode (j/get-in charge ["data" "object" "mode"])]
+    (js/console.log "checking charge" mode metadata user-id)
+    (and (aget metadata "tier")
+         (= (aget metadata "user-id") user-id)
+         (= mode "payment"))))
+
+(defn get-one-time-sub [user-id]
+  (p/let [one-time-charges (list-one-time-charges)
+          charge (last (filter #(is-user-one-time-charge % user-id) one-time-charges))]
+    (js/console.log "charge" charge)
+    charge))
+
+(defn is-valid [_sub])
+
+(defn get-sub [_user-id _tier])
+
+(defn get-user-subscription [user-id]
+  (p/let [kv (db/kv "subscriptions")
+          sub (.get kv user-id)]
+    (if (is-valid sub)
+      sub
+      (or
+        (get-one-time-sub user-id)
+        (get-sub user-id 1)
+        (get-sub user-id 2)))))
+
+(defn get-and-set-subscription [user-id]
+  (p/let [sub (get-user-subscription user-id)
+          kv (db/kv "subscriptions")
+          _set (.set kv user-id sub)]
+    sub))
+
 (defn payment-complete [req res]
-  (p/let [template (rc/inline "index.html")
-          ;user (j/get-in req [:session :user])
+  (p/let [user (j/get-in req [:session :user])
+          template (rc/inline "index.html")
           dom (motionless/dom template)
           ;el (j/call-in dom [:h :bind] nil)
           $ (j/call-in dom [:$ :bind] nil)
           ;$$ (j/call-in dom [:$$ :bind] nil)
-          app ($ "main")]
+          app ($ "main")
+          subscription (get-and-set-subscription (aget user "userId"))]
+    (js/console.log (clj->js subscription))
+    ;(js/console.log (get-user-subscription ))
     (aset app "innerHTML"
           (render [:section {:class "ui-section-articles"}
                    [:div {:class "ui-layout-container"}
                     [:h2 "Thank you"]
                     [:p "Hey, thanks for your payment."]
-                    [:p "Your current plan is ..."]
+                    [:p "Your current plan is " (j/get-in subscription ["data" "object" "metadata" "tier"])]
                     [:p "If you need to change your plan visit [CUSTOMER PORTAL LINK]."]]]))
     (.send res (j/call dom :render))))
