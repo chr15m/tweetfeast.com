@@ -94,7 +94,7 @@
                                                       :tier tier
                                                       :price (aget price-ids tier)}
                                            :mode (if (= tier "0") "payment" "subscription")
-                                           :success_url (build-absolute-uri req "/account/payment-complete")
+                                           :success_url (build-absolute-uri req "/account")
                                            :cancel_url (build-absolute-uri req "/subscribe")}))]
         (.redirect res 303 (aget session "url")))
       (.redirect 303 (build-absolute-uri req "/subscribe")))))
@@ -148,7 +148,7 @@
           _set (.set kv user-id sub)]
     sub))
 
-(defn payment-complete [req res]
+(defn account [req res]
   (p/let [user (j/get-in req [:session :user])
           template (rc/inline "index.html")
           dom (motionless/dom template)
@@ -156,14 +156,28 @@
           $ (j/call-in dom [:$ :bind] nil)
           ;$$ (j/call-in dom [:$$ :bind] nil)
           app ($ "main")
-          subscription (get-and-set-subscription (aget user "userId"))]
-    (js/console.log (clj->js subscription))
+          subscription (get-and-set-subscription (aget user "userId"))
+          tier (js/parseInt (j/get-in subscription ["data" "object" "metadata" "tier"]))
+          tier-description (get {0 "24hr single-payment"
+                                 1 "Monthly subscription"
+                                 2 "Annual subscription"} tier)]
+    ; (js/console.log (clj->js subscription))
     ;(js/console.log (get-user-subscription ))
     (aset app "innerHTML"
           (render [:section {:class "ui-section-articles"}
                    [:div {:class "ui-layout-container"}
                     [:h2 "Thank you"]
-                    [:p "Hey, thanks for your payment."]
-                    [:p "Your current plan is " (j/get-in subscription ["data" "object" "metadata" "tier"])]
-                    [:p "If you need to change your plan visit [CUSTOMER PORTAL LINK]."]]]))
+                    [:p "Hey, thanks for your subscription."]
+                    [:p "Your current plan is " tier-description "."]
+                    [:p "If you need to change your plan: " [:a.button {:href "/account/portal"} "visit the customer portal"]]]]))
     (.send res (j/call dom :render))))
+
+(defn customer-portal [req res]
+  (p/let [user (j/get-in req [:session :user])
+          subscription (get-and-set-subscription (aget user "userId"))
+          customer-id (j/get-in subscription ["data" "object" "customer"])
+          session (j/call-in stripe
+                             [:billingPortal :sessions :create]
+                             (clj->js {:customer customer-id
+                                       :return_url (build-absolute-uri req "/account")}))]
+    (.redirect res (aget session "url"))))
