@@ -130,7 +130,9 @@
 
 (defn is-valid [_sub])
 
-(defn get-sub [_user-id _tier])
+(defn get-sub [_user-id _tier]
+  ; TODO: implement this
+  )
 
 (defn get-user-subscription [user-id]
   (p/let [kv (db/kv "subscriptions")
@@ -138,9 +140,9 @@
     (if (is-valid sub)
       sub
       (or
-        (get-one-time-sub user-id)
+        (get-sub user-id 2)
         (get-sub user-id 1)
-        (get-sub user-id 2)))))
+        (get-one-time-sub user-id)))))
 
 (defn get-and-set-subscription [user-id]
   (p/let [sub (get-user-subscription user-id)
