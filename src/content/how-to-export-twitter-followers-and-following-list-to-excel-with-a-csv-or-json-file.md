@@ -210,7 +210,7 @@ on [TweetFeast](https://tweetfeast.com/exporter) and download this
 data for free.
 
 <div class="author">
-  <a href="https://twitter.com/AnidiChijoke"><img src="/content/avatar/patrick-anidi.jpg"/></a>
+  <a href="https://twitter.com/umicyclo"><img src="/content/avatar/patrick-anidi.jpg"/></a>
   <p>By Patrick Anidi</p>
-  <p><a href="https://twitter.com/AnidiChijoke">@AnidiChijoke</a></p>
+  <p><a href="https://twitter.com/umicyclo">@umicyclo</a></p>
 </div>
