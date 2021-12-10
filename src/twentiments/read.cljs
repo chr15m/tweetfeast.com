@@ -39,7 +39,7 @@
                        call-count)]
       statuses)
     (fn [err]
-      (throw err)
+      (js/console.error err)
       (clj->js {"error" {"error" err}}))))
 
 (defn get-urls-from-status [status]
