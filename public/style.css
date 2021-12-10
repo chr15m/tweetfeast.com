@@ -132,9 +132,48 @@ section.options {
   padding-top: 5rem;
 }
 
-.ui-section-articles li {
+div#articles-list ul li {
   list-style-type: none;
+}
+
+.ui-section-articles ul li {
+  list-style-type: '->';
   padding: 1em 2em;
+}
+
+.ui-section-articles {
+}
+
+div.side-by-side {
+  margin: 1em 0px;
+}
+
+div.side-by-side > * {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div.side-by-side img {
+  margin: 0.5em;
+}
+
+img.pop {
+  box-shadow: 0px 0px 10px #ccc;
+  margin: 3em auto;
+}
+
+.author {
+  margin: 6em auto;
+}
+
+.author img {
+  border-radius: 100px;
+  margin-bottom: 2em;
+}
+
+.author p {
+  text-align: center;
 }
 
 /*** styling info & ui ***/

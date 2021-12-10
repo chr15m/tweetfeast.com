@@ -195,3 +195,9 @@ So that's how you do twitter sentiment analysis in Python and JavaScript.
 Just a reminder that **if you don't want to write code or fiddle with API keys you can download a CSV file of tweets with sentiment analysis already included**. Just [sign in with Twitter](/login) to get started.
 
 Thanks for reading.
+
+<div class="author">
+  <a href="https://twitter.com/mccrmx"><img src="/content/avatar/chris-mccormick.jpg"/></a>
+  <p>By Chris McCormick</p>
+  <p><a href="https://twitter.com/mccrmx">@mccrmx</a></p>
+</div>

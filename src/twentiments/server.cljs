@@ -9,6 +9,7 @@
     ["motionless" :as motionless]
     ["wink-sentiment" :as sentiment]
     ["marked" :as marked]
+    ["marked-images" :as mi]
     [shadow.resource :as rc]
     [promesa.core :as p]
     [applied-science.js-interop :as j]
@@ -22,6 +23,8 @@
 (def r render-to-static-markup)
 
 (bind-console-to-file)
+
+(marked/use (mi))
 
 ; *** function calls *** ;
 
@@ -84,8 +87,8 @@
           (r [:section {:class "ui-section-articles"}
               [:div {:class "ui-layout-container"}
                (if title
-                 [:div {:dangerouslySetInnerHTML {:__html (marked content)}}]
-                 [:div
+                 [:div#article {:dangerouslySetInnerHTML {:__html (marked content)}}]
+                 [:div#articles-list
                   [:h2 "Articles"]
                   [:ul
                    (for [[f [title description]] article-list]
