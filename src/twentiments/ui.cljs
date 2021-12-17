@@ -88,6 +88,7 @@
 (defn get-user-by-username [username]
   (p/catch
     (p/let [username (.replace username "@" "")
+            username (.replace username "https://twitter.com/" "")
             req (js/fetch (str "/api/users/by/username/" username
                                "?" user-fields))
             json (.json req)]
