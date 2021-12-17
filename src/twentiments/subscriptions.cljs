@@ -29,21 +29,8 @@
       (p/let [user-id (aget user "userId")
               tw (twitter user)
               user-profile (aget user "profile")
-              user-profile (if user-profile user-profile (get-user-profile tw user-id))
-              nav ($ "nav")
-              signout-link (el "a" #js {:href "/logout"
-                                        :role "link"
-                                        :aria-label "Sign out"
-                                        :className "ui-section-header--nav-link"}
-                               "Sign out")
-              profile-image (el "div" #js {:className "user-profile"}
-                                (el "a" (clj->js {:href (str "https://twitter.com/" (aget user-profile "username"))
-                                                  :target "_BLANK"})
-                                    (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
+              user-profile (if user-profile user-profile (get-user-profile tw user-id))]
         (aset user "profile" user-profile)
-        (aset nav "innerHTML" "")
-        (.appendChild nav signout-link)
-        (.appendChild nav profile-image)
         (doseq [l (range (count links))]
           (let [link (aget links l)
                 parent (aget link "parentNode")
@@ -86,13 +73,15 @@
       (p/let [params (aget req "body")
               tier (aget params "tier")
               price (aget price-ids tier)
+              metadata {:user-id user-id
+                        :tier tier
+                        :price (aget price-ids tier)}
               session (j/call-in stripe [:checkout :sessions :create]
                                  (clj->js {:billing_address_collection "auto"
                                            :payment_method_types ["card"]
                                            :line_items [{:price price :quantity 1}]
-                                           :metadata {:user-id user-id
-                                                      :tier tier
-                                                      :price (aget price-ids tier)}
+                                           :metadata metadata
+                                           :subscription_data {:metadata metadata}
                                            :mode (if (= tier "0") "payment" "subscription")
                                            :success_url (build-absolute-uri req "/account")
                                            :cancel_url (build-absolute-uri req "/subscribe")}))]
@@ -125,30 +114,86 @@
 (defn get-one-time-sub [user-id]
   (p/let [one-time-charges (list-one-time-charges)
           charge (last (filter #(is-user-one-time-charge % user-id) one-time-charges))]
-    (js/console.log "charge" charge)
+    (js/console.log "day-sub charge" charge)
     charge))
 
-(defn is-valid [_sub])
+(defn is-valid [sub]
+  ; (js/console.log "is-valid?" sub (and sub (= (aget sub "status") "active")))
+  (js/console.log "is-valid? dates" (/ (js/Date.) 1000) (and sub (aget sub "current_period_end")))
+  ; at the moment this always returns false which means the stripe data is fetched every time
+  false)
 
-(defn get-sub [_user-id _tier]
-  ; TODO: implement this
-  )
+(defn get-sub-customer [sub]
+  (or (j/get-in sub ["data" "object" "customer"]) 
+      (j/get-in sub [:customer])))
+
+(defn get-sub-tier [sub]
+  (or (j/get-in sub ["data" "object" "metadata" "tier"])
+      (j/get-in sub [:metadata :tier])))
+
+(defn is-paused [sub]
+  (j/get-in sub [:pause_collection]))
+
+(defn get-sub [user-id tier]
+  (js/console.log "get-sub" user-id tier)
+  (js/Promise.
+    (fn [res _err]
+      (js/console.log "inside promise")
+      (->
+        (j/call-in stripe [:subscriptions :list]
+                   (clj->js {:status "active"
+                             :price (aget price-ids tier)}))
+        (j/call :autoPagingEach
+                (fn [subscription]
+                  (let [sub-name (j/get-in subscription [:plan :nickname])
+                        subscription-user-id (j/get-in subscription [:metadata :user-id])]
+                    (js/console.log "found sub" sub-name subscription-user-id user-id)
+                    (when (= subscription-user-id user-id)
+                      (res subscription)))))
+        (j/call :then
+                (fn []
+                  (js/console.log "done")
+                  (res nil)))))))
 
 (defn get-user-subscription [user-id]
   (p/let [kv (db/kv "subscriptions")
           sub (.get kv user-id)]
+    ; if there is a valid sub cached use that
+    ; otherwise re-fetch from the server
+    ; TODO: re-check if it is older than N days
+    ; to avoid cancelled year subs
     (if (is-valid sub)
       sub
-      (or
-        (get-sub user-id 2)
-        (get-sub user-id 1)
-        (get-one-time-sub user-id)))))
+      (p/let [year-sub (get-sub user-id 2)
+              month-sub (get-sub user-id 1)
+              day-sub (get-one-time-sub user-id)]
+        (js/console.log "get user sub" (or year-sub month-sub day-sub))
+        (or year-sub month-sub day-sub)))))
 
 (defn get-and-set-subscription [user-id]
   (p/let [sub (get-user-subscription user-id)
           kv (db/kv "subscriptions")
           _set (.set kv user-id sub)]
     sub))
+
+(defn component-account-subscribed [subscription tier-description]
+  [:section {:class "ui-section-articles"}
+   [:div {:class "ui-layout-container"}
+    [:h2 "Your subscription"]
+    [:p "Hello. " [:strong "Thank you"] " for your subscription."]
+    [:p "Your current plan is " [:strong tier-description] "."]
+    (when (is-paused subscription)
+      [:p [:strong "Your subscription is currently paused."]])
+    [:h2 "Update subscription"]
+    [:a.button {:href "/account/portal"} "visit the customer portal"]]])
+
+(defn component-account-not-subscribed []
+  [:section {:class "ui-section-articles"}
+   [:dif {:class "ui-layout-container"}
+    [:h2 "Not subscribed"]
+    [:p "You don't have an active TweetFeast subscription."]
+    [:p
+     [:a.button {:href "/subscribe"} "Subscribe"]]]])
 
 (defn account [req res]
   (p/let [user (j/get-in req [:session :user])
@@ -159,25 +204,25 @@
           ;$$ (j/call-in dom [:$$ :bind] nil)
           app ($ "main")
           subscription (get-and-set-subscription (aget user "userId"))
-          tier (js/parseInt (j/get-in subscription ["data" "object" "metadata" "tier"]))
+          tier-str (get-sub-tier subscription)
+          tier (when tier-str (js/parseInt tier-str))
           tier-description (get {0 "24hr single-payment"
                                  1 "Monthly subscription"
                                  2 "Annual subscription"} tier)]
-    ; (js/console.log (clj->js subscription))
-    ;(js/console.log (get-user-subscription ))
+    (js/console.log (clj->js "subscription" subscription))
+    ; (js/console.log (get-user-subscription))
+    ; (js/console.log "tier" tier)
     (aset app "innerHTML"
-          (render [:section {:class "ui-section-articles"}
-                   [:div {:class "ui-layout-container"}
-                    [:h2 "Thank you"]
-                    [:p "Hey, thanks for your subscription."]
-                    [:p "Your current plan is " tier-description "."]
-                    [:p "If you need to change your plan: " [:a.button {:href "/account/portal"} "visit the customer portal"]]]]))
+          (render (if tier
+                    [component-account-subscribed subscription tier-description]
+                    [component-account-not-subscribed])))
+    (update-nav dom user)
     (.send res (j/call dom :render))))
 
 (defn customer-portal [req res]
   (p/let [user (j/get-in req [:session :user])
           subscription (get-and-set-subscription (aget user "userId"))
-          customer-id (j/get-in subscription ["data" "object" "customer"])
+          customer-id (get-sub-customer subscription)
           session (j/call-in stripe
                              [:billingPortal :sessions :create]
                              (clj->js {:customer customer-id
