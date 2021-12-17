@@ -63,7 +63,7 @@
     (update-nav dom user)
     (doseq [l links]
       (let [href (.getAttribute l "href")]
-        (.setAttribute l "href" (str href "?next=/subscribe"))))
+        (.setAttribute l "href" (str href "?next=/pricing"))))
     (.send res (j/call dom :render))))
 
 (defn begin-subscription [req res]
@@ -84,9 +84,9 @@
                                            :subscription_data {:metadata metadata}
                                            :mode (if (= tier "0") "payment" "subscription")
                                            :success_url (build-absolute-uri req "/account")
-                                           :cancel_url (build-absolute-uri req "/subscribe")}))]
+                                           :cancel_url (build-absolute-uri req "/pricing")}))]
         (.redirect res 303 (aget session "url")))
-      (.redirect 303 (build-absolute-uri req "/subscribe")))))
+      (.redirect 303 (build-absolute-uri req "/pricing")))))
 
 (defn list-one-time-charges []
   (let [charges (atom [])]
@@ -176,6 +176,11 @@
           _set (.set kv user-id sub)]
     sub))
 
+(defn component-account-nav []
+  [:section
+   [:h3 [:a {:href "/exporter"} "Data exporter app"] "."]
+   [:h3 [:a {:href "/exporter"} "Your twitter account"] "."]])
+
 (defn component-account-subscribed [subscription tier-description]
   [:section {:class "ui-section-articles"}
    [:div {:class "ui-layout-container"}
@@ -185,7 +190,8 @@
     (when (is-paused subscription)
       [:p [:strong "Your subscription is currently paused."]])
     [:h2 "Update subscription"]
-    [:a.button {:href "/account/portal"} "visit the customer portal"]]])
+    [:a.button {:href "/account/portal"} "visit the customer portal"]
+    [component-account-nav]]])
 
 (defn component-account-not-subscribed []
   [:section {:class "ui-section-articles"}
@@ -193,7 +199,8 @@
     [:h2 "Not subscribed"]
     [:p "You don't have an active TweetFeast subscription."]
     [:p
-     [:a.button {:href "/subscribe"} "Subscribe"]]]])
+     [:a.button {:href "/pricing"} "Subscribe"]]
+    [component-account-nav]]])
 
 (defn account [req res]
   (p/let [user (j/get-in req [:session :user])

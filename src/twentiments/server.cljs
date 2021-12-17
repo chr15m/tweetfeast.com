@@ -229,7 +229,7 @@
   (.get app "/articles/:article" articles)
   (.get app "/exporter" (fn [req res] (serve-homepage "/js/main.js" req res)))
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
-  (.get app "/subscribe" view-subscribe)
+  (.get app "/pricing" view-subscribe)
   (j/call app :post "/account/begin-subscription" begin-subscription)
   (j/call app :get "/account/portal" customer-portal)
   (j/call app :get "/account" account)
