@@ -5,6 +5,7 @@
     [sitefox.web :as web]
     [sitefox.util :refer [env btoa]]
     [sitefox.logging :refer [bind-console-to-file]]
+    [sitefox.tracebacks :refer [install-traceback-emailer]]
     [reagent.dom.server :refer [render-to-static-markup]]
     ["motionless" :as motionless]
     ["wink-sentiment" :as sentiment]
@@ -23,6 +24,8 @@
 (def r render-to-static-markup)
 
 (bind-console-to-file)
+
+(install-traceback-emailer "chris@mccormickit.com")
 
 (marked/use (mi))
 
@@ -70,6 +73,14 @@
         (-> res
             (.status 403)
             (.send (make-simple-page req "Unauthorized.")))))))
+
+(defn authenticate-user [req res n]
+  (let [user (j/get-in req [:session :user])]
+    (if user
+      (n)
+      (if req.xhr
+        (return-json-error res {:message "Unauthorized."} 403)
+        (.redirect res 403 (str "/login?next=" (aget req "path")))))))
 
 ; *** pages *** ;
 
@@ -219,6 +230,9 @@
                                      v)))))
       (.catch (fn [err] (return-json-error res err 404))))))
 
+(defn trigger-error [_req _res]
+  (js/Promise. (fn [res err] (err "oh no"))))
+
 ; *** routes *** ;
 
 (defn setup-routes [app]
@@ -230,13 +244,15 @@
   (.get app "/exporter" (fn [req res] (serve-homepage "/js/main.js" req res)))
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
   (.get app "/pricing" view-subscribe)
-  (j/call app :post "/account/begin-subscription" begin-subscription)
-  (j/call app :get "/account/portal" customer-portal)
-  (j/call app :get "/account" account)
   ;(.get app "/login" soon)
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
+  (j/call app :post "/account/begin-subscription" begin-subscription)
+  (j/call app :get "/account/portal" customer-portal)
   (j/call app :get "/twitter-callback" twitter-login-done)
+  (j/call app :get "/trigger-error" trigger-error)
+  (.use app authenticate-user)
+  (j/call app :get "/account" account)
   (j/call app :get "/search" search-v1)
   (j/call app :get "/api/*" raw-api)
   (.use app authenticate-admin)
