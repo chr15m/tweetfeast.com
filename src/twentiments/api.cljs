@@ -3,6 +3,7 @@
     ["login-with-twitter" :as login-with-twitter]
     ["twitter-api-v2/dist" :refer [TwitterApi]]
     [applied-science.js-interop :as j]
+    [promesa.core :as p]
     [sitefox.db :as db]
     [sitefox.web :as web]
     [sitefox.util :refer [env-required error-to-json]]))
@@ -45,6 +46,14 @@
 
 ; *** twitter API interaction *** ;
 
+(defn get-user-profile [tw user-id]
+  (->
+    (.get (aget tw "v2") "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
+    (.then (fn [data] (-> data (aget "data") first)))
+    (.catch (fn [err]
+              (js/console.error err)
+              (error-to-json err)))))
+
 (defn twitter-sign-in [req]
   (let [next-url (aget req "query" "next")
         callback-url (web/build-absolute-uri req (str "/twitter-callback" (when next-url (str "?next=" next-url))))]
@@ -63,11 +72,14 @@
                (fn [err user]
                  (if err
                    (return-json-error res err 404)
-                   (do
+                   (p/let [twitter-instance (twitter user)
+                           user-id (aget user "userId")
+                           profile (get-user-profile twitter-instance user-id)]
                      (when-let [session (j/get req "session")]
                        (js-delete session "tokenSecret"))
+                     (aset user "profile" profile)
                      (j/assoc-in! req [:session :user] user)
-                     (log-event "last/login" (aget user "userId") user)
+                     (log-event "last/login" user-id user)
                      (log-event "event/login" (rnd-id) user)
                      (.redirect res (or next-url default-app-url))))))))
 
@@ -88,11 +100,3 @@
   (when-let [session (j/get req "session")]
     (js-delete session "user"))
   (.redirect res "/"))
-
-(defn get-user-profile [tw user-id]
-  (->
-    (.get (aget tw "v2") "users" (clj->js {:ids user-id :user.fields "id,name,username,url,profile_image_url"}))
-    (.then (fn [data] (-> data (aget "data") first)))
-    (.catch (fn [err]
-              (js/console.error err)
-              (error-to-json err)))))

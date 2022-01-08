@@ -16,7 +16,7 @@
     [applied-science.js-interop :as j]
     [twentiments.interface :refer [update-nav]]
     [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
-                             twitter-login twitter-logout twitter-login-done get-user-profile]]
+                             twitter-login twitter-logout twitter-login-done]]
     [twentiments.subscriptions :refer [view-subscribe begin-subscription account customer-portal]]))
 
 (defonce server (atom nil))
@@ -132,11 +132,9 @@
       (p/let [user-id (aget user "userId")
               tw (twitter user)
               user-profile (aget user "profile")
-              user-profile (if user-profile user-profile (get-user-profile tw user-id))
               dom (motionless/dom template)
               el (j/call-in dom [:h :bind] nil)
               app (j/call dom :$ "main")]
-        (aset user "profile" user-profile)
         (aset app "innerHTML" "")
         (.appendChild app (el "div" #js {:id "loading"} (el "div" #js {:className "spinner spin"})))
         (.after app (el "script" #js {:src mainfile}))
