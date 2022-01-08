@@ -453,14 +453,15 @@
      (when (> (count flat-data) table-display-limit)
        [:p [:strong "And " (- (count flat-data) table-display-limit) " more results..."]])]))
 
-(defn component-download-results [state]
+(defn component-download-results [state user]
   (let [tweets (@state :results)
         date (js/Date.)
         day (-> (str "0" (.getDate date)) (.slice -2))
         month (-> (str "0" (inc (.getMonth date))) (.slice -2))
         year (.getFullYear date)
         file-name (str "tweets-" year "-" month "-" day "-" (slug (@state :results-q)))
-        make-flat-json (json-format-fns (@state :results-format))]
+        make-flat-json (json-format-fns (@state :results-format))
+        subscription (:subscription user)]
     (when tweets
       [:div.downloads
        [:a.button.primary {:href (make-file-url
@@ -565,7 +566,7 @@
    [:div.spinner.spin]
    [:p searching]])
 
-(defn component-tweet-results [state empty-component]
+(defn component-tweet-results [state user empty-component]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     (if searching
@@ -578,7 +579,7 @@
                (aget results "results")) [:span
                                           [component-data-count results "tweets" (aget results "error")]
                                           ; [component-rate-limit results]
-                                          [component-download-results state]
+                                          [component-download-results state user]
                                           (if (@state :results-view-table)
                                             [component-tweets-table state]
                                             [component-tweets state])]
@@ -586,7 +587,7 @@
         (when empty-component
           [empty-component])))))
 
-(defn component-user-results [state]
+(defn component-user-results [state user]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
     (if searching
@@ -597,7 +598,7 @@
          (cond
            (aget results "data") [:span
                                   [component-data-count results "users" (aget results "error")]
-                                  [component-download-results state]
+                                  [component-download-results state user]
                                   [component-users-table state]]
            :else "Users not found.")]))))
 
@@ -614,7 +615,7 @@
          [component-icon (rc/inline "fa/arrow-circle-left.svg")]
          "Go back to the menu"]])
 
-(defn component-search-interface [state _user]
+(defn component-search-interface [state user]
   [:section#app
    [component-back-button state]
    [:p "Search for the tweets you want to export and download."]
@@ -626,7 +627,7 @@
                 :checked (@state :results-view-table)
                 :on-change #(swap! state assoc :results-view-table (-> % .-target .-checked))}]
        [:label {:for "search-state-check"} "table view"]]
-   [component-tweet-results state component-help-text]])
+   [component-tweet-results state user component-help-text]])
 
 (defn component-user-tweets [state user default]
   (let [username (r/atom nil)
@@ -656,7 +657,7 @@
                     :on-blur #(reset! limit (-> @limit int (js/Math.min max-records) (js/Math.max 10)))
                     :type "number"
                     :value @limit}]]]
-         [component-tweet-results state]]))))
+         [component-tweet-results state user]]))))
 
 (defn component-followers [state user default]
   (let [username (r/atom nil)
@@ -684,7 +685,7 @@
                     :on-blur #(reset! limit (-> @limit int (js/Math.min max-records) (js/Math.max 10)))
                     :type "number"
                     :value @limit}]]]
-         [component-user-results state]]))))
+         [component-user-results state user]]))))
 
 #_ (defn component-likers [state user default]
   (let [tweet-url (r/atom nil)

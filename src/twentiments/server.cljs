@@ -17,7 +17,8 @@
     [twentiments.interface :refer [update-nav]]
     [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
                              twitter-login twitter-logout twitter-login-done]]
-    [twentiments.subscriptions :refer [view-subscribe begin-subscription account customer-portal]]))
+    [twentiments.subscriptions :refer [view-subscribe begin-subscription account
+                                       customer-portal get-and-set-subscription]]))
 
 (defonce server (atom nil))
 
@@ -130,11 +131,12 @@
         user (j/get-in req [:session :user])]
     (if user
       (p/let [user-id (aget user "userId")
-              tw (twitter user)
               user-profile (aget user "profile")
+              subscription (get-and-set-subscription user-id)
               dom (motionless/dom template)
               el (j/call-in dom [:h :bind] nil)
               app (j/call dom :$ "main")]
+        (aset user-profile "subscription" subscription)
         (aset app "innerHTML" "")
         (.appendChild app (el "div" #js {:id "loading"} (el "div" #js {:className "spinner spin"})))
         (.after app (el "script" #js {:src mainfile}))
