@@ -711,19 +711,19 @@
        [:section#app
         [:section.ui-layout-container
          [:h3 "What kind of Twitter data do you need?"]
+         [:h4 "Follower / Following"]
+         [:ul.data-menu
+          [:li [:a {:href "#following"} "List of users followed by a user"]]
+          [:li [:a {:href "#followers"} "List of the followers of a user"]]
+          ;[:li [:a {:href "#tweet-likers"} "Users who liked a particular tweet"]]
+          ;[:li [:a {:href "#tweet-retweeters"} "Users who retweeted a particular tweet"]]
+          ]
          [:h4 "Tweets"]
          [:ul.data-menu
           [:li [:a {:href "#user-timeline"} "Tweets by a user"]]
           [:li [:a {:href "#user-likes"} "Tweets liked by a user"]]
           [:li [:a {:href "#user-mentions"} "Tweets a user is mentioned in"]]
           [:li [:a {:href "#search-tweets"} "Tweets from a search result"]]]
-         [:h4 "Users"]
-         [:ul.data-menu
-          [:li [:a {:href "#following"} "Users followed by a particular user"]]
-          [:li [:a {:href "#followers"} "Users who are following a particular user"]]
-          ;[:li [:a {:href "#tweet-likers"} "Users who liked a particular tweet"]]
-          ;[:li [:a {:href "#tweet-retweeters"} "Users who retweeted a particular tweet"]]
-          ]
          [:h4 "Something else"]
          [:p "If you don't see the type of data you're looking for, "
           [:a {:href feedback-link} "click here to shoot me an email"]
