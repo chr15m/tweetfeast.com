@@ -78,12 +78,26 @@ section.options {
   bottom: 0px;
   right: 0px;
   padding: 1em;
-  background-color: #eee;
-  border-top-left-radius: 5px;
-  border-top: 2px solid #ccc;
-  border-left: 2px solid #ccc;
-  color: #f56a6a;
-  text-decoration: none;
+}
+
+#feedback .icon {
+  font-size: 2em;
+  margin: 0.75em .25em;
+  display: block;
+}
+
+#feedback .icon svg {
+  transform-origin: center center;
+  transform: scaleX(-1);
+  filter: drop-shadow(0px 0px 10px #aaa);
+}
+
+#feedback .icon svg:hover {
+  filter: none;
+}
+
+#feedback .icon svg path {
+  fill: #f56a6a;
 }
 
 .icon > svg {
