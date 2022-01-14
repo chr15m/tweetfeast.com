@@ -178,8 +178,8 @@
 
 (defn component-account-nav []
   [:section
-   [:h3 [:a {:href "/exporter"} "Data exporter app"] "."]
-   [:h3 [:a {:href "/exporter"} "Your twitter account"] "."]])
+   [:h3 [:a {:href "/exporter"} "Use the data exporter app"] "."]
+   [:h3 [:a {:href "/exporter"} "Go to your twitter account"] "."]])
 
 (defn component-account-subscribed [subscription tier-description]
   [:section {:class "ui-section-articles"}
