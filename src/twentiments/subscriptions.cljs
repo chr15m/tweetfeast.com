@@ -76,15 +76,21 @@
               metadata {:user-id user-id
                         :tier tier
                         :price (aget price-ids tier)}
+              packet {:billing_address_collection "auto"
+                      :payment_method_types ["card"]
+                      :line_items [{:price price :quantity 1}]
+                      :metadata metadata
+
+                      :mode (if (= tier "0") "payment" "subscription")
+                      :success_url (build-absolute-uri req "/account")
+                      :cancel_url (build-absolute-uri req "/pricing")}
+              packet (assoc packet
+                            (if (= tier "0")
+                              :payment_intent_data
+                              :subscription_data)
+                            {:metadata metadata})
               session (j/call-in stripe [:checkout :sessions :create]
-                                 (clj->js {:billing_address_collection "auto"
-                                           :payment_method_types ["card"]
-                                           :line_items [{:price price :quantity 1}]
-                                           :metadata metadata
-                                           :subscription_data {:metadata metadata}
-                                           :mode (if (= tier "0") "payment" "subscription")
-                                           :success_url (build-absolute-uri req "/account")
-                                           :cancel_url (build-absolute-uri req "/pricing")}))]
+                                 (clj->js packet))]
         (.redirect res 303 (aget session "url")))
       (.redirect 303 (build-absolute-uri req "/pricing")))))
 
