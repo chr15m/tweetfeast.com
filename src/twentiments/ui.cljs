@@ -15,6 +15,8 @@
 
 (def feedback-link "mailto:chris@mccormickit.com?subject=TweetFeast+feedback")
 
+(def dm-link "https://twitter.com/messages/compose?recipient_id=1402839069046951938")
+
 (def table-display-limit 50)
 
 (def max-records 10000)
@@ -729,7 +731,8 @@
          [:p "If you don't see the type of data you're looking for, "
           [:a {:href feedback-link} "click here to shoot me an email"]
           " and help me improve this tool."]]])
-     [:div#feedback [:a {:href feedback-link} "Send feedback"]]]))
+     [:div#feedback [:a {:href dm-link :target "_BLANK"}
+                     [component-icon (rc/inline "fa/comment.svg")]]]]))
 
 (defn component-main [state]
   (let [user (auth)]
