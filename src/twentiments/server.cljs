@@ -79,9 +79,9 @@
   (let [user (j/get-in req [:session :user])]
     (if user
       (n)
-      (if req.xhr
+      (if (aget req "xhr")
         (return-json-error res {:message "Unauthorized."} 403)
-        (.redirect res 403 (str "/login?next=" (aget req "path")))))))
+        (.redirect res (str "/login?next=" (aget req "path")))))))
 
 ; *** pages *** ;
 
