@@ -220,15 +220,32 @@
     (log-event "event/api" (rnd-id) user {:url (aget req "url")})))
 
 (defn admin-data [_req res]
-  (let [db (db/client)]
-    (->
-      (.query db "select * from keyv where key like 'login/last:%' or key like 'last/%'")
-      (.then #(.json res (.map % (fn [row]
-                                   (let [k (aget row "key")
-                                         v (aget (js/JSON.parse (aget row "value")) "value")]
-                                     (aset v "kind" k)
-                                     v)))))
-      (.catch (fn [err] (return-json-error res err 404))))))
+  (p/catch
+    (p/let [db (db/client)
+            login-event-rows (.query db "select * from keyv where key like 'login/last:%' or key like 'last/%'")
+            login-events (.map login-event-rows
+                               (fn [row]
+                                 (let [k (aget row "key")
+                                       v (aget (js/JSON.parse (aget row "value")) "value")]
+                                   (aset v "kind" k)
+                                   v)))
+            event-rows (.query db (str "select * from keyv where key like 'event/%'"))
+            events-user-days (map (fn [row]
+                                    (let [value (js/JSON.parse (aget row "value"))
+                                          user-id (j/get-in value [:value :id])
+                                          t (j/get-in value [:value :t])
+                                          day (-> t (.split "T") first)]
+                                      [user-id day])) event-rows)
+            events-user-days (set events-user-days)
+            events-by-user (reduce
+                             (fn [events [user-id day]]
+                               (update-in events [user-id] conj day))
+                             {}
+                             events-user-days)]
+      ;(js/console.log (clj->js events-by-user))
+      ;(js/console.log (clj->js login-events))
+      (.json res (clj->js {:login-events login-events :user-dates events-by-user})))
+    (fn [err] (return-json-error res err 404))))
 
 (defn trigger-error [_req _res]
   (js/Promise. (fn [res err] (err "oh no"))))

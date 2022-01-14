@@ -32,16 +32,18 @@
        [:th "user"]
        [:td "what"]
        [:td "date"]
-       [:td "when"]]]
+       [:td "when"]
+       [:td "usage"]]]
      [:tbody
-      (for [row (reverse (sort-by #(aget % "t") data))]
+      (for [row (reverse (sort-by #(aget % "t") (aget data "login-events")))]
         [:tr {:key (aget row "id")}
          [:td [:a {:href (str "https://twitter.com/" (aget row "username"))
                    :target "_BLANK"}
                (aget row "username")]]
          [:td (-> (aget row "kind") (.split ":") first)]
          [:td (simple-date-time (aget row "t"))]
-         [:td (time-since (aget row "t"))]])]]]])
+         [:td (time-since (aget row "t"))]
+         [:td (str (-> data (aget "user-dates") (aget (aget row "id")) count) " days")]])]]]])
 
 ; *** startup *** ;
 
