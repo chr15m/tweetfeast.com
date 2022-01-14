@@ -227,7 +227,7 @@
             (let [metrics (or (aget user "public_metrics") #js {})
                   js-struct #js {}]
               (j/assoc! js-struct
-                        :id (aget user "id")
+                        :id (str "id:" (aget user "id"))
                         :username (aget user "username")
                         :name (aget user "name")
                         :date-time-created (simple-date-time (aget user "created_at"))
