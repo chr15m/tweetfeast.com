@@ -455,6 +455,26 @@
      (when (> (count flat-data) table-display-limit)
        [:p [:strong "And " (- (count flat-data) table-display-limit) " more results..."]])]))
 
+(defn crop-flat-json [flat-json subscription kind]
+  (if (nil? subscription)
+    (let [rows (count flat-json)
+          cropped (.slice flat-json 0 10)
+          difference (- rows 10)
+          message (str "To get the full data set (" difference " more rows) subscribe at https://tweetfeast.com/account")]
+      (when (= kind :json)
+        (j/call cropped :unshift #js {:_ message}))
+      (when (= kind :csv)
+        (j/call cropped :push #js {:id ""})
+        (j/call cropped :push #js {:id message}))
+      cropped)
+    flat-json))
+
+(defn crop-full-json [full-json subscription]
+  ; TODO this
+  (if (nil? subscription)
+    nil
+    full-json))
+
 (defn component-download-results [state user]
   (let [tweets (@state :results)
         date (js/Date.)
@@ -465,23 +485,27 @@
         make-flat-json (json-format-fns (@state :results-format))
         subscription (:subscription user)]
     (when tweets
-      [:div.downloads
-       [:a.button.primary {:href (make-file-url
-                                   (-> (json2csv/Parser.) (.parse (make-flat-json (@state :results))))
-                                   (str file-name ".csv")
-                                   "application/json")
-                           :download (str file-name ".csv")} "download csv"]
-       [:a.button.primary {:href (make-file-url
-                                   (js/JSON.stringify (make-flat-json (@state :results)) nil 2)
-                                   (str file-name ".json")
-                                   "application/json")
-                           :download (str file-name ".json")} "download json"]
-       [:a.button.primary {:href (make-file-url
-                                   (make-full-json-string (@state :results))
-                                   (str file-name ".json")
-                                   "application/json")
-                           :download (str file-name "-full.json")}
-        "download API json"]])))
+      (let [flat-json (make-flat-json (@state :results))
+            full-json (make-full-json-string (@state :results))]
+        ;(js/console.log "flat-json" flat-json)
+        ;(js/console.log "full-json" full-json)
+        [:div.downloads
+         [:a.button.primary {:href (make-file-url
+                                     (-> (json2csv/Parser.) (.parse (crop-flat-json flat-json subscription :csv)))
+                                     (str file-name ".csv")
+                                     "application/json")
+                             :download (str file-name ".csv")} "download csv"]
+         [:a.button.primary {:href (make-file-url
+                                     (js/JSON.stringify (crop-flat-json flat-json subscription :json) nil 2)
+                                     (str file-name ".json")
+                                     "application/json")
+                             :download (str file-name ".json")} "download json"]
+         [:a.button.primary {:href (make-file-url
+                                     full-json
+                                     (str file-name ".json")
+                                     "application/json")
+                             :download (str file-name "-full.json")}
+          "download API json"]]))))
 
 (defn component-help-text []
   [:section
