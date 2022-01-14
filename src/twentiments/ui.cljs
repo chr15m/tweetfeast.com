@@ -580,7 +580,7 @@
            (or (aget results "data")
                (aget results "results")) [:span
                                           [component-data-count results "tweets" (aget results "error")]
-                                          ; [component-rate-limit results]
+                                          [component-rate-limit results]
                                           [component-download-results state user]
                                           (if (@state :results-view-table)
                                             [component-tweets-table state]
@@ -600,6 +600,7 @@
          (cond
            (aget results "data") [:span
                                   [component-data-count results "users" (aget results "error")]
+                                  [component-rate-limit results]
                                   [component-download-results state user]
                                   [component-users-table state]]
            :else "Users not found.")]))))
