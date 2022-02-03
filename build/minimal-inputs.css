@@ -58,7 +58,7 @@ textarea {
 
 /*** Radio & Checkbox ***/
 
-input[type="checkbox"], input[type="radio"] {
+main input[type="checkbox"], input[type="radio"] {
   cursor: pointer;
   display: block;
   float: left;
@@ -69,7 +69,7 @@ input[type="checkbox"], input[type="radio"] {
   z-index: -1;
 }
 
-input[type="checkbox"] + label::before, input[type="radio"] + label::before {
+main input[type="checkbox"] + label::before, input[type="radio"] + label::before {
   background-color: #f56a6a;
   color: #f56a6a;
   cursor: pointer;
@@ -91,13 +91,13 @@ input[type="radio"] + label::before {
   border-radius: 100%;
 }
 
-input[type="checkbox"] + label, input[type="radio"] + label {
+main input[type="checkbox"] + label, input[type="radio"] + label {
   cursor: pointer;
   margin-right: 1em;
   white-space: nowrap;
 }
 
-input[type="checkbox"]:checked + label::before, input[type="radio"]:checked + label::before {
+main input[type="checkbox"]:checked + label::before, input[type="radio"]:checked + label::before {
   color: #fff;
   content: '\2714';
 }
