@@ -169,3 +169,9 @@ Twitter data can be a great way to get insights into your audience. By
 analyzing the data in Excel, you can gain valuable insights that can
 help you improve your profile engagement and customer acquisition.
 Thanks for reading!
+
+<div class="author">
+  <a href="https://twitter.com/umicyclo"><img src="/content/avatar/patrick-anidi.jpg"/></a>
+  <p>By Patrick Anidi</p>
+  <p><a href="https://twitter.com/umicyclo">@umicyclo</a></p>
+</div>
