@@ -61,7 +61,7 @@ section#app {
   margin-top: 3em;
 }
 
-ul#data-menu {
+ul.data-menu {
   list-style-type: none;
   padding-left: 1em;
   margin-top: 2em;
