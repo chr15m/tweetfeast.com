@@ -1,5 +1,6 @@
 (ns twentiments.subscriptions
   (:require
+    [clojure.edn :refer [read-string]]
     ["motionless" :as motionless]
     [shadow.resource :as rc]
     [promesa.core :as p]
@@ -14,6 +15,7 @@
 
 (def price-ids (-> (env-required "PRICE_IDS") (.split ",")))
 (def stripe (Stripe (env-required "STRIPE_SK")))
+(def lifetime-accounts (read-string (rc/inline "lifetime-accounts.edn")))
 
 (defn view-subscribe [req res]
   (p/let [template (rc/inline "index.html")
@@ -161,6 +163,12 @@
                   (js/console.log "done")
                   (res nil)))))))
 
+(defn get-lifetime-sub [user-id]
+  (js/console.log "get-lifetime-sub" user-id (type user-id) lifetime-accounts (get lifetime-accounts user-id))
+  (when (get lifetime-accounts user-id)
+    (clj->js {:lifetime true
+              :metadata {:tier -1}})))
+
 (defn get-user-subscription [user-id]
   (p/let [kv (db/kv "subscriptions")
           sub (.get kv user-id)]
@@ -170,11 +178,12 @@
     ; to avoid cancelled year subs
     (if (is-valid sub)
       sub
-      (p/let [year-sub (get-sub user-id 2)
+      (p/let [lifetime-sub (get-lifetime-sub user-id)
+              year-sub (get-sub user-id 2)
               month-sub (get-sub user-id 1)
               day-sub (get-one-time-sub user-id)]
-        (js/console.log "get user sub" (or year-sub month-sub day-sub))
-        (or year-sub month-sub day-sub)))))
+        (js/console.log "get user sub" (or lifetime-sub year-sub month-sub day-sub))
+        (or lifetime-sub year-sub month-sub day-sub)))))
 
 (defn get-and-set-subscription [user-id]
   (p/let [sub (get-user-subscription user-id)
@@ -196,7 +205,8 @@
     (when (is-paused subscription)
       [:p [:strong "Your subscription is currently paused."]])
     [:h2 "Update subscription"]
-    [:a.button {:href "/account/portal"} "visit the customer portal"]
+    (when (get-sub-customer subscription)
+      [:a.button {:href "/account/portal"} "visit the customer portal"])
     [component-account-nav]]])
 
 (defn component-account-not-subscribed []
@@ -221,7 +231,8 @@
           tier (when tier-str (js/parseInt tier-str))
           tier-description (get {0 "24hr single-payment"
                                  1 "Monthly subscription"
-                                 2 "Annual subscription"} tier)]
+                                 2 "Annual subscription"
+                                 -1 "Lifetime unlimited subscription"} tier)]
     (js/console.log (clj->js "subscription" subscription))
     ; (js/console.log (get-user-subscription))
     ; (js/console.log "tier" tier)
