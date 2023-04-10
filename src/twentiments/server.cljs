@@ -248,7 +248,7 @@
     (fn [err] (return-json-error res err 404))))
 
 (defn trigger-error [_req _res]
-  (js/Promise. (fn [res err] (err "oh no"))))
+  (js/Promise. (fn [_res err] (err "oh no"))))
 
 ; *** routes *** ;
 
