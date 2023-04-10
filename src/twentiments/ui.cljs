@@ -752,7 +752,9 @@
         subscription (:subscription user)]
     [:<>
      [component-followers state user "followers"]
-     (when subscription [:p "Your subscription is active."])
+     (when subscription
+       [:section.ui-layout-container
+        [:p "Your subscription is active and you can download the full data set."]])
      [component-subscribe-modal state]]
     #_ [:span
         (case h

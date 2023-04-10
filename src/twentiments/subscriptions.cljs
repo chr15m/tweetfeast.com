@@ -82,9 +82,8 @@
                       :payment_method_types ["card"]
                       :line_items [{:price price :quantity 1}]
                       :metadata metadata
-
                       :mode (if (= tier "0") "payment" "subscription")
-                      :success_url (build-absolute-uri req "/account")
+                      :success_url (build-absolute-uri req "/")
                       :cancel_url (build-absolute-uri req "/pricing")}
               packet (assoc packet
                             (if (= tier "0")
@@ -191,13 +190,16 @@
           _set (.set kv user-id sub)]
     sub))
 
-(defn component-account-nav []
+(defn component-account-nav [user subscription]
   [:section
-   [:h3 [:a {:href "/"} "Use the data exporter"] "."]
-   ;[:h3 [:a {:href "/exporter"} "Go to your twitter account"] "."]
-   ])
+   (when (get-sub-customer subscription)
+     [:h3 [:a {:href "/account/portal"} "Update your subscription"] "."])
+   [:h3 [:a {:href "/"} "Use the TweetFeast app"] "."]
+   [:h3 [:a {:href (str "https://twitter.com/" (aget user "userName"))
+             :target "_BLANK"}
+         "Go to your own twitter account"] "."]])
 
-(defn component-account-subscribed [subscription tier-description]
+(defn component-account-subscribed [subscription tier-description user]
   [:section {:class "ui-section-articles"}
    [:div {:class "ui-layout-container"}
     [:h2 "Your subscription"]
@@ -205,10 +207,7 @@
     [:p "Your current plan is " [:strong tier-description] "."]
     (when (is-paused subscription)
       [:p [:strong "Your subscription is currently paused."]])
-    [:h2 "Update subscription"]
-    (when (get-sub-customer subscription)
-      [:a.button {:href "/account/portal"} "visit the customer portal"])
-    [component-account-nav]]])
+    [component-account-nav user subscription]]])
 
 (defn component-account-not-subscribed []
   [:section {:class "ui-section-articles"}
@@ -239,7 +238,7 @@
     ; (js/console.log "tier" tier)
     (aset app "innerHTML"
           (render (if tier
-                    [component-account-subscribed subscription tier-description]
+                    [component-account-subscribed subscription tier-description user]
                     [component-account-not-subscribed])))
     (update-nav dom user)
     (.send res (j/call dom :render))))
