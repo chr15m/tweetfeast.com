@@ -111,6 +111,14 @@ section.options {
   fill: var(--ui-color-typography-note);
 }
 
+.cta {
+  display: block;
+  text-align: center;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /*** design mods ***/
 
 .ui-section-header--logo {
@@ -188,6 +196,10 @@ img.pop {
 
 .author p {
   text-align: center;
+}
+
+button svg {
+  display: inline-block;
 }
 
 /*** styling info & ui ***/
