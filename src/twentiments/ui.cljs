@@ -119,6 +119,7 @@
   (p/catch
     (p/let [url (str "/api/users/" user-id "/" search-type
                      "?" user-fields
+                     "&max_results=1000"
                      (when pagination-token (str "&pagination_token=" pagination-token)))
             res (js/fetch url)
             json (.json res)
