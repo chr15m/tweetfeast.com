@@ -67,7 +67,9 @@
 (defn authenticate-admin [req res n]
   (let [user (j/get-in req [:session :user])]
     (if (and user
-             (= (aget user "userName") "GetTweetFeast"))
+             (or
+               (= (aget user "userName") "GetTweetFeast")
+               (= (aget user "userId") (env "ADMIN_TWITTER_ID"))))
       (n)
       (if req.xhr
         (return-json-error res {:message "Unauthorized."} 403)
