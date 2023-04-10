@@ -193,8 +193,9 @@
 
 (defn component-account-nav []
   [:section
-   [:h3 [:a {:href "/exporter"} "Use the data exporter app"] "."]
-   [:h3 [:a {:href "/exporter"} "Go to your twitter account"] "."]])
+   [:h3 [:a {:href "/"} "Use the data exporter"] "."]
+   ;[:h3 [:a {:href "/exporter"} "Go to your twitter account"] "."]
+   ])
 
 (defn component-account-subscribed [subscription tier-description]
   [:section {:class "ui-section-articles"}
@@ -211,7 +212,7 @@
 
 (defn component-account-not-subscribed []
   [:section {:class "ui-section-articles"}
-   [:dif {:class "ui-layout-container"}
+   [:div {:class "ui-layout-container"}
     [:h2 "Not subscribed"]
     [:p "You don't have an active TweetFeast subscription."]
     [:p

@@ -26,7 +26,7 @@
 
 (bind-console-to-file)
 
-(install-traceback-emailer "chris@mccormickit.com")
+(install-traceback-emailer (env "ADMIN_EMAIL"))
 
 (marked/use (mi))
 
@@ -254,6 +254,7 @@
 
 (defn setup-routes [app]
   (web/reset-routes app)
+  (.get app "/$" (fn [req res] (serve-homepage "/js/main.js" req res)))
   (web/static-folder app "/" (if (env "NGINX_SERVER_NAME") "build" "public"))
   (.use app web/strip-slash-redirect)
   (.get app "/articles" articles)

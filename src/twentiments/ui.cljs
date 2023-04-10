@@ -5,6 +5,7 @@
             [promesa.core :as p]
             [shadow.resource :as rc]
             [sitefox.ui :refer [simple-date-time slug log]]
+            ;[sitefox.util :refer [env]]
             ["twitter-text" :as twitter-text]
             ["wink-sentiment" :as sentiment]
             ["twemoji" :as twemoji]
@@ -13,9 +14,9 @@
 
 (def initial-state {:results-view-table true})
 
-(def feedback-link "mailto:chris@mccormickit.com?subject=TweetFeast+feedback")
+; (def feedback-link (str "mailto:" (env "ADMIN_EMAIL") "?subject=TweetFeast+feedback"))
 
-(def dm-link "https://twitter.com/messages/compose?recipient_id=1402839069046951938")
+; (def dm-link (str "https://twitter.com/messages/compose?recipient_id=" (env "ADMIN_TWITTER_ID")))
 
 (def table-display-limit 50)
 
@@ -604,7 +605,7 @@
            (or (aget results "data")
                (aget results "results")) [:span
                                           [component-data-count results "tweets" (aget results "error")]
-                                          [component-rate-limit results]
+                                          ;[component-rate-limit results]
                                           [component-download-results state user]
                                           (if (@state :results-view-table)
                                             [component-tweets-table state]
@@ -624,7 +625,7 @@
          (cond
            (aget results "data") [:span
                                   [component-data-count results "users" (aget results "error")]
-                                  [component-rate-limit results]
+                                  ;[component-rate-limit results]
                                   [component-download-results state user]
                                   [component-users-table state]]
            :else "Users not found.")]))))
@@ -693,9 +694,9 @@
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
-         [component-back-button state]
+         ;[component-back-button state]
          [:section.ui-layout-container
-          [:h3 "User follow lists"]
+          [:h3 "Export followers"]
           [:p "Download follower/following user lists."]
           [:div
            [:select {:on-change #(reset! search-type (-> % .-target .-value))
@@ -724,9 +725,10 @@
   )
 
 (defn component-choose-activity [state user]
-  (let [h (aget js/document "location" "hash")
+  (let [_h (aget js/document "location" "hash")
         _history (@state :history)]
-    [:span
+    [component-followers state user "followers"]
+    #_ [:span
      (case h
        "#following" [component-followers state user "following"]
        "#followers" [component-followers state user "followers"]
@@ -753,11 +755,11 @@
           [:li [:a {:href "#user-mentions"} "Tweets a user is mentioned in"]]
           [:li [:a {:href "#search-tweets"} "Tweets from a search result"]]]
          [:h4 "Something else"]
-         [:p "If you don't see the type of data you're looking for, "
+         #_ [:p "If you don't see the type of data you're looking for, "
           [:a {:href feedback-link} "click here to shoot me an email"]
           " and help me improve this tool."]]])
-     [:div#feedback [:a {:href dm-link :target "_BLANK"}
-                     [component-icon (rc/inline "fa/comment.svg")]]]]))
+     #_ [:div#feedback [:a {:href dm-link :target "_BLANK"}
+                        [component-icon (rc/inline "fa/comment.svg")]]]]))
 
 (defn component-main [state]
   (let [user (auth)]

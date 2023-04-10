@@ -17,7 +17,7 @@
                                     :aria-label "Sign out"
                                     :className "ui-section-header--nav-link"}
                            "Sign out")
-          app-link (el "a" #js {:href "/exporter"
+          #_#_ app-link (el "a" #js {:href "/exporter"
                                 :role "link"
                                 :aria-label "Exporter"
                                 :className "ui-section-header--nav-link"}
@@ -28,6 +28,6 @@
       (aset nav "innerHTML" "")
       ;(.remove ($ "#sign-in-link"))
       (.appendChild nav articles-link)
-      (.appendChild nav app-link)
+      ; (.appendChild nav app-link)
       (.appendChild nav signout-link)
       (.appendChild nav profile-image))))

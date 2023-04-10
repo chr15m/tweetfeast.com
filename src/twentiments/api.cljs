@@ -14,7 +14,7 @@
                                        "TWITTER_ENVIRONMENT_NAME (full archive) not set.
                                        <https://developer.twitter.com/en/account/environments>"))
 
-(def default-app-url "/exporter")
+(def default-app-url "/")
 
 ; *** useful functions *** ;
 

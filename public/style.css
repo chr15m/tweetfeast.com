@@ -119,6 +119,13 @@ section.options {
   margin-right: auto;
 }
 
+main {
+  min-height: calc(100vh - 13em);
+}
+
+footer {
+}
+
 /*** design mods ***/
 
 .ui-section-header--logo {
