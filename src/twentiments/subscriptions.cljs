@@ -216,7 +216,7 @@
     [:h2 "Not subscribed"]
     [:p "You don't have an active TweetFeast subscription."]
     [:p
-     [:a.button {:href "/pricing"} "Subscribe"]]
+     [:a.button.primary {:href "/pricing"} "Subscribe"]]
     [component-account-nav]]])
 
 (defn account [req res]

@@ -173,6 +173,11 @@ div#articles-list ul li {
 .ui-section-articles {
 }
 
+#ui-section-header--menu-id:checked ~
+.ui-section-header--nav {
+  border-bottom: 1px solid #dedede;
+}
+
 div.side-by-side {
   margin: 1em 0px;
 }

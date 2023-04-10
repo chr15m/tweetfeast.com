@@ -620,7 +620,7 @@
     (if searching
       [component-progress searching]
       (when results
-        [:div
+        [:section.ui-layout-container
          (when (aget results "error") [component-errors results])
          (cond
            (aget results "data") [:span
@@ -697,7 +697,9 @@
          ;[component-back-button state]
          [:section.ui-layout-container
           [:h3 "Export followers"]
-          [:p "Download follower/following user lists."]
+          [:p "To download the list of follower/following users simply use this interface.
+              Enter the user you would like to download the list for and choose following/followed by.
+              Then click 'Go' to start downloading the data."]
           [:div
            [:select {:on-change #(reset! search-type (-> % .-target .-value))
                      :value @search-type}
