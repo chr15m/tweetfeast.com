@@ -111,6 +111,43 @@ section.options {
   fill: var(--ui-color-typography-note);
 }
 
+.cta {
+  display: block;
+  text-align: center;
+  margin-top: 1em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+main {
+  min-height: calc(100vh - 13em);
+}
+
+footer {
+}
+
+.modal {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.modal > * {
+  background-color: white;
+  border-radius: 0.375em;
+  padding: 1em 2em;
+  min-width: 50vw;
+  max-width: 90vw;
+  width: 600px;
+}
+
 /*** design mods ***/
 
 .ui-section-header--logo {
@@ -158,6 +195,11 @@ div#articles-list ul li {
 .ui-section-articles {
 }
 
+#ui-section-header--menu-id:checked ~
+.ui-section-header--nav {
+  border-bottom: 1px solid #dedede;
+}
+
 div.side-by-side {
   margin: 1em 0px;
 }
@@ -188,6 +230,10 @@ img.pop {
 
 .author p {
   text-align: center;
+}
+
+button svg {
+  display: inline-block;
 }
 
 /*** styling info & ui ***/
