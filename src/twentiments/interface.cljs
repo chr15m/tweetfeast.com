@@ -25,7 +25,6 @@
           profile-image (el "div" #js {:className "user-profile"}
                             (el "a" (clj->js {:href (str "https://twitter.com/" (aget user "userName"))}) ;(clj->js {:href "/account"})
                                 (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
-      (print user)
       (aset nav "innerHTML" "")
       ;(.remove ($ "#sign-in-link"))
       (.appendChild nav articles-link)

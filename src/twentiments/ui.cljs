@@ -461,7 +461,7 @@
     (let [rows (count flat-json)
           cropped (.slice flat-json 0 10)
           difference (- rows 10)
-          message (str "To get the full data set (" difference " more rows) subscribe at https://tweetfeast.com/account")]
+          message (str "To get the full data set (" difference " more rows) subscribe at https://tweetfeast.com/pricing")]
       (when (= kind :json)
         (j/call cropped :unshift #js {:_ message}))
       (when (= kind :csv)
@@ -475,6 +475,10 @@
   (if (nil? subscription)
     nil
     full-json))
+
+(defn subscription-notice [state subscription]
+  (when (nil? subscription)
+    (swap! state assoc :subscribe-modal true)))
 
 (defn component-download-results [state user]
   (let [tweets (@state :results)
@@ -495,17 +499,22 @@
                                      (-> (json2csv/Parser.) (.parse (crop-flat-json flat-json subscription :csv)))
                                      (str file-name ".csv")
                                      "application/json")
-                             :download (str file-name ".csv")} "download csv"]
+                             :download (str file-name ".csv")
+                             :on-click #(subscription-notice state subscription)}
+          "download csv"]
          [:a.button.primary {:href (make-file-url
                                      (js/JSON.stringify (crop-flat-json flat-json subscription :json) nil 2)
                                      (str file-name ".json")
                                      "application/json")
-                             :download (str file-name ".json")} "download json"]
+                             :download (str file-name ".json")
+                             :on-click #(subscription-notice state subscription)}
+          "download json"]
          [:a.button.primary {:href (make-file-url
                                      full-json
                                      (str file-name ".json")
                                      "application/json")
-                             :download (str file-name "-full.json")}
+                             :download (str file-name "-full.json")
+                             :on-click #(subscription-notice state subscription)}
           "download API json"]]))))
 
 (defn component-help-text []
@@ -726,42 +735,57 @@
     )
   )
 
+(defn component-subscribe-modal [state]
+  (when (:subscribe-modal @state)
+    [:div.modal
+     [:div
+      [:h3 "Your download"]
+      [:p "Your file is now downloading. We have sent you 10 rows of data. To download the full data set please subscribe."]
+      [:p.cta
+       [:button {:on-click #(swap! state dissoc :subscribe-modal)} "No thanks"]
+       [:a {:href "/pricing"
+            :target "_BLANK"} [:button.primary "Subscribe"]]]]]))
+
 (defn component-choose-activity [state user]
   (let [_h (aget js/document "location" "hash")
-        _history (@state :history)]
-    [component-followers state user "followers"]
+        _history (@state :history)
+        subscription (:subscription user)]
+    [:<>
+     [component-followers state user "followers"]
+     (when subscription [:p "Your subscription is active."])
+     [component-subscribe-modal state]]
     #_ [:span
-     (case h
-       "#following" [component-followers state user "following"]
-       "#followers" [component-followers state user "followers"]
-       ;"#tweet-likers" [component-likers state user "liking_users"]
-       ;"#tweet-retweeters" [component-likers state user "retweeted_by"]
-       "#user-timeline" [component-user-tweets state user "timeline"]
-       "#user-likes" [component-user-tweets state user "likes"]
-       "#user-mentions" [component-user-tweets state user "mentions"]
-       "#search-tweets" [component-search-interface state user]
-       [:section#app
-        [:section.ui-layout-container
-         [:h3 "What kind of Twitter data do you need?"]
-         [:h4 "Follower / Following"]
-         [:ul.data-menu
-          [:li [:a {:href "#following"} "List of users followed by a user"]]
-          [:li [:a {:href "#followers"} "List of the followers of a user"]]
-          ;[:li [:a {:href "#tweet-likers"} "Users who liked a particular tweet"]]
-          ;[:li [:a {:href "#tweet-retweeters"} "Users who retweeted a particular tweet"]]
-          ]
-         [:h4 "Tweets"]
-         [:ul.data-menu
-          [:li [:a {:href "#user-timeline"} "Tweets by a user"]]
-          [:li [:a {:href "#user-likes"} "Tweets liked by a user"]]
-          [:li [:a {:href "#user-mentions"} "Tweets a user is mentioned in"]]
-          [:li [:a {:href "#search-tweets"} "Tweets from a search result"]]]
-         [:h4 "Something else"]
-         #_ [:p "If you don't see the type of data you're looking for, "
-          [:a {:href feedback-link} "click here to shoot me an email"]
-          " and help me improve this tool."]]])
-     #_ [:div#feedback [:a {:href dm-link :target "_BLANK"}
-                        [component-icon (rc/inline "fa/comment.svg")]]]]))
+        (case h
+          "#following" [component-followers state user "following"]
+          "#followers" [component-followers state user "followers"]
+          ;"#tweet-likers" [component-likers state user "liking_users"]
+          ;"#tweet-retweeters" [component-likers state user "retweeted_by"]
+          "#user-timeline" [component-user-tweets state user "timeline"]
+          "#user-likes" [component-user-tweets state user "likes"]
+          "#user-mentions" [component-user-tweets state user "mentions"]
+          "#search-tweets" [component-search-interface state user]
+          [:section#app
+           [:section.ui-layout-container
+            [:h3 "What kind of Twitter data do you need?"]
+            [:h4 "Follower / Following"]
+            [:ul.data-menu
+             [:li [:a {:href "#following"} "List of users followed by a user"]]
+             [:li [:a {:href "#followers"} "List of the followers of a user"]]
+             ;[:li [:a {:href "#tweet-likers"} "Users who liked a particular tweet"]]
+             ;[:li [:a {:href "#tweet-retweeters"} "Users who retweeted a particular tweet"]]
+             ]
+            [:h4 "Tweets"]
+            [:ul.data-menu
+             [:li [:a {:href "#user-timeline"} "Tweets by a user"]]
+             [:li [:a {:href "#user-likes"} "Tweets liked by a user"]]
+             [:li [:a {:href "#user-mentions"} "Tweets a user is mentioned in"]]
+             [:li [:a {:href "#search-tweets"} "Tweets from a search result"]]]
+            [:h4 "Something else"]
+            #_ [:p "If you don't see the type of data you're looking for, "
+                [:a {:href feedback-link} "click here to shoot me an email"]
+                " and help me improve this tool."]]])
+        #_ [:div#feedback [:a {:href dm-link :target "_BLANK"}
+                           [component-icon (rc/inline "fa/comment.svg")]]]]))
 
 (defn component-main [state]
   (let [user (auth)]

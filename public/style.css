@@ -126,6 +126,28 @@ main {
 footer {
 }
 
+.modal {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.modal > * {
+  background-color: white;
+  border-radius: 0.375em;
+  padding: 1em 2em;
+  min-width: 50vw;
+  max-width: 90vw;
+  width: 600px;
+}
+
 /*** design mods ***/
 
 .ui-section-header--logo {

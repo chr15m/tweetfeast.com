@@ -18,7 +18,7 @@
 (def lifetime-accounts (read-string (rc/inline "lifetime-accounts.edn")))
 
 (defn view-subscribe [req res]
-  (p/let [template (rc/inline "index.html")
+  (p/let [template (rc/inline "index.original.html")
           user (j/get-in req [:session :user])
           dom (motionless/dom template)
           el (j/call-in dom [:h :bind] nil)
