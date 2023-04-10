@@ -743,8 +743,7 @@
       [:p "Your file is now downloading. We have sent you 10 rows of data. To download the full data set please subscribe."]
       [:p.cta
        [:button {:on-click #(swap! state dissoc :subscribe-modal)} "No thanks"]
-       [:a {:href "/pricing"
-            :target "_BLANK"} [:button.primary "Subscribe"]]]]]))
+       [:a {:href "/pricing"} [:button.primary "Subscribe"]]]]]))
 
 (defn component-choose-activity [state user]
   (let [_h (aget js/document "location" "hash")
