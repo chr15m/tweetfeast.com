@@ -709,7 +709,7 @@
           [:h3 "Export followers"]
           [:p "To download the list of follower/following users simply use this interface.
               Enter the user you would like to download the list for and choose following/followed by.
-              Then click 'Go' to start downloading the data."]
+              Then click 'Go' to start exporting the data. You will be able to download to CSV and JSON format."]
           [:div
            [:select {:on-change #(reset! search-type (-> % .-target .-value))
                      :value @search-type}
