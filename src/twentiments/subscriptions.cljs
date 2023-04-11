@@ -195,7 +195,7 @@
    (when (get-sub-customer subscription)
      [:h3 [:a {:href "/account/portal"} "Update your subscription"] "."])
    [:h3 [:a {:href "/"} "Use the TweetFeast app"] "."]
-   [:h3 [:a {:href (str "https://twitter.com/" (aget user "userName"))
+   [:h3 [:a {:href (str "https://twitter.com/" (if user (aget user "userName") ""))
              :target "_BLANK"}
          "Go to your own twitter account"] "."]])
 
