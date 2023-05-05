@@ -126,6 +126,30 @@ main {
 footer {
 }
 
+footer ul {
+  margin-top: 1em;
+  list-style-type: none;
+  margin-left: 0.25em;
+}
+
+footer ul li {
+  margin-top: 0.5em;
+}
+
+footer ul a {
+  text-decoration: none;
+  color: var(--ui-color-typography-note);
+}
+
+.content-page {
+  text-align: left;
+  margin-top: 2em;
+}
+
+.content-page ul {
+  margin-left: 2em;
+}
+
 .modal {
   position: fixed;
   top: 0px;
@@ -149,6 +173,28 @@ footer {
 }
 
 /*** design mods ***/
+
+.ui-section-footer__layout {
+  align-items: start;
+}
+
+.ui-section-footer__layout svg {
+  width: 32px;
+  height: 32px;
+}
+
+@media screen and (max-width: 600px) {
+  .ui-section-footer__layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ui-section-footer__layout svg {
+    width: 48px;
+    height: 48px;
+    margin: 4em 0px;
+  }
+}
 
 .ui-section-header--logo {
   display: flex;
@@ -379,4 +425,3 @@ table#help td, table#help th {
   border-color: red;
   background-color: rgba(255, 0, 0, 0.1);
 }
-
