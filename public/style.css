@@ -126,6 +126,30 @@ main {
 footer {
 }
 
+footer ul {
+  margin-top: 1em;
+  list-style-type: none;
+  margin-left: 0.25em;
+}
+
+footer ul li {
+  margin-top: 0.5em;
+}
+
+footer ul a {
+  text-decoration: none;
+  color: var(--ui-color-typography-note);
+}
+
+.content-page {
+  text-align: left;
+  margin-top: 2em;
+}
+
+.content-page ul {
+  margin-left: 2em;
+}
+
 .modal {
   position: fixed;
   top: 0px;
@@ -146,15 +170,6 @@ footer {
   min-width: 50vw;
   max-width: 90vw;
   width: 600px;
-}
-
-.content-page {
-  text-align: left;
-  margin-top: 2em;
-}
-
-.content-page ul {
-  margin-left: 2em;
 }
 
 /*** design mods ***/
