@@ -18,7 +18,7 @@
     [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
                              twitter-login twitter-logout twitter-login-done]]
     [twentiments.subscriptions :refer [view-subscribe begin-subscription account
-                                       customer-portal get-and-set-subscription]]))
+                                       customer-portal get-and-set-subscription get-user-subscription]]))
 
 (defonce server (atom nil))
 
@@ -243,10 +243,16 @@
                              (fn [events [user-id day]]
                                (update-in events [user-id] conj day))
                              {}
-                             events-user-days)]
+                             events-user-days)
+            user-subs (p/all (map
+                               (fn [user-id]
+                                 (p/let [sub (get-user-subscription user-id true)]
+                                   (when sub [user-id sub]))) (keys events-by-user)))
+            user-subs (into {} user-subs)]
+      (js/console.log (clj->js user-subs))
       ;(js/console.log (clj->js events-by-user))
       ;(js/console.log (clj->js login-events))
-      (.json res (clj->js {:login-events login-events :user-dates events-by-user})))
+      (.json res (clj->js {:login-events login-events :user-dates events-by-user :user-subs user-subs})))
     (fn [err] (return-json-error res err 404))))
 
 (defn trigger-error [_req _res]

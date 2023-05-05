@@ -168,14 +168,14 @@
     (clj->js {:lifetime true
               :metadata {:tier -1}})))
 
-(defn get-user-subscription [user-id]
+(defn get-user-subscription [user-id & [dont-fetch]]
   (p/let [kv (db/kv "subscriptions")
           sub (.get kv user-id)]
     ; if there is a valid sub cached use that
     ; otherwise re-fetch from the server
     ; TODO: re-check if it is older than N days
     ; to avoid cancelled year subs
-    (if (is-valid sub)
+    (if (or (is-valid sub) dont-fetch)
       sub
       (p/let [lifetime-sub (get-lifetime-sub user-id)
               year-sub (get-sub user-id 2)

@@ -23,27 +23,40 @@
 
 (defn component-main [_state data]
   (js/console.log "Admin data:" data)
-  [:main#app
-   [:section
-    [:h3 "Logins"]
-    [:table
-     [:thead
-      [:tr
-       [:th "user"]
-       [:td "what"]
-       [:td "date"]
-       [:td "when"]
-       [:td "usage"]]]
-     [:tbody
-      (for [row (reverse (sort-by #(aget % "t") (aget data "login-events")))]
-        [:tr {:key (aget row "id")}
-         [:td [:a {:href (str "https://twitter.com/" (aget row "username"))
-                   :target "_BLANK"}
-               (aget row "username")]]
-         [:td (-> (aget row "kind") (.split ":") first)]
-         [:td (simple-date-time (aget row "t"))]
-         [:td (time-since (aget row "t"))]
-         [:td (str (-> data (aget "user-dates") (aget (aget row "id")) count) " days")]])]]]])
+  (let [user-subs (aget data "user-subs")]
+    [:main#app
+     [:section
+      [:h3 "Logins"]
+      [:table
+       [:thead
+        [:tr
+         [:th "user"]
+         [:td "what"]
+         [:td "date"]
+         [:td "when"]
+         [:td "usage"]
+         [:td "sub"]]]
+       [:tbody
+        (for [row
+              (->> (aget data "login-events")
+                   (filter (fn [row] (.startsWith (aget row "kind") "last/request")))
+                   (sort-by (fn [row] (str (get {false 1 true 0} (nil? (aget user-subs (aget row "id")))) "-" (aget row "t") )))
+                   reverse)]
+          (let [sub (aget user-subs (aget row "id"))]
+            [:tr {:key (str (aget row "id") (aget row "kind"))}
+             [:td [:a {:href (str "https://twitter.com/" (aget row "username"))
+                       :target "_BLANK"}
+                   (aget row "username")]]
+             [:td (-> (aget row "kind") (.split ":") first)]
+             [:td (simple-date-time (aget row "t"))]
+             [:td (time-since (aget row "t"))]
+             [:td (str (-> data (aget "user-dates") (aget (aget row "id")) count) " days")]
+             [:td (cond (some-> sub (aget "plan") (aget "active")) "active"
+                        (some-> sub (aget "plan")) "expired"
+                        (some-> sub (aget "object")) "24hr"
+                        (some-> sub (aget "lifetime")) "life"
+                        sub "?"
+                        :else "")]]))]]]]))
 
 ; *** startup *** ;
 
