@@ -302,11 +302,7 @@
   (j/call app :get "/search" authenticate-user search-v1)
   (j/call app :get "/api/*" authenticate-user raw-api)
   (.get app "/admin" authenticate-admin (fn [req res] (serve-homepage "/js/admin.js" req res)))
-  (.get app "/admin/data" authenticate-admin admin-data)
-  ;(.use app authenticate)
-  ;(.get app "/data" get-data)
-  ;(.post app "/save" set-data)
-  )
+  (.get app "/admin/data" authenticate-admin admin-data))
 
 (defn main! []
   (p/let [c (db/client)
