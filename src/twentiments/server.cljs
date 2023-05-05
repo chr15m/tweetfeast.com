@@ -284,7 +284,10 @@
   )
 
 (defn main! []
-  (p/let [[app host port] (web/start)]
+  (p/let [c (db/client)
+          wal-mode-enabled (.query c "PRAGMA journal_mode=WAL;")
+          [app host port] (web/start)]
+    (js/console.log "WAL mode:" wal-mode-enabled)
     (reset! server app)
     (setup-routes app)
     (println "Serving on " (str "http://" host ":" port))))
