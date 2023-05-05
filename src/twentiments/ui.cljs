@@ -615,12 +615,20 @@
            (or (aget results "data")
                (aget results "results")) [:span
                                           [component-data-count results "tweets" (aget results "error")]
-                                          ;[component-rate-limit results]
+                                          [component-rate-limit results]
                                           [component-download-results state user]
                                           (if (@state :results-view-table)
                                             [component-tweets-table state]
                                             [component-tweets state])]
-           :else "No tweets found.")]
+           :else [:span
+                  [:p "No tweets found."]
+                  (let [rate-limit (some-> results (aget "error") (aget "error") (aget "rateLimit"))
+                        remaining (some-> rate-limit (aget "remaining"))
+                        reset (some-> rate-limit (aget "reset") (* 1000))
+                        diff (if reset (- reset (-> (js/Date.) .getTime)) 0)
+                        diff-minutes (-> diff (/ 60000) (js/Math.ceil))]
+                    (when (= remaining 0)
+                      [:p.error "You are rate limited by the Twitter API for " diff-minutes " minutes. Try again then."]))])]
         (when empty-component
           [empty-component])))))
 
@@ -635,7 +643,7 @@
          (cond
            (aget results "data") [:span
                                   [component-data-count results "users" (aget results "error")]
-                                  ;[component-rate-limit results]
+                                  [component-rate-limit results]
                                   [component-download-results state user]
                                   [component-users-table state]]
            :else "Users not found.")]))))
@@ -655,7 +663,7 @@
 
 (defn component-search-interface [state user]
   [:section#app
-   [component-back-button state]
+   ;[component-back-button state]
    [:p "Search for the tweets you want to export and download."]
    [component-search state]
    #_ [:section.options
@@ -674,7 +682,7 @@
     (fn []
       (let [un (or @username (:username user))]
         [:section#app
-         [component-back-button state]
+         ;[component-back-button state]
          [:section.ui-layout-container
           [:h3 "User tweets / likes / mentions"]
           [:p "Tweets from a user timeline, liked by a user, or mentioning a user."]
@@ -727,15 +735,6 @@
                     :value @limit}]]]
          [component-user-results state user]]))))
 
-#_ (defn component-likers [state user default]
-  (let [tweet-url (r/atom nil)
-        search-type (r/atom default)]
-    (fn []
-      (let [tweet-id ()])
-      )
-    )
-  )
-
 (defn component-subscribe-modal [state]
   (when (:subscribe-modal @state)
     [:div.modal
@@ -747,47 +746,61 @@
        [:a {:href "/pricing"} [:button.primary "Subscribe"]]]]]))
 
 (defn component-choose-activity [state user]
-  (let [_h (aget js/document "location" "hash")
+  (let [h (aget js/document "location" "hash")
         _history (@state :history)
         subscription (:subscription user)]
+    #_ [:<>
+        [component-followers state user "followers"]
+        (when subscription
+          [:section.ui-layout-container
+           [:p "Your subscription is active and you can download the full data set."]])
+        [component-subscribe-modal state]]
     [:<>
-     [component-followers state user "followers"]
+     ; NOTE: uncomment this to add the menu at the top for different download types
+     #_ [:nav.exports
+         [:ul
+          [:li [:a {:href "#followers"} [:button.primary "Export followers"]]]
+          [:li [:a {:href "#user-timeline"} [:button.primary "Export tweets"]]]
+          ;[:li [:a {:href "#user-likes"} [:button.primary "Export likes"]]]
+          ;[:li [:a {:href "#search-tweets"} [:button.primary "Export search"]]]
+          ]]
+     [:span
+      (case h
+        "#following" [component-followers state user "following"]
+        "#followers" [component-followers state user "followers"]
+        ;"#tweet-likers" [component-likers state user "liking_users"]
+        ;"#tweet-retweeters" [component-likers state user "retweeted_by"]
+        "#user-timeline" [component-user-tweets state user "timeline"]
+        "#user-likes" [component-user-tweets state user "likes"]
+        "#user-mentions" [component-user-tweets state user "mentions"]
+        "#search-tweets" [component-search-interface state user]
+        [component-followers state user "followers"]
+        #_ [:section#app
+            [:section.ui-layout-container
+             [:h3 "What kind of Twitter data do you need?"]
+             [:h4 "Follower / Following"]
+             [:ul.data-menu
+              [:li [:a {:href "#following"} "List of users followed by a user"]]
+              [:li [:a {:href "#followers"} "List of the followers of a user"]]
+              ;[:li [:a {:href "#tweet-likers"} "Users who liked a particular tweet"]]
+              ;[:li [:a {:href "#tweet-retweeters"} "Users who retweeted a particular tweet"]]
+              ]
+             [:h4 "Tweets"]
+             [:ul.data-menu
+              [:li [:a {:href "#user-timeline"} "Tweets by a user"]]
+              [:li [:a {:href "#user-likes"} "Tweets liked by a user"]]
+              [:li [:a {:href "#user-mentions"} "Tweets a user is mentioned in"]]
+              [:li [:a {:href "#search-tweets"} "Tweets from a search result"]]]
+             [:h4 "Something else"]
+             #_ [:p "If you don't see the type of data you're looking for, "
+                 [:a {:href feedback-link} "click here to shoot me an email"]
+                 " and help me improve this tool."]]])
+      #_ [:div#feedback [:a {:href dm-link :target "_BLANK"}
+                         [component-icon (rc/inline "fa/comment.svg")]]]]
      (when subscription
        [:section.ui-layout-container
         [:p "Your subscription is active and you can download the full data set."]])
-     [component-subscribe-modal state]]
-    #_ [:span
-        (case h
-          "#following" [component-followers state user "following"]
-          "#followers" [component-followers state user "followers"]
-          ;"#tweet-likers" [component-likers state user "liking_users"]
-          ;"#tweet-retweeters" [component-likers state user "retweeted_by"]
-          "#user-timeline" [component-user-tweets state user "timeline"]
-          "#user-likes" [component-user-tweets state user "likes"]
-          "#user-mentions" [component-user-tweets state user "mentions"]
-          "#search-tweets" [component-search-interface state user]
-          [:section#app
-           [:section.ui-layout-container
-            [:h3 "What kind of Twitter data do you need?"]
-            [:h4 "Follower / Following"]
-            [:ul.data-menu
-             [:li [:a {:href "#following"} "List of users followed by a user"]]
-             [:li [:a {:href "#followers"} "List of the followers of a user"]]
-             ;[:li [:a {:href "#tweet-likers"} "Users who liked a particular tweet"]]
-             ;[:li [:a {:href "#tweet-retweeters"} "Users who retweeted a particular tweet"]]
-             ]
-            [:h4 "Tweets"]
-            [:ul.data-menu
-             [:li [:a {:href "#user-timeline"} "Tweets by a user"]]
-             [:li [:a {:href "#user-likes"} "Tweets liked by a user"]]
-             [:li [:a {:href "#user-mentions"} "Tweets a user is mentioned in"]]
-             [:li [:a {:href "#search-tweets"} "Tweets from a search result"]]]
-            [:h4 "Something else"]
-            #_ [:p "If you don't see the type of data you're looking for, "
-                [:a {:href feedback-link} "click here to shoot me an email"]
-                " and help me improve this tool."]]])
-        #_ [:div#feedback [:a {:href dm-link :target "_BLANK"}
-                           [component-icon (rc/inline "fa/comment.svg")]]]]))
+     [component-subscribe-modal state]]))
 
 (defn component-main [state]
   (let [user (auth)]

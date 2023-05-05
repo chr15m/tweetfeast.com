@@ -299,6 +299,19 @@ button svg {
   margin: 2em 0px;
 }
 
+nav.exports {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 2em;
+  margin-bottom: -1em;
+  margin-left: 2em;
+}
+
+nav.exports ul {
+  display: flex;
+  list-style-type: none;
+}
+
 /*** styling table ***/
 
 table {
