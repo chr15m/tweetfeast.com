@@ -7,6 +7,7 @@
     [sitefox.logging :refer [bind-console-to-file]]
     [sitefox.tracebacks :refer [install-traceback-emailer]]
     [reagent.dom.server :refer [render-to-static-markup]]
+    ["express-basic-auth" :as basic-auth]
     ["motionless" :as motionless]
     ["wink-sentiment" :as sentiment]
     ["marked" :as marked]
@@ -86,7 +87,13 @@
     (update-nav dom user)
     (.send res (.render dom))))
 
-(defn authenticate-admin [req res n]
+
+(def authenticate-admin
+  (basic-auth (clj->js {:users {"admin" (env "ADMIN_PASSWORD")}
+                        :challenge true
+                        :realm "Admin"})))
+
+#_ (defn authenticate-admin [req res n]
   (let [user (j/get-in req [:session :user])]
     (if (and user
              (or
@@ -150,17 +157,17 @@
     (update-nav dom user)
     (.send res (.render dom))))
 
-(defn serve-homepage [mainfile req res]
+(defn serve-homepage [mainfile req res & [allow-anonymous]]
   (let [template (rc/inline "index.html")
         user (j/get-in req [:session :user])]
-    (if user
-      (p/let [user-id (aget user "userId")
-              user-profile (aget user "profile")
+    (if (or user allow-anonymous)
+      (p/let [user-id (when user (aget user "userId"))
+              user-profile (when user (aget user "profile"))
               subscription (get-and-set-subscription user-id)
               dom (motionless/dom template)
               el (j/call-in dom [:h :bind] nil)
               app (j/call dom :$ "main")]
-        (aset user-profile "subscription" subscription)
+        (when subscription (aset user-profile "subscription" subscription))
         (aset app "innerHTML" "")
         (.appendChild app (el "div" #js {:id "loading"} (el "div" #js {:className "spinner spin"})))
         (.after app (el "script" #js {:src mainfile}))
@@ -301,7 +308,7 @@
   (j/call app :get "/account" authenticate-user account)
   (j/call app :get "/search" authenticate-user search-v1)
   (j/call app :get "/api/*" authenticate-user raw-api)
-  (.get app "/admin" authenticate-admin (fn [req res] (serve-homepage "/js/admin.js" req res)))
+  (.get app "/admin" authenticate-admin (fn [req res] (serve-homepage "/js/admin.js" req res true)))
   (.get app "/admin/data" authenticate-admin admin-data))
 
 (defn main! []
