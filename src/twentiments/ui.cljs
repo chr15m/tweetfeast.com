@@ -126,7 +126,7 @@
             next-token (j/get-in json [:meta :next_token])
             merged-json (merge-user-json (or parent-json #js {}) json limit)
             fetched-count (count (j/get parent-json :data))]
-      (log "get-user-tweets" fetched-count next-token (j/get parent-json :rateLimit))
+      (log "get-user-follows" fetched-count next-token (j/get parent-json :rateLimit))
       (reset! progress (str "downloaded " fetched-count " users..."))
       (if (and next-token (< fetched-count (or limit max-records)))
         (get-user-follow user-id search-type limit progress merged-json next-token)
