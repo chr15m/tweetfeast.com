@@ -148,6 +148,15 @@ footer {
   width: 600px;
 }
 
+.content-page {
+  text-align: left;
+  margin-top: 2em;
+}
+
+.content-page ul {
+  margin-left: 2em;
+}
+
 /*** design mods ***/
 
 .ui-section-header--logo {

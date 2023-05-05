@@ -32,23 +32,25 @@
 
 ; *** function calls *** ;
 
+(defn parse-content-file [f path]
+  (let [f (.replace f ".md" "")
+        content (-> (str path f ".md")
+                    (fs/readFileSync)
+                    (.toString))
+        description (-> content
+                        (.split "\n")
+                        (.filter (fn [l] (not (or (.startsWith l "# ") (= l "")))))
+                        first)
+        title (-> f
+                  (.replace (js/RegExp. "-" "g") " ")
+                  (.replace (js/RegExp. "\\b\\w" "g") #(.toUpperCase %)))]
+    {f [title description content]}))
+
 (def article-list
   (into {}
         (-> (fs/readdirSync "src/content")
             (.filter #(.endsWith % ".md"))
-            (.map (fn [f]
-                    (let [f (.replace f ".md" "")
-                          content (-> (str "src/content/" f ".md")
-                                      (fs/readFileSync)
-                                      (.toString))
-                          description (-> content
-                                          (.split "\n")
-                                          (.filter (fn [l] (not (or (.startsWith l "# ") (= l "")))))
-                                          first)
-                          title (-> f
-                                    (.replace (js/RegExp. "-" "g") " ")
-                                    (.replace (js/RegExp. "\\b\\w" "g") #(.toUpperCase %)))]
-                      {f [title description content]})))
+            (.map #(parse-content-file % "src/content/"))
             vec)))
 
 (defn make-simple-page [req content]
@@ -63,6 +65,26 @@
                           (.h dom "h2" content))))
     (update-nav dom user)
     (.render dom)))
+
+(defn content-page [req res page-filename]
+  (let [user (j/get-in req [:session :user])
+        template (rc/inline "index.html")
+        dom (motionless/dom template)
+        el-app (.$ dom "main")
+        el-title (.$ dom "title")
+        parsed (parse-content-file page-filename "src/pages/")
+        [title _description content] (-> parsed vals first)
+        title (.replace title "And" "&")
+        content-parsed (.$ (motionless/dom (marked content)) "body")]
+    (aset el-title "textContent" (str title " - TweetFeast"))
+    (aset el-app "innerHTML" "")
+    (.appendChild el-app
+                  (.h dom "section" #js {:className "ui-section-pricing"}
+                      (.h dom "div" #js {:className "ui-layout-container"}
+                          #js [(.h dom "h2" title)
+                               (.h dom "div" #js {:className "content-page"} content-parsed)])))
+    (update-nav dom user)
+    (.send res (.render dom))))
 
 (defn authenticate-admin [req res n]
   (let [user (j/get-in req [:session :user])]
@@ -147,9 +169,6 @@
         (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
         (.send res (j/call dom :render)))
       (.send res template))))
-
-(defn soon [req res]
-  (.send res (make-simple-page req "Soon.")))
 
 ; *** API *** ;
 
@@ -249,7 +268,7 @@
                                  (p/let [sub (get-user-subscription user-id true)]
                                    (when sub [user-id sub]))) (keys events-by-user)))
             user-subs (into {} user-subs)]
-      (js/console.log (clj->js user-subs))
+      ;(js/console.log (clj->js user-subs))
       ;(js/console.log (clj->js events-by-user))
       ;(js/console.log (clj->js login-events))
       (.json res (clj->js {:login-events login-events :user-dates events-by-user :user-subs user-subs})))
@@ -271,6 +290,8 @@
   (.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
   (.get app "/pricing" view-subscribe)
   ;(.get app "/login" soon)
+  (.get app "/privacy-policy" #(content-page %1 %2 "privacy-policy.md"))
+  (.get app "/terms-and-conditions" #(content-page %1 %2 "terms-and-conditions.md"))
   (.get app "/login" twitter-login)
   (.get app "/logout" twitter-logout)
   (j/call app :post "/account/begin-subscription" begin-subscription)
