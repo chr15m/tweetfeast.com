@@ -174,6 +174,28 @@ footer ul a {
 
 /*** design mods ***/
 
+.ui-section-footer__layout {
+  align-items: start;
+}
+
+.ui-section-footer__layout svg {
+  width: 32px;
+  height: 32px;
+}
+
+@media screen and (max-width: 600px) {
+  .ui-section-footer__layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ui-section-footer__layout svg {
+    width: 48px;
+    height: 48px;
+    margin: 4em 0px;
+  }
+}
+
 .ui-section-header--logo {
   display: flex;
   text-decoration: none;
@@ -403,4 +425,3 @@ table#help td, table#help th {
   border-color: red;
   background-color: rgba(255, 0, 0, 0.1);
 }
-
