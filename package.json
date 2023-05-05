@@ -23,7 +23,7 @@
     "morgan": "1.10.0",
     "motionless": "0.0.4",
     "nbb": "0.0.107",
-    "node-fetch": "2.6.1",
+    "node-fetch": "2.6.7",
     "node-html-parser": "4.1.5",
     "nodemailer": "6.5.0",
     "react": "16.13.0",
