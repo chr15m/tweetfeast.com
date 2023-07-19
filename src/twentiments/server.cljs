@@ -6,6 +6,7 @@
     [sitefox.util :refer [env btoa]]
     [sitefox.logging :refer [bind-console-to-file]]
     [sitefox.tracebacks :refer [install-traceback-emailer]]
+    [sitefox.mail :refer [send-email]]
     [reagent.dom.server :refer [render-to-static-markup]]
     ["express-basic-auth" :as basic-auth]
     ["motionless" :as motionless]
@@ -113,6 +114,15 @@
       (if (aget req "xhr")
         (return-json-error res {:message "Unauthorized."} 403)
         (.redirect res (str "/login?next=" (aget req "path")))))))
+
+(defn rate-limit-notify! [req data]
+  (let [rate-limit (j/get-in data [:rateLimit])
+        remaining (j/get-in rate-limit [:remaining])]
+    (when (< remaining 5)
+      ;(js/console.log "Notifying admin about rate limit breach.")
+      (send-email (env "ADMIN_EMAIL") (env "ADMIN_EMAIL") "TweetFeast rate limit"
+                  :text (str "Remaining: " remaining "\n\n"
+                             (js/JSON.stringify (j/get-in req [:session :user :profile])))))))
 
 ; *** pages *** ;
 
@@ -224,6 +234,7 @@
             (when (not (aget query "next"))
               (log-event "last/request" (aget user "userId") user)
               (log-event "event/search-v1" (rnd-id) user (js->clj query)))
+            (rate-limit-notify! req data)
             (.json res (-> (j/get-in data [:data])
                            (j/assoc! :rateLimit (j/get-in data [:rateLimit]))))))
         (.catch
@@ -239,6 +250,8 @@
     (-> (.get (aget tw v) (-> (aget req "url") (.replace "/api/" "") (.replace "v1/" "")) #js {} #js {:fullResponse true})
         (.then
           (fn [data]
+            ;(js/console.log "raw-api rateLimit" v (j/get-in data [:rateLimit]) (j/get-in req [:session :user]))
+            (rate-limit-notify! req data)
             (.json res
                    (-> (j/get-in data [:data])
                        (j/assoc! :rateLimit (j/get-in data [:rateLimit]))))))
