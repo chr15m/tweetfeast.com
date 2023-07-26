@@ -309,7 +309,7 @@
   (.get app "/articles/:article" articles)
   (.get app "/exporter" (fn [req res] (serve-homepage "/js/main.js" req res)))
   ;(.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
-  (.get app "/generate" (fn [req res] (serve-homepage "/js/generate.js" req res)))
+  (.get app "/ai-tweet-generator" (fn [req res] (serve-homepage "/js/generate.js" req res true)))
   (.get app "/pricing" view-subscribe)
   ;(.get app "/login" soon)
   (.get app "/privacy-policy" #(content-page %1 %2 "privacy-policy.md"))

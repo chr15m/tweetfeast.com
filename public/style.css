@@ -40,6 +40,18 @@ fieldset.horizontal {
   flex-direction: row;
 }
 
+details {
+  margin: 1em 0px;
+}
+
+details summary {
+  cursor: pointer;
+}
+
+details ul {
+  margin: 1em;
+}
+
 .user-profile {
   text-align: right;
 }
@@ -361,6 +373,17 @@ table#help td, table#help th {
 
 .results p {
   margin-top: 2em;
+}
+
+/*** tweet generator ***/
+
+.generator li {
+  margin-left: 1em;
+}
+
+.generator textarea {
+  width: 100%;
+
 }
 
 /*** styling tweets ***/
