@@ -1,8 +1,8 @@
 (ns twentiments.generator
   (:require
-    ["process" :refer [env]]
     [promesa.core :as p]
     [applied-science.js-interop :as j]
+    ["process" :refer [env]]
     ["htmlparser2" :refer [parseFeed]]
     ["openai" :refer [Configuration OpenAIApi]]  
     [twentiments.filecache :refer [fetch-and-cache-url]]))
@@ -87,8 +87,9 @@
           (.status 404)
           (.json res "Nope. Parameters missing.")))))
 
-(p/let [topic "Brevity is the soul of wit and also good programming."
-        ;topic "On investing time and money in your tools and not just working on projects."
-        tweets (fetch-tweets "naval")
-        result (generate-tweets tweets topic)]
-  (js/console.log result))
+#_ (p/let [topic "Brevity is the soul of wit and also good programming."
+           ;topic "On investing time and money in your tools and not just working on projects."
+           tweets (fetch-tweets "naval")
+           result (generate-tweets tweets topic)]
+     (js/console.log result))
+
