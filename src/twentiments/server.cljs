@@ -20,7 +20,8 @@
     [twentiments.api :refer [return-json-error log-event rnd-id twitter twitter-environment
                              twitter-login twitter-logout twitter-login-done]]
     [twentiments.subscriptions :refer [view-subscribe begin-subscription account
-                                       customer-portal get-and-set-subscription get-user-subscription]]))
+                                       customer-portal get-and-set-subscription get-user-subscription]]
+    [twentiments.generator :refer [generate-tweets-api]]))
 
 (defonce server (atom nil))
 
@@ -320,6 +321,7 @@
   (j/call app :get "/trigger-error" trigger-error)
   (j/call app :get "/account" authenticate-user account)
   (j/call app :get "/search" authenticate-user search-v1)
+  (j/call app :get "/api/generate" authenticate-user generate-tweets-api)
   (j/call app :get "/api/*" authenticate-user raw-api)
   (.get app "/admin" authenticate-admin (fn [req res] (serve-homepage "/js/admin.js" req res true)))
   (.get app "/admin/data" authenticate-admin admin-data))
