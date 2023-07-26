@@ -1,8 +1,12 @@
 .*.swp
+*.sqlite
 .shadow-cljs
 .clj-kondo/.cache
+.feed-cache
 devserver.js
-node_modules
+database.sqlite*
 package-lock.json
+node_modules
+logs
 public/js
-*.sqlite
+workspace
