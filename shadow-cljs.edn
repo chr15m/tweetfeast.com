@@ -15,8 +15,10 @@
                                  :depends-on #{:common}}
                           :admin {:init-fn twentiments.admin/main!
                                   :depends-on #{:common}}
-                          :read {:init-fn twentiments.read/main!
-                                   :depends-on #{:common}}}
+                          :generate {:init-fn twentiments.ui.generator/main!
+                                     :depends-on #{:common}}
+                          #_#_ :read {:init-fn twentiments.read/main!
+                                      :depends-on #{:common}}}
                 :devtools {:watch-dir "public"}
                 :release {:output-dir "build/js"}}}}
 

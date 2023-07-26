@@ -11,7 +11,7 @@ test.js: src/**/*.cljs shadow-cljs.edn node_modules
 build: src/**/* $(STATIC) node_modules
 	mkdir -p build
 	cp -LR --preserve=all $(STATIC) build
-	npx shadow-cljs release app
+	npx shadow-cljs release app generate
 	touch build
 
 node_modules: package.json
@@ -29,10 +29,10 @@ server:
 	sleep 1 && while [ 1 ]; do node devserver.js; sleep 3; done
 
 watcher: src/**/*.cljs node_modules
-	npx shadow-cljs watch server app
+	npx shadow-cljs watch server app generate
 
 watch:
 	make -j2 watcher server
 
 repl:
-	npx shadow-cljs cljs-repl app
+	npx shadow-cljs cljs-repl app generate
