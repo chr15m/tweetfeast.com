@@ -168,7 +168,7 @@
     (update-nav dom user)
     (.send res (.render dom))))
 
-(defn serve-homepage [mainfile req res & [allow-anonymous]]
+(defn serve-app [mainfile req res & [allow-anonymous]]
   (let [template (rc/inline "index.html")
         user (j/get-in req [:session :user])]
     (if (or user allow-anonymous)
@@ -185,6 +185,25 @@
         (.after app (el "script" #js {:src "/js/common.js"}))
         (update-nav dom user)
         (.setAttribute app "data-user" (-> user-profile js/JSON.stringify btoa))
+        (.send res (j/call dom :render)))
+      (.send res template))))
+
+(defn serve-homepage [req res]
+  (let [template (rc/inline "index.html")
+        user (j/get-in req [:session :user])]
+    (if user
+      (p/let [user-id (when user (aget user "userId"))
+              user-profile (when user (aget user "profile"))
+              subscription (get-and-set-subscription user-id)
+              dom (motionless/dom template)
+              exporter-link (j/call dom :$ ".cta.exporter>button") 
+              generator-link (j/call dom :$ ".cta.generator>button")
+              notes (j/call dom :$$ ".note")]
+        (when subscription (aset user-profile "subscription" subscription))
+        (update-nav dom user)
+        (j/assoc! exporter-link :innerHTML "Export followers")
+        (j/assoc! generator-link :innerHTML "Generate tweets")
+        (.map notes #(.remove %))
         (.send res (j/call dom :render)))
       (.send res template))))
 
@@ -302,14 +321,14 @@
 
 (defn setup-routes [app]
   (web/reset-routes app)
-  (.get app "/$" (fn [req res] (serve-homepage "/js/main.js" req res)))
+  (.get app "/$" serve-homepage)
   (web/static-folder app "/" (if (env "NGINX_SERVER_NAME") "build" "public"))
   (.use app web/strip-slash-redirect)
   (.get app "/articles" articles)
   (.get app "/articles/:article" articles)
-  (.get app "/exporter" (fn [req res] (serve-homepage "/js/main.js" req res)))
+  (.get app "/exporter" (fn [req res] (serve-app "/js/main.js" req res)))
   ;(.get app "/reader*" (fn [req res] (serve-homepage "/js/read.js" req res)))
-  (.get app "/ai-tweet-generator" (fn [req res] (serve-homepage "/js/generate.js" req res true)))
+  (.get app "/ai-tweet-generator" (fn [req res] (serve-app "/js/generate.js" req res true)))
   (.get app "/pricing" view-subscribe)
   ;(.get app "/login" soon)
   (.get app "/privacy-policy" #(content-page %1 %2 "privacy-policy.md"))
@@ -324,7 +343,7 @@
   (j/call app :get "/search" authenticate-user search-v1)
   (j/call app :get "/api/generate" authenticate-user generate-tweets-api)
   (j/call app :get "/api/*" authenticate-user raw-api)
-  (.get app "/admin" authenticate-admin (fn [req res] (serve-homepage "/js/admin.js" req res true)))
+  (.get app "/admin" authenticate-admin (fn [req res] (serve-app "/js/admin.js" req res true)))
   (.get app "/admin/data" authenticate-admin admin-data))
 
 (defn main! []

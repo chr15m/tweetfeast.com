@@ -8,6 +8,10 @@
 
 (defonce state (r/atom nil))
 
+(defn initiate-generate-tweets! [state _*username _*topic]
+  (swap! state assoc :fetching true)
+  )
+
 (defn component-home [_state user username topic]
   (let [_subscription (:subscription user)
         un (or @username (:username user))]
@@ -49,9 +53,11 @@
          {:placeholder "Topic you'd like to generate tweets about."
           :on-change #(reset! topic (-> % .-target .-value))
           :value @topic}]
-        [:p [:button.primary "Generate tweets"] [:br]
+        [:p [:button.primary
+             ;{:on-click #(initiate-generate-tweets! @username @topic)}
+             "Generate tweets"] [:br]
          [:small "Note: no tweets will be posted. You will be shown tweets and you can choose what to post."]]]
-       [:a.button.primary {:href "/login"} "Sign in with twitter to start"])]))
+       [:a.button.primary {:href "/login?next=/ai-tweet-generator"} "Sign in to start"])]))
 
 (defn ^:dev/after-load reload! []
   (js/console.log "reload!")

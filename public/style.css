@@ -62,7 +62,7 @@ nav {
 }
 
 nav > * {
-  margin: 0px 0.5em;
+  margin: 0px 0em;
 }
 
 section#app > *, section#app > span > * {

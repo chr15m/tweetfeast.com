@@ -38,7 +38,8 @@
 
 (def prompt-2
   "Ok, now here is the topic or reference text I would like you to tweet about.
-  Please generate new tweets based on this topic or reference text.")
+  Please generate new tweets based on this topic or reference text.
+  Please output the tweets in JSON format as an array of strings with one array entry for each tweet.")
 
 ;Tweet like one of the a greatest minds in the modern world.
 

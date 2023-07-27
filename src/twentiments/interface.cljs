@@ -17,17 +17,23 @@
                                     :aria-label "Sign out"
                                     :className "ui-section-header--nav-link"}
                            "Sign out")
-          #_#_ app-link (el "a" #js {:href "/exporter"
+          app1-link (el "a" #js {:href "/exporter"
                                 :role "link"
-                                :aria-label "Exporter"
+                                :aria-label "Followers exporter"
                                 :className "ui-section-header--nav-link"}
-                       "Exporter")
+                       "Followers")
+          app2-link (el "a" #js {:href "/ai-tweet-generator"
+                                :role "link"
+                                :aria-label "AI Tweet Generator"
+                                :className "ui-section-header--nav-link"}
+                       "Generate")
           profile-image (el "div" #js {:className "user-profile"}
                             (el "a" (clj->js {:href "/account"})
                                 (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
       (aset nav "innerHTML" "")
       ;(.remove ($ "#sign-in-link"))
       (.appendChild nav articles-link)
-      ; (.appendChild nav app-link)
+      (.appendChild nav app1-link)
+      (.appendChild nav app2-link)
       (.appendChild nav signout-link)
       (.appendChild nav profile-image))))

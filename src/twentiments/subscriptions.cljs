@@ -194,7 +194,8 @@
   [:section
    (when (get-sub-customer subscription)
      [:h3 [:a {:href "/account/portal"} "Update your subscription"] "."])
-   [:h3 [:a {:href "/"} "Use the TweetFeast app"] "."]
+   [:h3 [:a {:href "/exporter"} "Use the Followers Exporter"] "."]
+   [:h3 [:a {:href "/ai-tweet-generator"} "Use AI Tweet Generator"] "."]
    [:h3 [:a {:href (str "https://twitter.com/" (if user (aget user "userName") ""))
              :target "_BLANK"}
          "Go to your own twitter account"] "."]])
@@ -209,14 +210,14 @@
       [:p [:strong "Your subscription is currently paused."]])
     [component-account-nav user subscription]]])
 
-(defn component-account-not-subscribed []
+(defn component-account-not-subscribed [user]
   [:section {:class "ui-section-articles"}
    [:div {:class "ui-layout-container"}
     [:h2 "Not subscribed"]
     [:p "You don't have an active TweetFeast subscription."]
     [:p
      [:a.button.primary {:href "/pricing"} "Subscribe"]]
-    [component-account-nav]]])
+    [component-account-nav user]]])
 
 (defn account [req res]
   (p/let [user (j/get-in req [:session :user])
@@ -239,7 +240,7 @@
     (aset app "innerHTML"
           (render (if tier
                     [component-account-subscribed subscription tier-description user]
-                    [component-account-not-subscribed])))
+                    [component-account-not-subscribed user])))
     (update-nav dom user)
     (.send res (j/call dom :render))))
 
