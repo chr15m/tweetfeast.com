@@ -142,6 +142,8 @@ main {
 }
 
 footer {
+  border-top: 1px solid silver;
+  margin-top: 2em;
 }
 
 footer ul {
@@ -157,6 +159,10 @@ footer ul li {
 footer ul a {
   text-decoration: none;
   color: var(--ui-color-typography-note);
+}
+
+footer p {
+  color: #555;
 }
 
 .content-page {
