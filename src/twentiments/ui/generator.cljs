@@ -19,6 +19,18 @@
           result (.json res)]
     (swap! state assoc :result result :fetching nil)))
 
+; *** view *** ;
+
+(defn component-subscribe-modal [state]
+  (when (:subscribe-modal @state)
+    [:div.modal
+     [:div
+      [:h3 "Your generated tweets"]
+      [:p "Subscribe to generate 1000s of tweets."]
+      [:p.cta
+       [:button {:on-click #(swap! state dissoc :subscribe-modal)} "No thanks"]
+       [:a {:href "/pricing"} [:button.primary "Subscribe"]]]]]))
+
 (defn component-tweet [tweet]
   [:div.twitter-tweet {:key (aget tweet "id")}
    [:div.profile
@@ -54,42 +66,54 @@
   ;[:pre (js/JSON.stringify (:result @state) nil 2)]
   (let [username (:username user)
         fullname (:name user)
+        subscription (:subscription user)
         tweets (:result @state)]
     [:<>
      (for [t (range (count tweets))]
        (let [tweet (nth tweets t)
+             tweet (if (and (not subscription) (>= t 3))
+                     "Subscribe to TweetFeast to generate more tweets. Find out more at tweetfeast.com!"
+                     tweet)
              tweet-this-link (str "https://twitter.com/intent/tweet?text="
                                   (js/encodeURIComponent tweet)
                                   "&related=GetTweetFeast")]
-         [:div.generated-tweet {:key tweet}
-          [:div.twitter-tweet
-           [:div.profile
-            [:img {:src (:profile_image_url user)}]
-            [:div
-             [:a.name
-              {:href (str "https://twitter.com/" username)} fullname] [:br]
-             [:a.username
-              {:href (str "https://twitter.com/" username)} "@" username]
-             #_ [:span.timesince "1h"]]]
-           [:div.tweet
-            {:ref (fn [el]
-                    (when el
-                      ; TODO: sanitize this? security issue if ChatGPT generates a script tag.
-                      (aset el "innerHTML"
-                            (-> tweet (.replace "\n" "<br/>") (twitter-text/autoLink)))
-                      (twemoji/parse el)))}]
-           #_ [:div.date
-               [:a {:href tweet-this-link}
-                "2023-01-01"]]
-           #_ [:div
-               [:span "likes: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]
-               [:span "replies: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]
-               [:span "quotes: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]
-               [:span "retweets: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]]]
-          [:div.actions
-           [:a {:href tweet-this-link :target "_BLANK"}
-            [:button.primary "Edit on Twitter "
-             [component-twicon "👉️"]]]]]))]))
+         ^{:key t}
+         [:<>
+          (when (and (not subscription) (= t 4))
+            [:div.subscribe-notice
+             [:h3 "Get more generated tweets"]
+             [:p "Subscribe to generate 1000s of tweets every month!"]
+             [:p.cta
+              [:a {:href "/pricing"} [:button.primary "Subscribe"]]]])
+          [:div.generated-tweet
+           [:div.twitter-tweet {:class (when (and (not subscription) (>= t 3)) "blur")}
+            [:div.profile
+             [:img {:src (:profile_image_url user)}]
+             [:div
+              [:a.name
+               {:href (str "https://twitter.com/" username)} fullname] [:br]
+              [:a.username
+               {:href (str "https://twitter.com/" username)} "@" username]
+              #_ [:span.timesince "1h"]]]
+            [:div.tweet
+             {:ref (fn [el]
+                     (when el
+                       ; TODO: sanitize this? security issue if ChatGPT generates a script tag.
+                       (aset el "innerHTML"
+                             (-> tweet (.replace "\n" "<br/>") (twitter-text/autoLink)))
+                       (twemoji/parse el)))}]
+            #_ [:div.date
+                [:a {:href tweet-this-link}
+                 "2023-01-01"]]
+            #_ [:div
+                [:span "likes: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]
+                [:span "replies: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]
+                [:span "quotes: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]
+                [:span "retweets: " (-> (js/Math.random) (* 100) (.toFixed 1)) "k"]]]
+           [:div.actions
+            [:a {:href tweet-this-link :target "_BLANK"}
+             [:button.primary "Edit on Twitter "
+              [component-twicon "👉️"]]]]]]))]))
 
 (defn component-back-button [state]
   [:p [:a {:href "/ai-tweet-generator"
@@ -104,12 +128,15 @@
 (defn component-compact-ui [username topic]
   [:<>
    [:p "Tweet like: @" [:strong username]]
-   [:p "Topic:"
-    [:blockquote "\"" topic "\""]]])
+   [:p "Topic:"]
+   [:blockquote "\"" topic "\""]])
+
+(defn auto-resize-textarea [el]
+  (j/assoc-in! el [:style :height] "5px")
+  (j/assoc-in! el [:style :height] (str (j/get el :scrollHeight) "px")))
 
 (defn component-home [state user]
-  (let [_subscription (:subscription user)
-        un (or (:username @state) (:username user))]
+  (let [un (or (:username @state) (:username user))]
     ;[:div (pr-str subscription)]
     ;[:pre (pr-str user)]
     ;[:pre (pr-str @state)]
@@ -124,6 +151,7 @@
        [:<>
         [component-back-button state]
         [component-compact-ui (:username @state) (:topic @state)]
+        [:p "Hint: use Twitter's schedule function to queue up multiple tweets."]
         [:h3 "Generated Tweets" [component-twicon "👇️"]]
         [component-generated-tweet-list state user]]
        :else
@@ -151,6 +179,7 @@
              [:li "Something that happened to you today."]
              [:li "Copy and paste part of an article you read."]
              [:li "A good idea you heard recently."]
+             [:li "A tweet you would like to re-word."]
              [:li "Paste in a quote from somebody famous. "
               [:a {:href "https://www.goodreads.com/quotes/"
                    :target "_BLANK"}
@@ -159,7 +188,9 @@
              [:li "Something that helped you recently."]]]
            [:textarea
             {:placeholder "Topic you'd like to generate tweets about."
-             :on-change #(swap! state assoc :topic (-> % .-target .-value))
+             :on-change (fn [ev]
+                          (swap! state assoc :topic (-> ev .-target .-value))
+                          (auto-resize-textarea (-> ev .-target)))
              :value (:topic @state)}]
            (if (:fetching @state)
              [component-progress "Hang tight, this can take up to two minutes."]

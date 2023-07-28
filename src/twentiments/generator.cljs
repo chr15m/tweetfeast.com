@@ -5,6 +5,7 @@
     ["process" :refer [env]]
     ["htmlparser2" :refer [parseFeed]]
     ["openai" :refer [Configuration OpenAIApi]]  
+    [sitefox.mail :refer [send-email]]
     [twentiments.filecache :refer [fetch-and-cache-url]]))
 
 (defn process-feed [url]
@@ -94,11 +95,14 @@
   ; TODO: guard against errors, timeouts etc.
   (let [username (j/get-in req [:query :username])
         topic (j/get-in req [:query :topic])]
+    (when (and username topic)
+      (send-email (j/get env :ADMIN_EMAIL) (j/get env :ADMIN_EMAIL)
+                  "TweetFeast generator run"
+                  :text (js/JSON.stringify (j/get req :query) nil 2)))
     (if (and username topic)
       (p/let [tweets (fetch-tweets username)
               generated (generate-tweets tweets topic)
               extract-array (first (.exec re-json-array generated))
-              _ (js/console.log extract-array)
               parsed (try (js/JSON.parse extract-array)
                           (catch :default e
                             #js {:error "Error parsing response."

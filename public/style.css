@@ -389,6 +389,7 @@ table#help td, table#help th {
 
 .generator textarea {
   width: 100%;
+  min-height: 7em;
 }
 
 .generator .progress {
@@ -398,6 +399,19 @@ table#help td, table#help th {
 .generator blockquote {
   border-left: 1px solid silver;
   padding-left: 1em;
+}
+
+.generator .subscribe-notice {
+  border-radius: 0.5em;
+  border: 1px solid #aaa;
+  text-align: center;
+  padding: 1em;
+}
+
+.generated-tweet .blur {
+  filter: blur(0.25em);
+  pointer-events: none;
+  user-select: none;
 }
 
 .generated-tweet {
