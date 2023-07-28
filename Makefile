@@ -11,7 +11,7 @@ test.js: src/**/*.cljs shadow-cljs.edn node_modules
 build: src/**/* $(STATIC) node_modules
 	mkdir -p build
 	cp -LR --preserve=all $(STATIC) build
-	npx shadow-cljs release app generate
+	npx shadow-cljs release app
 	touch build
 
 node_modules: package.json
