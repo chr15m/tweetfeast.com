@@ -27,9 +27,8 @@
 (def prompt-1
   "I'd like you to write some tweets for me.
   I'm going to provide you with a list of tweets first and then I'm going to provide you with a topic or reference text to tweet about.
-  I want you to write ten (10) tweets in the same voice as the list of tweets I'll provide.
+  I want you to write fifteen (15) tweets in the same voice as the list of tweets I'll provide.
   It's important that the tweets you write are stylistically similar to the reference tweets.
-  Do not retweet using RT or reference other users with the at symbol. Do not number the tweets.
   It's important that the tweets are on the topic of the reference text I'll provide.
 
   Please make the tweets smart, funny, entertaining, interesting, poignant and/or insightful.
@@ -38,8 +37,19 @@
 
 (def prompt-2
   "Ok, now here is the topic or reference text I would like you to tweet about.
-  Please generate new tweets based on this topic or reference text.
-  Please output the tweets in JSON format as an array of strings with one array entry for each tweet.")
+
+  Please generate fifteen (15) new tweets based on this topic or reference text.
+
+  Please follow these rules:
+
+  - Please not retweet or use the 'RT' shorthand.
+  - Please do not reply or use the 'R' shorthand.
+  - Please do not reference other users with the at (@) symbol.
+  - Please do not number the tweets.
+
+  Most importantly, please output the tweets in JSON format as an array of strings with one array entry for each tweet.
+  Please do not add any preamble before or any text after the JSON structure.
+  Only respond with valid JSON data and no other text.")
 
 ;Tweet like one of the a greatest minds in the modern world.
 
@@ -74,19 +84,30 @@
                                  ;:functions [{:name "set_tweets" :parameters schema}]
                                  ;:function_call {:name "set_tweets"}
                                  :temperature 1}))]
+    (js/console.log "Done generating tweets.")
     (j/get-in completion [:data :choices 0 :message :content])))
 
+(def re-json-array (js/RegExp. "\\[(.*)\\]" "s"))
+
 (defn generate-tweets-api [req res]
+  (js/console.log (j/get req :query))
   ; TODO: guard against errors, timeouts etc.
   (let [username (j/get-in req [:query :username])
         topic (j/get-in req [:query :topic])]
     (if (and username topic)
       (p/let [tweets (fetch-tweets username)
-              generated (generate-tweets tweets topic)]
-        (.json res generated))
+              generated (generate-tweets tweets topic)
+              extract-array (first (.exec re-json-array generated))
+              _ (js/console.log extract-array)
+              parsed (try (js/JSON.parse extract-array)
+                          (catch :default e
+                            #js {:error "Error parsing response."
+                                 :e e
+                                 :original generated}))]
+        (.json res parsed))
       (-> res
           (.status 404)
-          (.json res "Nope. Parameters missing.")))))
+          (.json "Nope. Parameters missing.")))))
 
 #_ (p/let [topic "Brevity is the soul of wit and also good programming."
            ;topic "On investing time and money in your tools and not just working on projects."

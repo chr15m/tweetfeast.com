@@ -123,6 +123,12 @@ section.options {
   fill: var(--ui-color-typography-note);
 }
 
+.icon img {
+  display: inline;
+  width: 1em;
+  margin: 0px 0.25em;
+}
+
 .cta {
   display: block;
   text-align: center;
@@ -383,7 +389,24 @@ table#help td, table#help th {
 
 .generator textarea {
   width: 100%;
+}
 
+.generator .progress {
+  margin: 1em 0px;
+}
+
+.generator blockquote {
+  border-left: 1px solid silver;
+  padding-left: 1em;
+}
+
+.generated-tweet {
+  max-width: 600px;
+  margin: 4em auto;
+}
+
+.generated-tweet .actions {
+  text-align: right;
 }
 
 /*** styling tweets ***/
@@ -402,6 +425,7 @@ table#help td, table#help th {
 .twitter-tweet .profile img {
   border-radius: 64px;
   margin-right: 0.25em;
+  margin-left: 0px;
 }
 
 .twitter-tweet .profile {
@@ -460,4 +484,8 @@ table#help td, table#help th {
 .twitter-tweet.sentiment-negative {
   border-color: red;
   background-color: rgba(255, 0, 0, 0.1);
+}
+
+.twitter-tweet img {
+  display: inline;
 }

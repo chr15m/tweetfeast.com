@@ -10,7 +10,7 @@
             ["wink-sentiment" :as sentiment]
             ["twemoji" :as twemoji]
             ["json2csv" :as json2csv]
-            [twentiments.common :refer [auth make-tweet-link]]))
+            [twentiments.common :refer [auth make-tweet-link component-progress component-icon]]))
 
 (def initial-state {:results-view-table true})
 
@@ -598,11 +598,6 @@
   (when (aget results "rateLimit")
     [:p (j/get-in results [:rateLimit :remaining]) " requests left."]))
 
-(defn component-progress [searching]
-  [:div.progress
-   [:div.spinner.spin]
-   [:p searching]])
-
 (defn component-tweet-results [state user empty-component]
   (let [searching (-> @state :progress :search)
         results (@state :results)]
@@ -647,10 +642,6 @@
                                   [component-download-results state user]
                                   [component-users-table state]]
            :else "Users not found.")]))))
-
-(defn component-icon [icon]
-  (let [icon (-> icon (.split "\n") rest)]
-    [:span.icon {:dangerouslySetInnerHTML {:__html icon}}]))
 
 (defn component-back-button [state]
   [:div [:a {:href "/exporter"
