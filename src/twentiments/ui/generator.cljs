@@ -162,7 +162,7 @@
             No tweets will be posted without your permission."]
         (if user
           [:<>
-           [:p "Enter the username of someone you'd like to tweet as (case sensitive)."]
+           [:p "Enter the username of someone you'd like to tweet like (case sensitive)."]
            [:p "Tweet like: "
             [:input
              {:on-change #(swap! state assoc :username (-> % .-target .-value))
