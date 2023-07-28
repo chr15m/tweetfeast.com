@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="uisual" content="Made with Uisual (uisual.com)">
     <meta name="author" content="Chris McCormick">
-    <meta name="description" content="Export Twitter follower lists and download to Excel, CSV, and JSON.">
+    <meta name="description" content="AI generated tweets. Export Twitter follower lists and download to Excel, CSV, and JSON.">
 
     <meta name="referrer" content="unsafe-url">
     <meta name="robots" content="index, follow">
@@ -31,16 +31,16 @@
     <meta content="@mccrmx" name="twitter:creator">
     <meta content="summary" name="twitter:card">
     <meta content="TweetFeast" name="twitter:title">
-    <meta content="Export Twitter follower lists and download to Excel, CSV, and JSON." name="twitter:description">
+    <meta content="AI generated tweets. Export Twitter follower lists and download to Excel, CSV, and JSON." name="twitter:description">
     <!-- other social -->
     <meta content="https://tweetfeast.com/icon.png" property="og:image">
     <meta content="TweetFeast" property="og:site_name">
     <meta content="website" property="og:type">
     <meta content="TweetFeast" property="og:title">
     <meta content="https://tweetfeast.com/" property="og:url">
-    <meta content="Export Twitter follower lists and download to Excel, CSV, and JSON." property="og:description">
+    <meta content="AI generated tweets. Export Twitter follower lists and download to Excel, CSV, and JSON." property="og:description">
     <!-- TITLE -->
-    <title>Export Twitter follower lists and download to Excel, CSV, and JSON - TweetFeast</title>
+    <title>AI Generated tweets and export Twitter follower lists and download to Excel, CSV, and JSON - TweetFeast</title>
   </head>
   <body>
     <header role="banner" class="ui-section-header">
@@ -75,16 +75,16 @@
                 You can export follower or following lists for yourself or any other user.
                 You can download the exported lists to Excel, CSV and JSON.
               </p>
-                <a href="/login" class="cta">
+                <a href="/login?next=/exporter" class="cta exporter">
                   <button class="primary">
                     <svg viewBox="0 0 24 24" height="16" width="16" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                       <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" fill="white"/>
                     </svg>
-                    Sign in
+                    <span>Sign in</span>
                   </button>
                 </a>
-              <p class="ui-text-note">
-                <center>
+              <p class="ui-text-note exporter">
+                <center class="note">
                   Sign in with Twitter to get started.
                 </center>
               </p>
@@ -94,6 +94,37 @@
           </div>
         </div>
       </section>
+
+      <section class="ui-section-hero">
+        <div class="ui-layout-container">
+          <div class="ui-section-hero__layout ui-layout-grid ui-layout-grid-2">
+            <!-- IMAGE -->
+            <img src="/content/media/ai-tweet-generator-ui.png" loading="lazy" alt="Animated gif of the tweet search process." class="ui-image-half-left">
+            <!-- COPYWRITING -->
+            <div>
+              <h1>Generate tweets with AI.</h1>
+              <p class="ui-text-intro">
+                TweetFeast lets you generate tweets with AI.
+                You can generate tweets on any topic you like.
+              </p>
+                <a href="/login?next=/ai-tweet-generator" class="cta generator">
+                  <button class="primary">
+                    <svg viewBox="0 0 24 24" height="16" width="16" fill="none" stroke="white" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                      <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" fill="white"/>
+                    </svg>
+                    <span>Sign in</span>
+                  </button>
+                </a>
+              <p class="ui-text-note generator">
+                <center class="note">
+                  Sign in with Twitter to get started.
+                </center>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
     </main>
     <footer role="contentinfo" class="ui-section-footer">
       <div class="ui-layout-container">
@@ -104,12 +135,15 @@
             <ul>
               <li><a href="/terms-and-conditions">Terms</a></li>
               <li><a href="/privacy-policy">Privacy</a></li>
+              <li><a href="/ai-tweet-generator">AI Tweet Generator</a></li>
+              <li><a href="/login?next=/exporter">Exporter Twitter Followers</a></li>
             </ul>
             <p><a href="/articles">Articles</a></p>
             <ul>
               <li><a href="/articles/twitter-sentiment-analysis">Twitter sentiment analysis (Python & JS)</a></li>
               <li><a href="/articles/how-to-delete-a-retweet">How to delete a retweet</a></li>
               <li><a href="/articles/how-to-export-twitter-followers-and-following-list-to-excel-with-a-csv-or-json-file">How to export Twitter followers</a></li>
+              <li><a href="/articles/tweet-like-me-xyz">Tweet Like Me XYZ</a></li>
             </ul>
           </div>
           <!-- MENU -->

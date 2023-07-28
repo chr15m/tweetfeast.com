@@ -40,6 +40,18 @@ fieldset.horizontal {
   flex-direction: row;
 }
 
+details {
+  margin: 1em 0px;
+}
+
+details summary {
+  cursor: pointer;
+}
+
+details ul {
+  margin: 1em;
+}
+
 .user-profile {
   text-align: right;
 }
@@ -50,7 +62,7 @@ nav {
 }
 
 nav > * {
-  margin: 0px 0.5em;
+  margin: 0px 0em;
 }
 
 section#app > *, section#app > span > * {
@@ -109,6 +121,12 @@ section.options {
 
 .icon svg path {
   fill: var(--ui-color-typography-note);
+}
+
+.icon img {
+  display: inline;
+  width: 1em;
+  margin: 0px 0.25em;
 }
 
 .cta {
@@ -363,6 +381,48 @@ table#help td, table#help th {
   margin-top: 2em;
 }
 
+/*** tweet generator ***/
+
+.generator li {
+  margin-left: 1em;
+}
+
+.generator textarea {
+  width: 100%;
+  min-height: 7em;
+}
+
+.generator .progress {
+  margin: 1em 0px;
+}
+
+.generator blockquote {
+  border-left: 1px solid silver;
+  padding-left: 1em;
+}
+
+.generator .subscribe-notice {
+  border-radius: 0.5em;
+  border: 1px solid #aaa;
+  text-align: center;
+  padding: 1em;
+}
+
+.generated-tweet .blur {
+  filter: blur(0.25em);
+  pointer-events: none;
+  user-select: none;
+}
+
+.generated-tweet {
+  max-width: 600px;
+  margin: 4em auto;
+}
+
+.generated-tweet .actions {
+  text-align: right;
+}
+
 /*** styling tweets ***/
 
 .twitter-tweet {
@@ -379,6 +439,7 @@ table#help td, table#help th {
 .twitter-tweet .profile img {
   border-radius: 64px;
   margin-right: 0.25em;
+  margin-left: 0px;
 }
 
 .twitter-tweet .profile {
@@ -437,4 +498,8 @@ table#help td, table#help th {
 .twitter-tweet.sentiment-negative {
   border-color: red;
   background-color: rgba(255, 0, 0, 0.1);
+}
+
+.twitter-tweet img {
+  display: inline;
 }
