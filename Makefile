@@ -2,7 +2,7 @@ STATIC=public/*.html public/*.png public/*.css public/*.svg public/*.gif public/
 
 all: server.js build
 
-server.js: src/**/*.cljs shadow-cljs.edn node_modules
+server.js: src/**/*.cljs shadow-cljs.edn node_modules public/index.html
 	npx shadow-cljs release server --debug
 
 test.js: src/**/*.cljs shadow-cljs.edn node_modules
