@@ -156,13 +156,13 @@
         [component-generated-tweet-list state user]]
        :else
        [:<>
-        [:p "Use the AI tweet generator to generate tweets on any topic of your choice in the voice of any twitter user.
-            Choose which user you want to tweet like, and then enter a topic you'd like to tweet about.
+        [:p "Use the AI tweet generator to generate tweets on any topic of your choice in your own voice (or the voice of any user).
+            Tweet as yourself or choose which user you want to tweet like, and then enter a topic you'd like to tweet about.
             Once the app is done generating you can choose which tweets you want to post.
             No tweets will be posted without your permission."]
         (if user
           [:<>
-           [:p "Enter the username of someone you'd like to tweet like (case sensitive)."]
+           [:p "Change the username if you'd like to tweet like somebody else (case sensitive)."]
            [:p "Tweet like: "
             [:input
              {:on-change #(swap! state assoc :username (-> % .-target .-value))
@@ -179,7 +179,8 @@
              [:li "Something that happened to you today."]
              [:li "Copy and paste part of an article you read."]
              [:li "A good idea you heard recently."]
-             [:li "A tweet you would like to re-word."]
+             [:li "Something useful you learned."]
+             [:li "An existing tweet you'd like to re-word."]
              [:li "Paste in a quote from somebody famous. "
               [:a {:href "https://www.goodreads.com/quotes/"
                    :target "_BLANK"}
