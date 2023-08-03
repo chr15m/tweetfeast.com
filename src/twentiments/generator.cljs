@@ -6,7 +6,8 @@
     ["htmlparser2" :refer [parseFeed]]
     ["openai" :refer [Configuration OpenAIApi]]  
     [sitefox.mail :refer [send-email]]
-    [twentiments.filecache :refer [fetch-and-cache-url]]))
+    [twentiments.filecache :refer [fetch-and-cache-url]]
+    [twentiments.api :refer [log-event rnd-id]]))
 
 (defn process-feed [url]
   (p/let [body (fetch-and-cache-url url)
@@ -99,6 +100,8 @@
         topic (j/get-in req [:query :topic])
         user (j/get-in req [:session :user])
         start (js/Date.)]
+    (log-event "last/request" (aget user "userId") user)
+    (log-event "event/generate" (rnd-id) user {:u username :t topic})
     (if (and username topic)
       (p/let [tweets (fetch-tweets username)
               generated (if tweets (generate-tweets tweets topic) "")
@@ -115,7 +118,7 @@
                             (j/lit {:query (j/get req :query)
                                     :user (j/get user :userName)
                                     :result parsed
-                                    :time (-> (- done start) (/ 1000))})
+                                    :time (-> (- done start) (/ 1000) int)})
                             nil 2))
         (if tweets
           (.json res parsed)
