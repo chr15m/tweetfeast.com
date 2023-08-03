@@ -12,7 +12,7 @@
 (defonce state (r/atom nil))
 
 (defn initiate-generate-tweets! [state *username *topic]
-  (swap! state assoc :fetching true)
+  (swap! state assoc :fetching {:start (js/Date.) :estimate 120})
   (p/let [res (js/fetch (str "/api/generate"
                           "?username=" *username
                           "&topic=" (js/encodeURIComponent *topic)))
@@ -137,6 +137,12 @@
   (j/assoc-in! el [:style :height] "5px")
   (j/assoc-in! el [:style :height] (str (j/get el :scrollHeight) "px")))
 
+(defn component-countdown [fetching]
+  (let [t (r/atom (:estimate fetching))]
+    (js/setInterval #(swap! t dec) 1000)
+    (fn []
+      [component-progress [:span "Hang tight, this can take up to two minutes." [:span " (" @t "s)"]]])))
+
 (defn component-home [state user]
   (let [un (or (:username @state) (:username user))
         result (:result @state)
@@ -197,7 +203,7 @@
              :value (:topic @state)}]
            (cond
              (:fetching @state)
-             [component-progress "Hang tight, this can take up to two minutes."]
+             [component-countdown (:fetching @state)]
              :else
              [:p [:button.primary
                   {:on-click #(initiate-generate-tweets! state un (:topic @state))}
