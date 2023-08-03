@@ -29,10 +29,10 @@ server:
 	sleep 1 && while [ 1 ]; do node devserver.js; sleep 3; done
 
 watcher: src/**/*.cljs node_modules
-	npx shadow-cljs watch server app generate
+	npx shadow-cljs watch server app
 
 watch:
 	make -j2 watcher server
 
 repl:
-	npx shadow-cljs cljs-repl app generate
+	npx shadow-cljs cljs-repl app
