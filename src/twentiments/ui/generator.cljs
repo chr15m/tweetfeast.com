@@ -127,7 +127,9 @@
 
 (defn component-compact-ui [username topic]
   [:<>
-   [:p "Tweet like: @" [:strong username]]
+   [:p "Tweet like: " [:a {:href (str "https://twitter.com/" username)
+                           :target "_BLANK"}
+                       "@" [:strong username]]]
    [:p "Topic:"]
    [:blockquote "\"" topic "\""]])
 
@@ -136,18 +138,16 @@
   (j/assoc-in! el [:style :height] (str (j/get el :scrollHeight) "px")))
 
 (defn component-home [state user]
-  (let [un (or (:username @state) (:username user))]
+  (let [un (or (:username @state) (:username user))
+        result (:result @state)
+        error (j/get (:result @state) :error)]
     ;[:div (pr-str subscription)]
     ;[:pre (pr-str user)]
     ;[:pre (pr-str @state)]
     [:div
      [:h1 "AI Tweet Generator"]
      (cond
-       (j/get (:result @state) :error)
-       [:<>
-        [component-back-button state]
-        [:p "Whoops, there was an error generating. Please try again."]]
-       (:result @state)
+       (and result (not error))
        [:<>
         [component-back-button state]
         [component-compact-ui (:username @state) (:topic @state)]
@@ -169,7 +169,9 @@
               :placeholder "Twitter username"
               :value un
               #_#_ :on-key-down #(when (= (aget % "keyCode") 13)
-                                   (initiate-user-tweet-fetch state un @search-type @limit))}]]
+                                   (initiate-user-tweet-fetch state un @search-type @limit))}]
+            (when (and error (= (j/get result :target) "username"))
+              [:p.errors error])]
            [:p "Enter the topic you'd like to generate tweets about.
                Write whatever you want in here.
                You can write a couple of words or a whole paragraph, it's up to you."]
@@ -193,11 +195,14 @@
                           (swap! state assoc :topic (-> ev .-target .-value))
                           (auto-resize-textarea (-> ev .-target)))
              :value (:topic @state)}]
-           (if (:fetching @state)
+           (cond
+             (:fetching @state)
              [component-progress "Hang tight, this can take up to two minutes."]
+             :else
              [:p [:button.primary
                   {:on-click #(initiate-generate-tweets! state un (:topic @state))}
                   "Generate tweets"] [:br]
+              (when error [:span.errors error])
               [:small "Note: no tweets will be posted. You will be shown tweets and you can choose what to post."]])]
           [:a.button.primary {:href "/login?next=/ai-tweet-generator"} "Sign in to start"])])]))
 

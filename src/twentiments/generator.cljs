@@ -93,22 +93,38 @@
 (defn generate-tweets-api [req res]
   (js/console.log (j/get req :query))
   ; TODO: guard against errors, timeouts etc.
-  (let [username (j/get-in req [:query :username])
-        topic (j/get-in req [:query :topic])]
+  (let [username (->
+                   (j/get-in req [:query :username])
+                   .toLowerCase
+                   (.replaceAll " " ""))
+        topic (j/get-in req [:query :topic])
+        user (j/get-in req [:session :user])]
     (when (and username topic)
       (send-email (j/get env :ADMIN_EMAIL) (j/get env :ADMIN_EMAIL)
                   "TweetFeast generator run"
-                  :text (js/JSON.stringify (j/get req :query) nil 2)))
+                  :text (js/JSON.stringify
+                          (j/lit {:query (j/get req :query)
+                                  :user user})
+                          nil 2)))
     (if (and username topic)
       (p/let [tweets (fetch-tweets username)
-              generated (generate-tweets tweets topic)
+              generated (if tweets (generate-tweets tweets topic) "")
               extract-array (first (.exec re-json-array generated))
               parsed (try (js/JSON.parse extract-array)
                           (catch :default e
                             #js {:error "Error parsing response."
                                  :e e
                                  :original generated}))]
-        (.json res parsed))
+        (when parsed
+          (send-email (j/get env :ADMIN_EMAIL) (j/get env :ADMIN_EMAIL)
+                      "TweetFeast generator results"
+                      :text (js/JSON.stringify
+                              parsed
+                              nil 2)))
+        (if tweets
+          (.json res parsed)
+          (.json res (j/lit {:error "Sorry we couldn't find that user. Please check the username."
+                             :target "username"}))))
       (-> res
           (.status 404)
           (.json "Nope. Parameters missing.")))))
