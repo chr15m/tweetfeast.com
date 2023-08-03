@@ -91,21 +91,14 @@
 (def re-json-array (js/RegExp. "\\[(.*)\\]" "s"))
 
 (defn generate-tweets-api [req res]
-  (js/console.log (j/get req :query))
   ; TODO: guard against errors, timeouts etc.
   (let [username (->
                    (j/get-in req [:query :username])
                    .toLowerCase
                    (.replaceAll " " ""))
         topic (j/get-in req [:query :topic])
-        user (j/get-in req [:session :user])]
-    (when (and username topic)
-      (send-email (j/get env :ADMIN_EMAIL) (j/get env :ADMIN_EMAIL)
-                  "TweetFeast generator run"
-                  :text (js/JSON.stringify
-                          (j/lit {:query (j/get req :query)
-                                  :user user})
-                          nil 2)))
+        user (j/get-in req [:session :user])
+        start (js/Date.)]
     (if (and username topic)
       (p/let [tweets (fetch-tweets username)
               generated (if tweets (generate-tweets tweets topic) "")
@@ -114,13 +107,16 @@
                           (catch :default e
                             #js {:error "Error parsing response."
                                  :e e
-                                 :original generated}))]
-        (when parsed
-          (send-email (j/get env :ADMIN_EMAIL) (j/get env :ADMIN_EMAIL)
-                      "TweetFeast generator results"
-                      :text (js/JSON.stringify
-                              parsed
-                              nil 2)))
+                                 :original generated}))
+              done (js/Date.)]
+        (send-email (j/get env :ADMIN_EMAIL) (j/get env :ADMIN_EMAIL)
+                    "TweetFeast generator run"
+                    :text (js/JSON.stringify
+                            (j/lit {:query (j/get req :query)
+                                    :user (j/get user :userName)
+                                    :result parsed
+                                    :time (-> (- done start) (/ 1000))})
+                            nil 2))
         (if tweets
           (.json res parsed)
           (.json res (j/lit {:error "Sorry we couldn't find that user. Please check the username."
