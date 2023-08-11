@@ -55,8 +55,6 @@
           <label for="ui-section-header--menu-id" class="ui-section-header--menu-icon"></label>
           <!-- MENU -->
           <nav role="navigation" class="ui-section-header--nav ui-layout-flex">
-            <!-- <a href="/#features" role="link" aria-label="#" class="ui-section-header--nav-link">Features</a> -->
-            <!-- <a href="/pricing" role="link" aria-label="#" class="ui-section-header--nav-link">Pricing</a> -->
             <a href="/articles" role="link" aria-label="#" class="ui-section-header--nav-link">Articles</a>
             <a href="/login" id="sign-in-link" role="link" aria-label="#" class="ui-section-header--nav-link">Sign In</a>
           </nav>
@@ -163,5 +161,94 @@
         </div>
       </div>
     </footer>
+
+    <template id="pricing">
+      <section class="ui-section-pricing">
+        <div class="ui-layout-container">
+          <h2 class="pricing-title"><a name="pricing"></a>Pricing</h2>
+          <p class="ui-text-intro">Our pricing is based on usage time.</p>
+          <!-- PRICING -->
+          <div class="ui-section-pricing__layout ui-layout-grid ui-layout-grid-3">
+            <div class="ui-component-card ui-component-card--pricing">
+              <span><strong>24 hour</strong></span>
+              <!-- AMOUNT -->
+              <div class="ui-component-card--pricing-price">
+                <span class="ui-component-card--pricing-amount ui-component-card--pricing-amount-1"><strike>$15</strike> $5</span>
+                <span>one time</span>
+                <span></span>
+              </div>
+              <span><small>For quick 24hr access.</small></span>
+              <!-- LIST -->
+              <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
+                <!-- <li class="ui-component-list--item ui-component-list--item-check">Export tweets.</li> -->
+                <li class="ui-component-list--item ui-component-list--item-check">AI Generate Tweets.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export followers.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">24 hrs access.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Unlimited exports.</li>
+              </ul>
+              <!-- CTA -->
+              <a href="/login"
+                 data-tier="0"
+                 class="ui-component-button ui-component-button-big ui-component-button-secondary"
+                 role="link"
+                 aria-label="#">Sign in with Twitter</a>
+            </div>
+            <div class="ui-component-card ui-component-card--pricing">
+              <span><strong>Monthly</strong></span>
+              <!-- AMOUNT -->
+              <div class="ui-component-card--pricing-price">
+                <span class="ui-component-card--pricing-amount ui-component-card--pricing-amount-3"><strike>$49</strike> $19</span>
+                <span>/</span>
+                <span>month</span>
+              </div>
+              <span><small>For multiple uses per month.</small></span>
+              <!-- LIST -->
+              <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
+                <li class="ui-component-list--item ui-component-list--item-check">AI Generate Tweets.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export followers.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Monthly discount.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Unlimited exports.</li>
+              </ul>
+              <!-- CTA -->
+              <a href="/login"
+                 data-tier="1"
+                 class="ui-component-button ui-component-button-big ui-component-button-primary"
+                 role="link"
+                 aria-label="#">Sign in with Twitter</a>
+            </div>
+            <div class="ui-component-card ui-component-card--pricing">
+              <span><strong>Annual</strong></span>
+              <!-- AMOUNT -->
+              <div class="ui-component-card--pricing-price">
+                <span class="ui-component-card--pricing-amount ui-component-card--pricing-amount-2">$99</span>
+                <span>/</span>
+                <span>year</span>
+              </div>
+              <span><small>For year long power users.</small></span>
+              <!-- LIST -->
+              <ul class="ui-component-list ui-component-list--pricing ui-layout-grid">
+                <li class="ui-component-list--item ui-component-list--item-check">AI Generate Tweets.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export followers.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to CSV.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Export to JSON.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Yearly discount.</li>
+                <li class="ui-component-list--item ui-component-list--item-check">Unlimited exports.</li>
+              </ul>
+              <!-- CTA -->
+              <a href="/login"
+                 data-tier="2"
+                 class="ui-component-button ui-component-button-big ui-component-button-secondary"
+                 role="link"
+                 aria-label="#">Sign in with Twitter</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </template>
+
   </body>
 </html>

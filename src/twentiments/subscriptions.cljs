@@ -18,54 +18,57 @@
 (def lifetime-accounts (read-string (rc/inline "lifetime-accounts.edn")))
 
 (defn view-subscribe [req res]
-  (p/let [template (rc/inline "index.original.html")
+  (p/let [template (rc/inline "index.html")
           user (j/get-in req [:session :user])
           dom (motionless/dom template)
           el (j/call-in dom [:h :bind] nil)
           $ (j/call-in dom [:$ :bind] nil)
           $$ (j/call-in dom [:$$ :bind] nil)
           app ($ "main")
-          pricing ($ ".ui-section-pricing")
-          links ($$ ".ui-section-pricing a[href=\"/login\"]")]
-    (when user
-      (p/let [user-id (aget user "userId")
-              tw (twitter user)
-              user-profile (aget user "profile")
-              user-profile (if user-profile user-profile (get-user-profile tw user-id))]
-        (aset user "profile" user-profile)
-        (doseq [l (range (count links))]
-          (let [link (aget links l)
-                parent (aget link "parentNode")
-                form (el "form" (clj->js {:action "/account/begin-subscription"
-                                          :method "POST"}))
-                tier (js/parseInt (.getAttribute link "data-tier"))]
-            (.remove link)
-            (aset form "innerHTML"
-                  (render [:fieldset
-                           [:input {:type "hidden"
-                                    :name "tier"
-                                    :defaultValue tier}]
-                           [:input {:name "_csrf" :type "hidden" :default-value (j/call req :csrfToken)}]
-                           [:button {:type :submit
-                                     :class (str "ui-component-button ui-component-button-big"
-                                                 (if (= l 1)
-                                                   " ui-component-button-primary"
-                                                   " ui-component-button-secondary"))
-                                     ; undo minimal-stylesheet modifications
-                                     :style {:box-shadow :none
-                                             :text-transform :none
-                                             :font-size "var(--ui-typography-p)"}}
-                            "Checkout"]]))
-            (.appendChild parent form))
-          (aset l "textContent" "Choose"))))
-    (aset app "innerHTML" "")
+          pricing-template ($ "template#pricing")
+          pricing (j/get pricing-template :content)
+          pricing (.cloneNode pricing true)]
+    (j/assoc! app :innerHTML "")
     (.appendChild app pricing)
-    (aset ($ "h2") "textContent" "Plans & pricing")
-    (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
-    (update-nav dom user)
-    (doseq [l links]
-      (let [href (.getAttribute l "href")]
-        (.setAttribute l "href" (str href "?next=/pricing"))))
+    (.remove pricing-template)
+    (let [links ($$ ".ui-section-pricing a[href^=\"/login\"]")]
+      (when user
+        (p/let [user-id (aget user "userId")
+                tw (twitter user)
+                user-profile (aget user "profile")
+                user-profile (if user-profile user-profile (get-user-profile tw user-id))]
+          (aset user "profile" user-profile)
+          (doseq [l (range (count links))]
+            (let [link (aget links l)
+                  parent (aget link "parentNode")
+                  form (el "form" (clj->js {:action "/account/begin-subscription"
+                                            :method "POST"}))
+                  tier (js/parseInt (.getAttribute link "data-tier"))]
+              (.remove link)
+              (aset form "innerHTML"
+                    (render [:fieldset
+                             [:input {:type "hidden"
+                                      :name "tier"
+                                      :defaultValue tier}]
+                             [:input {:name "_csrf" :type "hidden" :default-value (j/call req :csrfToken)}]
+                             [:button {:type :submit
+                                       :class (str "ui-component-button ui-component-button-big"
+                                                   (if (= l 1)
+                                                     " ui-component-button-primary"
+                                                     " ui-component-button-secondary"))
+                                       ; undo minimal-stylesheet modifications
+                                       :style {:box-shadow :none
+                                               :text-transform :none
+                                               :font-size "var(--ui-typography-p)"}}
+                              "Checkout"]]))
+              (.appendChild parent form))))))
+    (let [links ($$ ".ui-section-pricing a[href^=\"/login\"]")]
+      (aset ($ "h2") "textContent" "Plans & pricing")
+      (aset ($ ".ui-text-intro") "textContent" "Choose the plan that suits your usage.")
+      (update-nav dom user)
+      (doseq [l links]
+        (let [href (.getAttribute l "href")]
+          (.setAttribute l "href" (str href "?next=/pricing")))))
     (.send res (j/call dom :render))))
 
 (defn begin-subscription [req res]
