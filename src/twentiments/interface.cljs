@@ -29,7 +29,9 @@
                        "Generate")
           profile-image (el "div" #js {:className "user-profile"}
                             (el "a" (clj->js {:href "/account"})
-                                (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))]
+                                (el "img" (clj->js {:src (aget user-profile "profile_image_url")}))))
+          year (j/call dom :$ "footer span.year")]
+      (aset year "textContent" (.getFullYear (js/Date.)))
       (aset nav "innerHTML" "")
       ;(.remove ($ "#sign-in-link"))
       (.appendChild nav articles-link)
