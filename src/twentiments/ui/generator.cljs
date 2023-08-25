@@ -67,7 +67,7 @@
   (let [username (:username user)
         fullname (:name user)
         subscription (:subscription user)
-        tweets (:result @state)]
+        tweets (j/get (:result @state) :tweets)]
     [:<>
      (for [t (range (count tweets))]
        (let [tweet (nth tweets t)

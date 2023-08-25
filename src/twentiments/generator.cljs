@@ -7,7 +7,7 @@
     ["openai" :refer [Configuration OpenAIApi]]  
     [sitefox.mail :refer [send-email]]
     [twentiments.filecache :refer [fetch-and-cache-url]]
-    [twentiments.api :refer [log-event rnd-id]]))
+    [twentiments.api :refer [log-event rnd-id set-user-data! get-user-data]]))
 
 (defn process-feed [url]
   (p/let [body (fetch-and-cache-url url)
@@ -99,6 +99,7 @@
                    (.replaceAll " " ""))
         topic (j/get-in req [:query :topic])
         user (j/get-in req [:session :user])
+        user-data (get-user-data user)
         start (js/Date.)]
     (log-event "last/request" (aget user "userId") user)
     (log-event "event/generate" (rnd-id) user {:u username :t topic})
@@ -120,8 +121,14 @@
                                     :result parsed
                                     :time (-> (- done start) (/ 1000) int)})
                             nil 2))
+        (when tweets
+          (set-user-data! user
+                          (j/update-in! user-data
+                                        [:generator :uses]
+                                        #(inc (or % 0)))))
         (if tweets
-          (.json res parsed)
+          (.json res (j/lit {:tweets parsed
+                             :uses (j/get-in user-data [:generator :uses])}))
           (.json res (j/lit {:error "Sorry we couldn't find that user. Please check the username."
                              :target "username"}))))
       (-> res

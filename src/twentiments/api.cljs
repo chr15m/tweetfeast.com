@@ -100,3 +100,14 @@
   (when-let [session (j/get req "session")]
     (js-delete session "user"))
   (.redirect res "/"))
+
+(defn get-user-data [user]
+  (p/let [user-id (aget user "userId")
+          kv (db/kv "user-data")]
+    (.get kv user-id)))
+
+(defn set-user-data! [user user-data]
+  (p/let [user-id (aget user "userId")
+          kv (db/kv "user-data")]
+    (.set kv user-id (clj->js user-data))
+    user-data))
