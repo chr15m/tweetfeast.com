@@ -160,7 +160,8 @@ Remember, consistency is key. Engaging with your audience, responding to comment
   (let [username (->
                    (j/get-in req [:query :username])
                    .toLowerCase
-                   (.replaceAll " " ""))
+                   (.replaceAll " " "")
+                   (.replaceAll "@" ""))
         topic (j/get-in req [:query :topic])
         user (j/get-in req [:session :user])
         start (js/Date.)]
@@ -186,7 +187,6 @@ Remember, consistency is key. Engaging with your audience, responding to comment
                                     :result parsed
                                     :time (-> (- done start) (/ 1000) int)})
                             nil 2))
-        (js/console.log "user-data:" user-data)
         (when tweets
           (set-user-data! user
                           (j/update-in! user-data
