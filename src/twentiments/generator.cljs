@@ -99,12 +99,12 @@
                    (.replaceAll " " ""))
         topic (j/get-in req [:query :topic])
         user (j/get-in req [:session :user])
-        user-data (get-user-data user)
         start (js/Date.)]
     (log-event "last/request" (aget user "userId") user)
     (log-event "event/generate" (rnd-id) user {:u username :t topic})
     (if (and username topic)
-      (p/let [tweets (fetch-tweets username)
+      (p/let [user-data (get-user-data user)
+              tweets (fetch-tweets username)
               generated (if tweets (generate-tweets tweets topic) "")
               extract-array (first (.exec re-json-array generated))
               parsed (try (js/JSON.parse extract-array)
@@ -118,6 +118,7 @@
                     :text (js/JSON.stringify
                             (j/lit {:query (j/get req :query)
                                     :user (j/get user :userName)
+                                    :user-data user-data
                                     :result parsed
                                     :time (-> (- done start) (/ 1000) int)})
                             nil 2))

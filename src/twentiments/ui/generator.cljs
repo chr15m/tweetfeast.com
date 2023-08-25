@@ -67,11 +67,14 @@
   (let [username (:username user)
         fullname (:name user)
         subscription (:subscription user)
-        tweets (j/get (:result @state) :tweets)]
+        uses (j/get (:result @state) :uses)
+        tweets (j/get (:result @state) :tweets)
+        limit (if subscription 100
+                (js/Math.max 2 (- (dec (count tweets)) uses)))]
     [:<>
      (for [t (range (count tweets))]
        (let [tweet (nth tweets t)
-             tweet (if (and (not subscription) (>= t 3))
+             tweet (if (and (not subscription) (>= t limit))
                      "Subscribe to TweetFeast to generate more tweets. Find out more at tweetfeast.com!"
                      tweet)
              tweet-this-link (str "https://twitter.com/intent/tweet?text="
@@ -79,14 +82,14 @@
                                   "&related=GetTweetFeast")]
          ^{:key t}
          [:<>
-          (when (and (not subscription) (= t 4))
+          (when (and (not subscription) (= t (inc limit)))
             [:div.subscribe-notice
              [:h3 "Get more generated tweets"]
              [:p "Subscribe to generate 1000s of tweets every month!"]
              [:p.cta
               [:a {:href "/pricing"} [:button.primary "Subscribe"]]]])
           [:div.generated-tweet
-           [:div.twitter-tweet {:class (when (and (not subscription) (>= t 3)) "blur")}
+           [:div.twitter-tweet {:class (when (and (not subscription) (>= t limit)) "blur")}
             [:div.profile
              [:img {:src (:profile_image_url user)}]
              [:div
