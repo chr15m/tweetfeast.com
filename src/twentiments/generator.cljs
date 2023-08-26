@@ -6,13 +6,15 @@
     ["htmlparser2" :refer [parseFeed]]
     ["openai" :refer [Configuration OpenAIApi]]  
     [sitefox.mail :refer [send-email]]
-    [twentiments.filecache :refer [fetch-and-cache-url]]
+    [twentiments.filecache :refer [fetch-and-cache-url delete-cache-url]]
     [twentiments.api :refer [log-event rnd-id set-user-data! get-user-data]]))
 
 (defn process-feed [url]
   (p/let [body (fetch-and-cache-url url)
           feed (parseFeed body)
           items (j/get feed :items)]
+    (when (nil? items)
+      (delete-cache-url url))
     items))
 
 (defn fetch-tweets [user]
@@ -20,7 +22,6 @@
   (let [;url (str "https://twiiit.com/search/rss?q=(from%3A" user ")+-filter%3Anativeretweets+-filter%3Areplies&src=typed_query")
         ;url (str "https://twiiit.com/" user "/rss")]
         url (str "https://twiiit.com/" user "/with_replies/rss")]
-    (js/console.log url)
     (process-feed url)))
 
 (def role
@@ -122,7 +123,7 @@ Remember, consistency is key. Engaging with your audience, responding to comment
   (p/let [;schema (-> (fs/readFileSync "schema-tweets.json") js/JSON.parse)
           config (Configuration. #js {:apiKey (j/get env :OPENAI_API_KEY)})
           openai (OpenAIApi. config)
-          tweet-structure (.join (.map tweets #(j/get % :title)) "\n\n---\n\n")
+          tweet-structure (if tweets (.join (.map tweets #(j/get % :title)) "\n\n---\n\n") "")
           tweets-prompt (str prompt-1 "\n\n---\n\n" tweet-structure "\n\n---\n\n")
           topic-prompt (str prompt-2 "\n\n###\n" topic "\n###\n\n")
           messages [{:role "system"
@@ -170,7 +171,7 @@ Remember, consistency is key. Engaging with your audience, responding to comment
     (if (and username topic)
       (p/let [user-data (get-user-data user)
               tweets (fetch-tweets username)
-              generated (if tweets (generate-tweets tweets topic) "")
+              generated (generate-tweets tweets topic)
               extract-array (first (.exec re-json-array generated))
               parsed (try (js/JSON.parse extract-array)
                           (catch :default e
@@ -187,15 +188,17 @@ Remember, consistency is key. Engaging with your audience, responding to comment
                                     :result parsed
                                     :time (-> (- done start) (/ 1000) int)})
                             nil 2))
-        (when tweets
+        (when parsed
           (set-user-data! user
                           (j/update-in! user-data
                                         [:generator :uses]
                                         #(inc (or % 0)))))
-        (if tweets
+        (if parsed
           (.json res (j/lit {:tweets parsed
+                             :username username
+                             :user-tweets tweets
                              :uses (j/get-in user-data [:generator :uses])}))
-          (.json res (j/lit {:error "Sorry we couldn't find that user. Please check the username."
+          (.json res (j/lit {:error "Sorry there was an error generating tweets. Please try again later."
                              :target "username"}))))
       (-> res
           (.status 404)

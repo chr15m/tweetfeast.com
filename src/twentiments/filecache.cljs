@@ -32,3 +32,11 @@
         (fn [_err]
           cache-file-contents))
       cache-file-contents)))
+
+(defn delete-cache-url
+  [url]
+  (let [file-slug (uslug url)
+        cache-file (path/join ".feed-cache" file-slug)]
+    (when (fs/existsSync cache-file)
+      (fs/unlinkSync cache-file))
+    cache-file))

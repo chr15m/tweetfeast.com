@@ -69,9 +69,13 @@
         subscription (:subscription user)
         uses (j/get (:result @state) :uses)
         tweets (j/get (:result @state) :tweets)
+        user-tweets (j/get (:result @state) :user-tweets)
+        chosen-user (j/get (:result @state) :username)
         limit (if subscription 100
                 (js/Math.max 2 (- (dec (count tweets)) uses)))]
     [:<>
+     (when (nil? user-tweets)
+       [:p [:strong "Note: "] "we couldn't find a user called '" chosen-user "' but we've generated some tweets anyway. Please double-check the username."])
      (for [t (range (count tweets))]
        (let [tweet (nth tweets t)
              tweet (if (and (not subscription) (>= t limit))
