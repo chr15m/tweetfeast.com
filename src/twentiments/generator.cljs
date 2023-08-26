@@ -61,7 +61,10 @@
 
   Most importantly, please output the tweets in JSON format as an array of strings with one array entry for each tweet.
 
-  Before returning the JSON tweets structure please expand upon and summarize the topic and the points from it that will make engaging tweets.")
+  Before returning the JSON tweets structure please expand upon and summarize the topic and the points from it that will make engaging tweets.
+  
+  Here's what I'd like you to tweet:
+")
 
 ;   Please do not add any preamble before or any text after the JSON structure.
 ;  Only respond with valid JSON data and no other text.
