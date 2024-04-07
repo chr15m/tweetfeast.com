@@ -213,7 +213,9 @@
              [component-countdown (:fetching @state)]
              :else
              [:p [:button.primary
-                  {:on-click #(initiate-generate-tweets! state un (:topic @state))}
+                  {:on-click #(if (empty? (:topic @state))
+                                (js/alert "Please enter a topic to tweet about.")
+                                (initiate-generate-tweets! state un (:topic @state)))}
                   "Generate tweets"] [:br]
               (when error [:span.errors error])
               [:small "Note: no tweets will be posted. You will be shown tweets and you can choose what to post."]])]
